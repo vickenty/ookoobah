@@ -16,6 +16,7 @@ class GameRenderer(object):
         self.renderers = []
         self.renderers.append( GridRenderer(game.grid, window) )
         self.renderers.append( BallRenderer(game.ball, window) )
+        pyglet.clock.set_fps_limit(self.FPS)
 
     def draw(self):
         self._next_frame()
@@ -30,8 +31,6 @@ class GameRenderer(object):
 
 class GridRenderer(object):
 
-    NUM_ROWS = 8
-    NUM_COLS = 8
     CELL_SIZE = 30
     CELL_SPACING = 5
 
@@ -41,23 +40,23 @@ class GridRenderer(object):
 
     def __init__(self, grid, window):
         self.grid = grid
-        self.frame = 0
         self.batch = pyglet.graphics.Batch()
         self.window = window
+        (self.num_cols, self.num_rows) = (3,4)
 
         # Init the background
         self.background = self._add_rectangle( 0, 0, self.window.width, self.window.height,
             self.COLOR_BACKGROUND_1, pyglet.graphics.OrderedGroup(0))
 
         # Init the grid (centered on the screen)
-        grid_size_x = self.NUM_COLS * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
-        grid_size_y = self.NUM_ROWS * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
+        grid_size_x = self.num_cols * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
+        grid_size_y = self.num_rows * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
         start_pos_x = (self.window.width - grid_size_x) / 2
         start_pos_y = (self.window.height - grid_size_y) / 2
 
-        for col in range(self.NUM_COLS):
+        for col in range(self.num_cols):
             pos_x = start_pos_x + (self.CELL_SIZE + self.CELL_SPACING) * col
-            for row in range(self.NUM_ROWS):
+            for row in range(self.num_rows):
                 pos_y = start_pos_y + (self.CELL_SIZE + self.CELL_SPACING) * row
                 self._add_rectangle( pos_x, pos_y, self.CELL_SIZE, self.CELL_SIZE, self.COLOR_CELL)
 
