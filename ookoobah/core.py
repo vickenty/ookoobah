@@ -46,10 +46,10 @@ class Ball(object):
         )
 
 class Game(object):
-    def __init__(self, grid, ball):
+    def __init__(self):
         self.step_n = 0
-        self.grid = grid
-        self.ball = ball
+        self.grid = Grid()
+        self.ball = Ball()
 
     def __str__(self):
         return "<Game: step_n=%s, grid=%s, ball=%s>" % (self.step_n, self.grid, self.ball)
@@ -62,11 +62,9 @@ class Game(object):
         self.step_n += 1
 
 if __name__ == "__main__":
-    grid = Grid()
-    grid[2, 0] = Mirror()
-    grid[3, 0] = Wall()
-    ball = Ball()
-    game = Game(grid=grid, ball=ball)
+    game = Game()
+    game.grid[2, 0] = Mirror()
+    game.grid[3, 0] = Wall()
     for n in range(10):
         print game
         game.step()
