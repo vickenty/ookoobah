@@ -1,5 +1,7 @@
 class Grid(dict):
-    pass
+    def size(self):
+        # TODO Cache me, maybe
+        return map(max, zip(*self.keys()))
 
 class Block(object):
     def act(self, ball):
