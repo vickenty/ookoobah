@@ -3,7 +3,7 @@ class Grid(dict):
 
 class Block(object):
     def act(self, ball):
-        raise NotImplemented
+        raise NotImplementedError()
 
 class Launcher(object):
     def __init__(self, direction=None):
