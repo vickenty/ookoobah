@@ -10,10 +10,18 @@ class GameRenderer(object):
     FPS = 60
 
     def __init__(self, game, window):
-        pass
+        self.game = game
+        self.window = window
+        self.frame = 0
+        self.renderers = []
+        self.renderers.append( GridRenderer(game.grid, window) )
+        self.renderers.append( BallRenderer(game.ball, window) )
 
     def draw(self):
-        pass
+        self._next_frame()
+        self.window.clear()        
+        for renderer in self.renderers:
+            renderer.draw()
 
     def _next_frame(self):
         # TODO: there must be an FPS counter somewhere in pyglet
@@ -54,10 +62,7 @@ class GridRenderer(object):
                 self._add_rectangle( pos_x, pos_y, self.CELL_SIZE, self.CELL_SIZE, self.COLOR_CELL)
 
     def draw(self):
-        self._next_frame()
-        self.window.clear()
         self.batch.draw()
-
 
     def _add_rectangle(self, x, y, width, height, color, group=pyglet.graphics.OrderedGroup(1)):
         x2 = x + width
@@ -66,3 +71,12 @@ class GridRenderer(object):
             ('v2i', (x, y, x, y2, x2, y2, x2, y)),
             ('c4B', (color * 4))
         )
+
+
+class BallRenderer(object):
+
+    def __init__(self, ball, window):
+        pass
+
+    def draw(self):
+        pass

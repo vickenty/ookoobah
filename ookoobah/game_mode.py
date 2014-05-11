@@ -9,8 +9,9 @@ class GameMode(mode.Mode):
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
-        self.game = core.Game()
+        self.game = self._create_test_game()
         self.renderer = render.GameRenderer(self.game, self.window)
+        self.game.start()
 
     def tick(self):
         pass
@@ -18,3 +19,9 @@ class GameMode(mode.Mode):
     def on_draw(self):
         self.renderer.draw()
 
+    def _create_test_game(self):
+        game = core.Game()
+        game.grid[0, 0] = core.Launcher()
+        game.grid[2, 0] = core.Mirror()
+        game.grid[3, 0] = core.Wall()
+        return game
