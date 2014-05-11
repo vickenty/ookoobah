@@ -24,4 +24,5 @@ class GameMode(mode.Mode):
         game.grid[0, 0] = core.Launcher()
         game.grid[2, 0] = core.Mirror()
         game.grid[3, 0] = core.Wall()
+        game.grid[13, 10] = core.Wall()
         return game

@@ -55,7 +55,7 @@ class GridRenderer(object):
         self.batch = batch
 
         # Init the grid (centered on the screen)
-        (num_cols, num_rows) = (3,14)#grid.size()
+        (num_cols, num_rows) = grid.size()
         grid_size_x = num_cols * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
         grid_size_y = num_rows * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
         start_pos_x = (window_width - grid_size_x) / 2
