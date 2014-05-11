@@ -13,6 +13,6 @@ CHAR_TO_BLOCK = {
 
 def populate_grid_from_string(grid, string):
     build = lambda block, param: block(**dict(param)) if block is not None else None
-    for y, line in enumerate(string.split("\n")):
+    for y, line in enumerate(string.strip().split("\n")):
         for x, char in enumerate(line.strip()):
             grid[x, y] = build(*CHAR_TO_BLOCK[char])
