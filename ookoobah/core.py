@@ -12,6 +12,19 @@ class Wall(Block):
             -ball.direction[1],
         )
 
+class Mirror(Block):
+    SLOPE_BACKWARD = 1
+    SLOPE_FORWARD = -1
+
+    def __init__(self, slope=SLOPE_BACKWARD):
+        self.slope = slope
+
+    def act(self, ball):
+        ball.direction = (
+            ball.direction[1] * self.slope,
+            ball.direction[0] * self.slope,
+        )
+
 class Ball(object):
     DIR_RIGHT = (1, 0)
     DIR_DOWN = (0, 1)
@@ -50,6 +63,7 @@ class Game(object):
 
 if __name__ == "__main__":
     grid = Grid()
+    grid[2, 0] = Mirror()
     grid[3, 0] = Wall()
     ball = Ball()
     game = Game(grid=grid, ball=ball)
