@@ -66,5 +66,5 @@ if __name__ == "__main__":
     game.grid[2, 0] = Mirror()
     game.grid[3, 0] = Wall()
     for n in range(10):
-        print game
+        print game.ball
         game.step()
