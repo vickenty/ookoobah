@@ -1,18 +1,18 @@
 import pyglet
-
+import math
 
 class GridRenderer(object):
 
     FPS = 30
 
-    NUM_ROWS = 10
-    NUM_COLS = 10
-    CELL_SIZE = 50
+    NUM_ROWS = 8
+    NUM_COLS = 8
+    CELL_SIZE = 30
     CELL_SPACING = 5
 
-    COLOR_BACKGROUND_1 = (50, 108, 158, 255)
-    COLOR_BACKGROUND_2 = (50, 54, 158, 255)
-    COLOR_CELL = (50, 54, 158, 255)
+    COLOR_BACKGROUND_1 = (226, 82, 71, 255)
+    COLOR_BACKGROUND_2 = (50, 54,  158, 255)
+    COLOR_CELL = (217, 147, 78, 255)
 
     def __init__(self, window, grid=None):
         self.grid = grid
@@ -21,14 +21,20 @@ class GridRenderer(object):
         self.window = window
 
         # Init the background
-        self.background = self._rectangle( 0, 0, self.window.width, self.window.height,
+        self.background = self._add_rectangle( 0, 0, self.window.width, self.window.height,
             self.COLOR_BACKGROUND_1, pyglet.graphics.OrderedGroup(0))
 
-        # Init the grid
-        for row in range(self.NUM_ROWS):
-            for col in range(self.NUM_COLS):
-                pass
-                #self._rectangle(  )        
+        # Init the grid (centered on the screen)
+        grid_size_x = self.NUM_COLS * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
+        grid_size_y = self.NUM_ROWS * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
+        start_pos_x = (self.window.width - grid_size_x) / 2
+        start_pos_y = (self.window.height - grid_size_y) / 2
+
+        for col in range(self.NUM_COLS):
+            pos_x = start_pos_x + (self.CELL_SIZE + self.CELL_SPACING) * col
+            for row in range(self.NUM_ROWS):
+                pos_y = start_pos_y + (self.CELL_SIZE + self.CELL_SPACING) * row
+                self._add_rectangle( pos_x, pos_y, self.CELL_SIZE, self.CELL_SIZE, self.COLOR_CELL)
 
     def draw(self):
         self._next_frame()
@@ -39,8 +45,10 @@ class GridRenderer(object):
         # TODO: there must be an FPS counter somewhere        
         self.frame = 0 if self.frame == self.FPS else self.frame + 1
 
-    def _rectangle(self, x, y, width, height, color, group=None):
+    def _add_rectangle(self, x, y, width, height, color, group=pyglet.graphics.OrderedGroup(1)):
+        x2 = x + width
+        y2 = y + height
         return self.batch.add(4, pyglet.gl.GL_QUADS, group,
-            ('v2i', (0, 0, 0, height, width, height, width, 0)),
+            ('v2i', (x, y, x, y2, x2, y2, x2, y)),
             ('c4B', (color * 4))
         )
