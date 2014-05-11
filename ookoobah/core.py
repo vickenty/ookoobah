@@ -77,13 +77,3 @@ class Game(object):
         if block:
             block.act(self.ball)
         self.step_n += 1
-
-if __name__ == "__main__":
-    game = Game()
-    game.grid[0, 0] = Launcher()
-    game.grid[2, 0] = Mirror()
-    game.grid[3, 0] = Wall()
-    game.start()
-    for n in range(10):
-        print game.ball
-        game.step()
