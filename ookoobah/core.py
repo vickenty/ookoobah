@@ -12,10 +12,7 @@ class Launcher(object):
         self.direction = direction
 
     def act(self, ball):
-        ball.direction = (
-            -ball.direction[0],
-            -ball.direction[1],
-        )
+        pass
 
 class Wall(Block):
     def act(self, ball):
