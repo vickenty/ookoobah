@@ -1,9 +1,26 @@
 import pyglet
 import math
 
-class GridRenderer(object):
 
-    FPS = 30
+class GameRenderer(object):
+    """Top level renderer.
+
+    Renders the score and calls all other game object renderers.
+    """
+    FPS = 60
+
+    def __init__(self, game, window):
+        pass
+
+    def draw(self):
+        pass
+
+    def _next_frame(self):
+        # TODO: there must be an FPS counter somewhere in pyglet
+        self.frame = 0 if self.frame == self.FPS else self.frame + 1
+
+
+class GridRenderer(object):
 
     NUM_ROWS = 8
     NUM_COLS = 8
@@ -14,7 +31,7 @@ class GridRenderer(object):
     COLOR_BACKGROUND_2 = (50, 54,  158, 255)
     COLOR_CELL = (217, 147, 78, 255)
 
-    def __init__(self, window, grid=None):
+    def __init__(self, grid, window):
         self.grid = grid
         self.frame = 0
         self.batch = pyglet.graphics.Batch()
@@ -41,9 +58,6 @@ class GridRenderer(object):
         self.window.clear()
         self.batch.draw()
 
-    def _next_frame(self):
-        # TODO: there must be an FPS counter somewhere        
-        self.frame = 0 if self.frame == self.FPS else self.frame + 1
 
     def _add_rectangle(self, x, y, width, height, color, group=pyglet.graphics.OrderedGroup(1)):
         x2 = x + width

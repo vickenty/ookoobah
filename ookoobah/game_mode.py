@@ -1,4 +1,5 @@
 import mode
+import core
 import render
 
 
@@ -8,9 +9,8 @@ class GameMode(mode.Mode):
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
-        # TODO: This is where we'll init the game objects
-        # and pass them to the renderer
-        self.renderer = render.GridRenderer(self.window)
+        self.game = core.Game()
+        self.renderer = render.GameRenderer(self.game, self.window)
 
     def tick(self):
         pass
