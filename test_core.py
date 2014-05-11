@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from ookoobah import core
-from ookoobah import level
 
 game = core.Game()
 
