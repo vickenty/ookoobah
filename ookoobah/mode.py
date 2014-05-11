@@ -89,12 +89,3 @@ class Mode(object):
         """Process a single tick.
 
         """
-
-    def update(self, dt):
-        """Update real time components.
-
-        :Parameters:
-            `dt` : float
-                The actual time that has passed since the last tick.
-
-        """
