@@ -5,6 +5,18 @@ class Block(object):
     def act(self, ball):
         raise NotImplemented
 
+class Launcher(object):
+    def __init__(self, direction=None):
+        if direction is None:
+            direction = Ball.DIR_RIGHT
+        self.direction = direction
+
+    def act(self, ball):
+        ball.direction = (
+            -ball.direction[0],
+            -ball.direction[1],
+        )
+
 class Wall(Block):
     def act(self, ball):
         ball.direction = (
@@ -49,10 +61,18 @@ class Game(object):
     def __init__(self):
         self.step_n = 0
         self.grid = Grid()
-        self.ball = Ball()
+        self.ball = None
 
     def __str__(self):
         return "<Game: step_n=%s, grid=%s, ball=%s>" % (self.step_n, self.grid, self.ball)
+
+    def start(self):
+        for (pos, block) in self.grid.items():
+            if isinstance(block, Launcher):
+                # TODO Shove balls into a list: there are may be multiple launchers, and thus balls
+                self.ball = Ball(direction=block.direction, pos=pos)
+
+        assert self.ball is not None, "no launcher blocks found"
 
     def step(self):
         self.ball.move()
@@ -63,8 +83,10 @@ class Game(object):
 
 if __name__ == "__main__":
     game = Game()
+    game.grid[0, 0] = Launcher()
     game.grid[2, 0] = Mirror()
     game.grid[3, 0] = Wall()
+    game.start()
     for n in range(10):
         print game.ball
         game.step()
