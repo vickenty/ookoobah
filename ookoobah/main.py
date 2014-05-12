@@ -124,7 +124,7 @@ class Controller(object):
 
         """
         self.window = window.Window(visible=False, caption="Ookoobah", fullscreen=False)
-        clock.schedule_interval_soft(self.tick, 1.0 / 60)
+        clock.schedule_interval_soft(self.tick, 1.0)
 
     def run(self):
         """Start the game.

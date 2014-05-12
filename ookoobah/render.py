@@ -3,6 +3,9 @@ import pyglet
 from pyglet.gl import *
 import math
 
+import core
+import shapes
+
 class GameRenderer(object):
     """Top level renderer.
 
@@ -10,9 +13,8 @@ class GameRenderer(object):
     """
     BACKGROUND_COLOR = (0.8862, 0.3215, 0.2784, 1)
 
-    def __init__(self, game, window):
+    def __init__(self, game):
         self.game = game
-        self.window = window
         self.batch = pyglet.graphics.Batch()
 
         glClearColor(*self.BACKGROUND_COLOR)
@@ -20,58 +22,59 @@ class GameRenderer(object):
         # TODO: render the score and other labels
 
         # Init the renderers for all game objects
-        self.renderers = []
-        self.renderers.append( GridRenderer(game.grid, self.batch, window.width, window.height) )
-        self.renderers.append( BallRenderer(game.ball, self.batch) )
+        self.grid_renderer = GridRenderer(game.grid, self.batch)
+        self.ball_renderer = BallRenderer(game.ball, self.batch)
 
     def draw(self):
-        self.window.clear()
-
-        for renderer in self.renderers:
-            renderer.draw()
-
         # We can draw th batch only after all renderers updated it
         self.batch.draw()
 
-class GridRenderer(object):
-    CELL_SIZE = 30
-    CELL_SPACING = 5
-    COLOR_CELL = (217, 147, 78, 255)
+class BlockRenderer (object):
+    def __init__(self, batch, x, y, block):
+        self.shape = shapes.Box(batch, None, (x, y, 0), self.size, self.color)
 
-    def __init__(self, grid, batch, window_width, window_height ):
+class Wall (BlockRenderer):
+    size = (.9, .9, .9)
+    color = (.3, .3, .3)
+
+class Launcher (BlockRenderer):
+    size = (.5, .5, .5)
+    color = (.5, .1, .1)
+
+class Mirror (BlockRenderer):
+    size = (1, 1, .4)
+    color = (.1, .9, .9)
+
+class GridRenderer(dict):
+    mapping = {
+        core.Wall: Wall,
+        core.Launcher: Launcher,
+        core.Mirror: Mirror,
+    }
+
+    def __init__(self, grid, batch):
         self.grid = grid
         self.batch = batch
 
-        # Init the grid (centered on the screen)
-        (num_cols, num_rows) = grid.size()
-        grid_size_x = num_cols * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
-        grid_size_y = num_rows * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
-        start_pos_x = (window_width - grid_size_x) // 2
-        start_pos_y = (window_height - grid_size_y) // 2
+        for (x, y), block in self.grid.iteritems():
+            blockClass = block.__class__
+            rendererClass = self.mapping[blockClass]
+            self[x, y] = rendererClass(batch, x, y, block)
 
-        # Render the cells
-        for col in range(num_cols):
-            pos_x = start_pos_x + (self.CELL_SIZE + self.CELL_SPACING) * col
-            for row in range(num_rows):
-                pos_y = start_pos_y + (self.CELL_SIZE + self.CELL_SPACING) * row
-                _add_rectangle( batch, pos_x, pos_y, self.CELL_SIZE, self.CELL_SIZE, self.COLOR_CELL)
+class BallGroup (pyglet.graphics.Group):
+    def __init__(self, ball, parent=None):
+        super(BallGroup, self).__init__(parent)
+        self.ball = ball
 
-    def draw(self):
-        # TODO: no need to draw the batch - only update the vertex list here
-        #self.batch.draw()
-        pass
+    def set_state(self):
+        glPushMatrix()
+        x, y = self.ball.pos
+        glTranslatef(x, y, 0)
+
+    def unset_state(self):
+        glPopMatrix()
 
 class BallRenderer(object):
     def __init__(self, ball, batch):
-        self.batch = batch
-
-    def draw(self):
-        pass
-
-def _add_rectangle(batch, x, y, width, height, color, group=pyglet.graphics.OrderedGroup(1)):
-    x2 = x + width
-    y2 = y + height
-    return batch.add(4, pyglet.gl.GL_QUADS, group,
-        ('v2i', (x, y, x, y2, x2, y2, x2, y)),
-        ('c4B', (color * 4))
-    )
+        self.group = BallGroup(ball)
+        self.shape = shapes.Ico(batch, self.group, (0, 0, 0), (.3, .3, .3), (1, 1, 0))
