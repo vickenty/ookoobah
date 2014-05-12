@@ -9,15 +9,14 @@ class GameRenderer(object):
 
     Renders the score and calls all other game object renderers.
     """
-    COLOR_BACKGROUND_1 = (226, 82, 71, 255)
+    BACKGROUND_COLOR = (0.8862, 0.3215, 0.2784, 1)
 
     def __init__(self, game, window):
         self.game = game
         self.window = window
         self.batch = pyglet.graphics.Batch()
 
-        # Init the background
-        glClearColor(*(v / 255 for v in self.COLOR_BACKGROUND_1))
+        glClearColor(*self.BACKGROUND_COLOR)
 
         # TODO: render the score and other labels
 
