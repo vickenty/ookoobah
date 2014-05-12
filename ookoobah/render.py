@@ -1,3 +1,4 @@
+from __future__ import division
 import pyglet
 from pyglet.gl import *
 import math
@@ -16,7 +17,7 @@ class GameRenderer(object):
         self.batch = pyglet.graphics.Batch()
 
         # Init the background
-        glClearColor(*(v / 255. for v in self.COLOR_BACKGROUND_1))
+        glClearColor(*(v / 255 for v in self.COLOR_BACKGROUND_1))
 
         # TODO: render the score and other labels
 
@@ -48,8 +49,8 @@ class GridRenderer(object):
         (num_cols, num_rows) = grid.size()
         grid_size_x = num_cols * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
         grid_size_y = num_rows * (self.CELL_SIZE + self.CELL_SPACING) - self.CELL_SPACING
-        start_pos_x = (window_width - grid_size_x) / 2
-        start_pos_y = (window_height - grid_size_y) / 2
+        start_pos_x = (window_width - grid_size_x) // 2
+        start_pos_y = (window_height - grid_size_y) // 2
 
         # Render the cells
         for col in range(num_cols):
