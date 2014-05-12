@@ -3,7 +3,6 @@ import pyglet
 from pyglet.gl import *
 import math
 
-
 class GameRenderer(object):
     """Top level renderer.
 
@@ -35,7 +34,6 @@ class GameRenderer(object):
         self.batch.draw()
 
 class GridRenderer(object):
-
     CELL_SIZE = 30
     CELL_SPACING = 5
     COLOR_CELL = (217, 147, 78, 255)
@@ -63,9 +61,7 @@ class GridRenderer(object):
         #self.batch.draw()
         pass
 
-
 class BallRenderer(object):
-
     def __init__(self, ball, batch):
         self.batch = batch
 
