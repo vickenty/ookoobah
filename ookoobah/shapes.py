@@ -144,6 +144,8 @@ if __name__ == '__main__':
         gl.glRotatef(t[0], 0, 0, 1)
 
         box.move_to((math.sin(t[0] / 12) / 2 - 2, -.5, 0))
+        ico.move_to((0, math.cos(t[0] / 11), 0))
+        pyr.move_to((.5, -.5, math.sin(t[0] / 10)))
 
         batch.draw()
 
