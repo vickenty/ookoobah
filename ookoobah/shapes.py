@@ -6,13 +6,14 @@ class Shape (object):
     def __init__(self, batch, group, pos, size, color):
         real = []
         norm = []
+        self.size = size
         for face in self.shape:
             a = Vector3(*face[1]) - Vector3(*face[0])
             b = Vector3(*face[2]) - Vector3(*face[0])
             n = a.cross(b).normalize()
-            print n
+
             for vert in face:
-                real.extend(pos + Vector3(*vert) * size)
+                real.extend(p + v * s for p, v, s in zip(pos, vert, size))
                 norm.extend(n)
 
         count = len(self.shape) * 3
@@ -20,6 +21,13 @@ class Shape (object):
             ('v3f', real),
             ('c3f', color * count),
             ('n3f', norm))
+
+    def move_to(self, pos):
+        self.vlist.vertices = [p + v * s
+            for face in self.shape
+            for vert in face
+            for p, v, s in zip(pos, vert, self.size)
+        ]
 
 class Box (Shape):
     shape = [
@@ -51,11 +59,13 @@ if __name__ == '__main__':
     import pyglet
     import ctypes
     from pyglet import gl
+    import math
+
     window = pyglet.window.Window(width=640, height=480)
     batch = pyglet.graphics.Batch()
 
-    Box(batch, None, Vector3(-1.5, -1.5, 0), Vector3(1, 1, 1), (1, 0, 1))
-    Pyramid(batch, None, Vector3(.5, .5, 0), Vector3(1, 1, 1), (1, 1, 0))
+    box = Box(batch, None, (-1.5, -.5, 0), (1, 1, 1), (1, 0, 1))
+    pyr = Pyramid(batch, None, (.5, -.5, 0), (1, 1, 1), (1, 1, 0))
 
     gl.glEnable(gl.GL_LIGHTING)
     gl.glEnable(gl.GL_LIGHT0)
@@ -89,6 +99,9 @@ if __name__ == '__main__':
         gl.glu.gluLookAt(5, 5, 5, 0, 0, 0, 0, 0, 1)
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, ptr(5, 0, 5, 1))
         gl.glRotatef(t[0], 0, 0, 1)
+
+        box.move_to((math.sin(t[0] / 12) / 2 - 2, -.5, 0))
+
         batch.draw()
 
     def update(dt):
