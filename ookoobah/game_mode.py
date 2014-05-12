@@ -40,7 +40,6 @@ class GameMode(mode.Mode):
 
     def tick(self):
         self.game.step()
-        print self.game.ball
 
     def on_resize(self, w, h):
         glViewport(0, 0, w, h)
