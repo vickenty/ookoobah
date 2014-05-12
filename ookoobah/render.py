@@ -17,7 +17,7 @@ class GameRenderer(object):
         self.game = game
         self.batch = pyglet.graphics.Batch()
 
-        glClearColor(*self.BACKGROUND_COLOR)
+        #glClearColor(*self.BACKGROUND_COLOR)
 
         # TODO: render the score and other labels
 

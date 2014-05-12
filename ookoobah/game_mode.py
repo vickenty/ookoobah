@@ -3,10 +3,9 @@ from pyglet.gl import *
 import mode
 import core
 import render
-
+from glutil import *
 
 class GameMode(mode.Mode):
-
     name = "game_mode"
 
     def connect(self, controller):
@@ -14,6 +13,24 @@ class GameMode(mode.Mode):
         self.game = self._create_test_game()
         self.game.start()
         self.renderer = render.GameRenderer(self.game)
+        self.init_gl()
+
+    def init_gl(self):
+        glLoadIdentity()
+
+        glEnable(GL_COLOR_MATERIAL)
+        glEnable(GL_LIGHTING)
+        glEnable(GL_LIGHT0)
+        glEnable(GL_DEPTH_TEST)
+
+        glLightfv(GL_LIGHT0, GL_POSITION, ptr(5, 5, 5, 1))
+        glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, ptr(5, 5, -5, 1))
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, ptr(.8, .8, .8, 1))
+        glLightfv(GL_LIGHT0, GL_SPECULAR, ptr(.8, .8, .8, 1))
+
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, ptr(.5, .5, .5, 1))
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ptr(0, 0, 0, 0))
+        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0)
 
     def tick(self):
         self.game.step()

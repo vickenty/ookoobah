@@ -102,6 +102,7 @@ if __name__ == '__main__':
     import ctypes
     from pyglet import gl
     import math
+    from glutil import *
 
     window = pyglet.window.Window(width=640, height=480)
     batch = pyglet.graphics.Batch()
@@ -114,9 +115,6 @@ if __name__ == '__main__':
     gl.glEnable(gl.GL_LIGHT0)
     gl.glEnable(gl.GL_DEPTH_TEST)
     gl.glEnable(gl.GL_COLOR_MATERIAL)
-
-    def ptr(*args):
-        return (gl.GLfloat * len(args))(*args)
 
     gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, ptr(1, 1, 1, 1))
     gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, ptr(1, 1, 1, 1))
