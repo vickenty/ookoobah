@@ -24,6 +24,7 @@ class GameRenderer(object):
         # Init the renderers for all game objects
         self.grid_renderer = GridRenderer(game.grid, self.batch)
         self.ball_renderer = BallRenderer(game.ball, self.batch)
+        self.mouse = Mouse(self.batch)
 
     def draw(self):
         # We can draw th batch only after all renderers updated it
@@ -78,3 +79,26 @@ class BallRenderer(object):
     def __init__(self, ball, batch):
         self.group = BallGroup(ball)
         self.shape = shapes.Ico(batch, self.group, (0, 0, 0), (.3, .3, .3), (1, 1, 0))
+
+class FollowGroup (pyglet.graphics.Group):
+    def __init__(self, target, parent=None):
+        super(FollowGroup, self).__init__(parent)
+        self.target = target
+
+    def set_state(self):
+        glPushAttrib(GL_POLYGON_BIT)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+
+        x, y, z = self.target.pos
+        glPushMatrix()
+        glTranslatef(x, y, z)
+
+    def unset_state(self):
+        glPopMatrix()
+        glPopAttrib()
+
+class Mouse (object):
+    def __init__(self, batch):
+        self.group = FollowGroup(self)
+        self.shape = shapes.Box(batch, self.group, (0, 0, 0), (1, 1, 1), (1, 0, 0))
+        self.pos = (0, 0, 0)
