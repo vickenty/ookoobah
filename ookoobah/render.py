@@ -1,4 +1,5 @@
 import pyglet
+from pyglet.gl import *
 import math
 
 
@@ -19,8 +20,7 @@ class GameRenderer(object):
         pyglet.clock.set_fps_limit(self.FPS)
 
         # Init the background
-        self.background = _add_rectangle( self.batch, 0, 0, self.window.width, self.window.height,
-            self.COLOR_BACKGROUND_1, pyglet.graphics.OrderedGroup(0))
+        glClearColor(*(v / 255. for v in self.COLOR_BACKGROUND_1))
 
         # TODO: render the score and other labels
 
