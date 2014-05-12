@@ -8,16 +8,12 @@ class GameRenderer(object):
 
     Renders the score and calls all other game object renderers.
     """
-    FPS = 60
     COLOR_BACKGROUND_1 = (226, 82, 71, 255)
-    COLOR_BACKGROUND_2 = (50, 54,  158, 255)
 
     def __init__(self, game, window):
         self.game = game
         self.window = window
         self.batch = pyglet.graphics.Batch()
-        self.frame = 0
-        pyglet.clock.set_fps_limit(self.FPS)
 
         # Init the background
         glClearColor(*(v / 255. for v in self.COLOR_BACKGROUND_1))
@@ -30,7 +26,6 @@ class GameRenderer(object):
         self.renderers.append( BallRenderer(game.ball, self.batch) )
 
     def draw(self):
-        self._next_frame()
         self.window.clear()
 
         for renderer in self.renderers:
@@ -38,11 +33,6 @@ class GameRenderer(object):
 
         # We can draw th batch only after all renderers updated it
         self.batch.draw()
-
-    def _next_frame(self):
-        # TODO: there must be an FPS counter somewhere in pyglet
-        self.frame = 0 if self.frame == self.FPS else self.frame + 1
-
 
 class GridRenderer(object):
 
