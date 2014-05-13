@@ -6,6 +6,7 @@ from euclid import Vector3
 import mode
 import core
 import render
+import gui
 from glutil import *
 
 class GameMode(mode.Mode):
@@ -24,6 +25,7 @@ class GameMode(mode.Mode):
         self.game.start()
         self.renderer = render.GameRenderer(self.game)
         self.init_gl()
+        self.init_gui()
 
         self.modelview = (GLdouble * 16)()
         self.projection = (GLdouble * 16)()
@@ -48,6 +50,13 @@ class GameMode(mode.Mode):
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ptr(0, 0, 0, 0))
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0)
 
+    def init_gui(self):
+        self.gui.replace([
+            gui.Button('Build', None),
+            gui.Button('Pause', None),
+            gui.Button('Quit', None)
+        ])
+
     def tick(self):
         self.game.step()
 
@@ -71,6 +80,12 @@ class GameMode(mode.Mode):
         self.renderer.mouse.pos = map(round, self.unproject(self.mouse_pos))
 
         self.renderer.draw()
+
+        glPushAttrib(GL_ENABLE_BIT)
+        glDisable(GL_LIGHTING)
+        glDisable(GL_DEPTH_TEST)
+        self.gui.draw()
+        glPopAttrib(GL_ENABLE_BIT)
 
     def _unproject(self, x, y, z):
         gluUnProject(x, y, z,

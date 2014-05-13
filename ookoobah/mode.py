@@ -74,6 +74,7 @@ class Mode(object):
 
         """
         self.control = control
+        self.gui = control.gui
         self.window = control.window
         self.window.push_handlers(self.keys)
 

@@ -59,7 +59,7 @@ class Manager (object):
                 btn.pos = Vector2(-btn.width - self.MARGIN, offset + self.MARGIN)
             btn.target = Vector2(self.MARGIN * (len(self.stack) + 1), offset)
 
-    def tick(self):
+    def tick(self, dt=None):
         self.buttons = [b for b in self.buttons if b.tick() is not DONE]
 
     def draw(self):
@@ -76,7 +76,7 @@ class Manager (object):
         glPopMatrix()
         glMatrixMode(GL_MODELVIEW)
 
-    def clicked(self, x, y, btn):
+    def on_mouse_release(self, x, y, btn, mods):
         if not self.active:
             return
         y -= self.window.height
@@ -201,9 +201,7 @@ if __name__ == '__main__':
         win.clear()
         man.draw()
     
-    @win.event
-    def on_mouse_release(x, y, btn, mods):
-        man.clicked(x, y, btn)
+    win.push_handlers(man)
 
     def update(dt):
         man.tick()

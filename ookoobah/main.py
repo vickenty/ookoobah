@@ -14,6 +14,7 @@ from pyglet.gl import *
 
 import data
 import mode
+import gui
 import game_mode
 
 class Controller(object):
@@ -39,11 +40,13 @@ class Controller(object):
     def set_handler(self, value):
         if self._handler is not None:
             self._handler.disconnect()
-            self.window.pop_handlers()
+            self.window.remove_handlers(self.gui)
+            self.window.remove_handlers(self._handler)
             self._handler = None
         if value is not None:
             self._handler = value
             self.window.push_handlers(value)
+            self.window.push_handlers(self.gui)
             value.connect(self)
 
     handler = property(get_handler, set_handler)
@@ -124,7 +127,9 @@ class Controller(object):
 
         """
         self.window = window.Window(visible=False, caption="Ookoobah", fullscreen=False)
+        self.gui = gui.Manager(self.window)
         clock.schedule_interval_soft(self.tick, 1.0)
+        clock.schedule_interval_soft(self.gui.tick, 1 / 60)
 
     def run(self):
         """Start the game.
