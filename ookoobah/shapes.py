@@ -16,10 +16,10 @@ class Shape (object):
                 real.extend(p + v * s for p, v, s in zip(pos, vert, size))
                 norm.extend(n)
 
-        count = len(self.shape) * 3
-        self.vlist = batch.add(count, GL_TRIANGLES, group,
+        vertex_count = len(self.shape) * 3
+        self.vlist = batch.add(vertex_count, GL_TRIANGLES, group,
             ('v3f', real),
-            ('c3f', color * count),
+            ('c3f', color * vertex_count),
             ('n3f', norm))
 
     def delete(self):

@@ -28,7 +28,7 @@ class GameRenderer(object):
         self.mouse.set_cursor(core.Wall)
 
     def draw(self):
-        # We can draw th batch only after all renderers updated it
+        # We can draw the batch only after all renderers updated it
         self.batch.draw()
 
 class BlockRenderer (object):
@@ -107,6 +107,7 @@ class Mouse (object):
             self.cursor.delete()
         self.cursor = create_block_renderer(blockClass, self.batch, self.group, 0, 0)
 
+# TODO: move to a better place
 def create_block_renderer(blockClass, batch, group, x, y):
     CORE_MAPPING = {
         core.Wall: Wall,

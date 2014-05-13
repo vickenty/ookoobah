@@ -13,7 +13,7 @@ class GameMode(mode.Mode):
     name = "game_mode"
 
     # Key constants are defined in pyglet.window.key
-    key_2_block_class = {
+    EDITOR_MAPPING = {
         key._1: core.Launcher,
         key._2: core.Wall,
         key._3: core.Mirror
@@ -24,6 +24,8 @@ class GameMode(mode.Mode):
         self.game = self._create_test_game()
         self.game.start()
         self.renderer = render.GameRenderer(self.game)
+        # TODO: the edtor state could be moved to the Core
+        self.current_block_class = core.Wall
         self.init_gl()
         self.init_gui()
 
@@ -114,10 +116,23 @@ class GameMode(mode.Mode):
     def on_mouse_motion(self, x, y, dx, dy):
         self.mouse_pos = (x, y)
 
+    def on_mouse_press(self, x, y, button, modifiers):
+        self.create_new_block(x, y)
+
     def on_key_press(self, symbol, modifiers):
-        if symbol in self.key_2_block_class:
-            blockClass = self.key_2_block_class[symbol]
-            self.renderer.mouse.set_cursor(blockClass)
+        if symbol in self.EDITOR_MAPPING:
+            blockClass = self.EDITOR_MAPPING[symbol]
+            self.set_current_block_class(blockClass)
+
+    def set_current_block_class(self, blockClass):
+        self.current_block_class = blockClass
+        self.renderer.mouse.set_cursor(blockClass)
+
+    def create_new_block(self, x, y):
+        #TODO: figure out how to transform world coordinates to grid
+        #(grid_x, grid_y) = ???
+        #self.game.grid[grid_x, grid_y] = self.current_block_class()
+        pass
 
     def _create_test_game(self):
         game = core.Game()
