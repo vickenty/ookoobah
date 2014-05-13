@@ -53,11 +53,10 @@ class GameMode(mode.Mode):
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0)
 
     def init_gui(self):
-        self.gui.replace([
-            gui.Button('Build', None),
-            gui.Button('Pause', None),
-            gui.Button('Quit', None)
-        ])
+        # FIXME: Burn this with fire.
+        blocks = (cls for cls in core.__dict__.values() if type(cls) == type and issubclass(cls, core.Block) and cls != core.Block)
+        buttons = [gui.Button(cls.__name__, gui.SELECT, cls) for cls in blocks]
+        self.gui.replace(buttons)
 
     def tick(self):
         self.game.step()
@@ -79,6 +78,12 @@ class GameMode(mode.Mode):
         glGetDoublev(GL_MODELVIEW_MATRIX, self.modelview)
         glGetDoublev(GL_PROJECTION_MATRIX, self.projection)
 
+        if self.gui.selected:
+            block_class ,= self.gui.selected.args
+        else:
+            block_class = None
+
+        self.renderer.mouse.set_cursor(block_class)
         self.renderer.mouse.pos = map(round, self.unproject(self.mouse_pos))
 
         self.renderer.draw()

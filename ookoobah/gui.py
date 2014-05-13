@@ -7,6 +7,7 @@ from euclid import Vector2
 
 DONE = object()
 BACK = object()
+SELECT = object()
 
 class Manager (object):
     ANIM_STRIDE = 2
@@ -25,9 +26,11 @@ class Manager (object):
         self.stack = []
         self.set_active(buttons)
 
-    def push(self, buttons):
+    def push(self, buttons, add_back=True):
         self.hide()
         self.stack.append(self.active)
+        if add_back:
+            buttons += [ Button('Back', BACK) ]
         self.set_active(buttons)
 
     def set_active(self, buttons):
@@ -87,19 +90,26 @@ class Manager (object):
 
             for obj in self.active:
                 if obj.contains(x, y):
+                    old_selected = self.selected
                     if self.selected:
                         self.selected.selected(0)
                         self.selected = None
 
-                    if obj.callback is BACK:
+                    # Second click removes selection and that's it.
+                    if old_selected == obj:
+                        return pyglet.event.EVENT_HANDLED
+
+                    if callable(obj.callback):
+                        ret = obj.callback(obj, *obj.args, **obj.kwargs)
+                    else:
+                        ret = obj.callback
+
+                    if ret is BACK:
                         self.pop()
 
-                    elif obj.callback is None:
+                    elif ret is SELECT:
                         obj.selected(self.MARGIN)
                         self.selected = obj
-
-                    else:
-                        obj.callback(obj)
 
                     return pyglet.event.EVENT_HANDLED
 
@@ -112,9 +122,11 @@ class Button (object):
     THRESHOLD = 1
     SPEED = 0.4
 
-    def __init__(self, text, callback):
+    def __init__(self, text, callback, *args, **kwargs):
         self.label = pyglet.text.Label(text)
         self.callback = callback
+        self.args = args
+        self.kwargs = kwargs
 
         w = self.label.content_width
         h = self.label.content_height
@@ -178,8 +190,8 @@ if __name__ == '__main__':
     man = Manager(win)
     txt = [
         ('Spam', (
-            ('Spam', (('Eggs', None), ('Bacon', None), ('Spam', None))),
-            ('Bacon', None)
+            ('Spam', (('Eggs', SELECT), ('Bacon', SELECT), ('Spam', SELECT))),
+            ('Bacon', SELECT)
         )),
         ('Quit', DONE),
     ]
@@ -187,9 +199,11 @@ if __name__ == '__main__':
     def mk_handler(sub):
         if sub is DONE:
             return lambda _: pyglet.app.exit()
+        elif sub is SELECT:
+            return sub
         elif sub:
             def handler(_):
-                man.push([Button(label, mk_handler(sub2)) for label, sub2 in sub] + [Button('Back', BACK)])
+                man.push([Button(label, mk_handler(sub2)) for label, sub2 in sub])
             return handler
 
     man.replace(Button(t, mk_handler(sub)) for t, sub in txt)

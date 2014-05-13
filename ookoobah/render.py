@@ -25,7 +25,6 @@ class GameRenderer(object):
         self.grid_renderer = GridRenderer(game.grid, self.batch)
         self.ball_renderer = BallRenderer(game.ball, self.batch)
         self.mouse = Mouse(self.batch)
-        self.mouse.set_cursor(core.Wall)
 
     def draw(self):
         # We can draw the batch only after all renderers updated it
@@ -100,12 +99,20 @@ class Mouse (object):
         # We need to cache the batch in order to change shapes on the fly
         self.batch = batch
         self.cursor = None
+        self.block_class = None
         self.pos = (0, 0, 0)
 
     def set_cursor(self, blockClass):
+        if self.block_class == blockClass:
+            return
+        self.block_class = blockClass
+
         if self.cursor:
             self.cursor.delete()
-        self.cursor = create_block_renderer(blockClass, self.batch, self.group, 0, 0)
+            self.cursor = None
+
+        if blockClass:
+            self.cursor = create_block_renderer(blockClass, self.batch, self.group, 0, 0)
 
 # TODO: move to a better place
 def create_block_renderer(blockClass, batch, group, x, y):
