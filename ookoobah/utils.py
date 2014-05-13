@@ -20,7 +20,7 @@ def populate_grid_from_string(grid, string):
             if block:
                 grid[x, y] = block(**dict(param))
 
-def dump_grid_to_string(grid):
+def dump_grid_to_string(grid, ball):
 
     def block_matches_desc(block, desc):
         b_type, b_attrs = desc
@@ -32,7 +32,13 @@ def dump_grid_to_string(grid):
     def block_to_char(block):
         return next(char for desc, char in BLOCK_TO_CHAR.items() if block_matches_desc(block, desc))
 
+    def place_ball(ball, char_pos, char):
+        if ball.pos == char_pos:
+            return "\x1b[7m%s\x1b[0m" % char
+        else:
+            return char
+
     (width, height) = grid.size()
-    chars = ((block_to_char(grid.get((x, y))) for x in range(width)) for y in range(height))
+    chars = ((place_ball(ball, (x, y), block_to_char(grid.get((x, y)))) for x in range(width)) for y in range(height))
 
     return "\n".join("".join(row) for row in chars)
