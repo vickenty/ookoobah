@@ -25,7 +25,8 @@ def dump_grid_to_string(grid):
     def block_matches_desc(block, desc):
         b_type, b_attrs = desc
         return (block is None and b_type is None) \
-            or (isinstance(block, b_type) \
+            or (b_type is not None \
+                and isinstance(block, b_type) \
                 and all(hasattr(block, k) and getattr(block, k) == v for k, v in b_attrs))
 
     def block_to_char(block):
