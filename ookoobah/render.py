@@ -51,20 +51,13 @@ class Mirror (BlockRenderer):
     color = (.1, .9, .9)
 
 class GridRenderer(dict):
-    block_mapping = {
-        core.Wall: Wall,
-        core.Launcher: Launcher,
-        core.Mirror: Mirror,
-    }
-
     def __init__(self, grid, batch):
         self.grid = grid
         self.batch = batch
 
         for (x, y), block in self.grid.iteritems():
             blockClass = block.__class__
-            rendererClass = self.block_mapping[blockClass]
-            self[x, y] = rendererClass(batch, None, x, y, block)
+            self[x, y] = create_block_renderer(blockClass, batch, None, x, y)
 
 class BallGroup (pyglet.graphics.Group):
     def __init__(self, ball, parent=None):
@@ -112,6 +105,13 @@ class Mouse (object):
     def set_cursor(self, blockClass):
         if self.cursor:
             self.cursor.delete()
+        self.cursor = create_block_renderer(blockClass, self.batch, self.group, 0, 0)
 
-        rendererClass = GridRenderer.block_mapping[blockClass]
-        self.cursor = rendererClass(self.batch, self.group, 0, 0, blockClass)
+def create_block_renderer(blockClass, batch, group, x, y):
+    CORE_MAPPING = {
+        core.Wall: Wall,
+        core.Launcher: Launcher,
+        core.Mirror: Mirror
+    }
+    renderer_class = CORE_MAPPING[blockClass]
+    return renderer_class(batch, group, x, y, blockClass)
