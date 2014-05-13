@@ -20,7 +20,8 @@ def populate_grid_from_string(grid, string):
             if block:
                 grid[x, y] = block(**dict(param))
 
-def dump_grid_to_string(grid, ball):
+def dump_game_to_string(game):
+    grid, ball = game.grid, game.ball
 
     def block_matches_desc(block, desc):
         b_type, b_attrs = desc
