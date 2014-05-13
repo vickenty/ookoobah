@@ -20,6 +20,13 @@ def populate_grid_from_string(grid, string):
             if block:
                 grid[x, y] = block(**dict(param))
 
+BALL_POS_TO_CHAR = {
+    core.Ball.DIR_RIGHT: ">",
+    core.Ball.DIR_DOWN: "v",
+    core.Ball.DIR_LEFT: "<",
+    core.Ball.DIR_UP: "^",
+}
+
 def dump_game_to_string(game):
     grid, ball = game.grid, game.ball
 
@@ -35,7 +42,7 @@ def dump_game_to_string(game):
 
     def place_ball(ball, char_pos, char):
         if ball.pos == char_pos:
-            return "\x1b[7m%s\x1b[0m" % char
+            return "\x1b[7m%s\x1b[0m" % BALL_POS_TO_CHAR[ball.direction]
         else:
             return char
 
