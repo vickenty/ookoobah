@@ -1,7 +1,20 @@
 class Grid(dict):
+    def __init__(self, *args, **kwargs):
+        super(Grid, self).__init__(*args, **kwargs)
+        self.dirty = []
+
+    def __setitem__(self, key, value):
+        self.dirty.append(key)
+        super(Grid, self).__setitem__(key, value)
+
     def size(self):
         # TODO Cache me, maybe
         return tuple(n + 1 for n in map(max, zip(*self.keys())))
+
+    def get_dirty(self):
+        dirty = self.dirty
+        self.dirty = []
+        return dirty
 
 class Block(object):
     def act(self, ball):
