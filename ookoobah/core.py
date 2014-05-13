@@ -22,6 +22,7 @@ class Wall(Block):
             -ball.direction[0],
             -ball.direction[1],
         )
+        return True
 
 class Mirror(Block):
     SLOPE_BACKWARD = 1
@@ -74,8 +75,12 @@ class Game(object):
         assert self.ball is not None, "no launcher blocks found"
 
     def step(self):
-        self.ball.move()
-        block = self.grid.get(self.ball.pos)
-        if block:
-            block.act(self.ball)
+        keep_moving = True
+        while keep_moving:
+            self.ball.move()
+            block = self.grid.get(self.ball.pos)
+            if block:
+                keep_moving = block.act(self.ball)
+            else:
+                keep_moving = False
         self.step_n += 1
