@@ -18,6 +18,7 @@ class Manager (object):
         self.stack = []
         self.active = []
         self.buttons = []
+        self.selected = None
 
     def replace(self, buttons):
         self.hide(True, True)
@@ -76,12 +77,30 @@ class Manager (object):
         glMatrixMode(GL_MODELVIEW)
 
     def clicked(self, x, y, btn):
+        if not self.active:
+            return
         y -= self.window.height
         if btn == mouse.LEFT:
+            if y > self.active[-1].pos.y and x < self.MARGIN * len(self.stack):
+                self.pop()
+                return
+
             for obj in self.active:
                 if obj.contains(x, y):
-                    if obj.clicked() is BACK:
+                    if self.selected:
+                        self.selected.selected(0)
+                        self.selected = None
+
+                    if obj.callback is BACK:
                         self.pop()
+
+                    elif obj.callback is None:
+                        obj.selected(self.MARGIN)
+                        self.selected = obj
+
+                    else:
+                        obj.callback(obj)
+
                     return pyglet.event.EVENT_HANDLED
 
         elif btn == mouse.RIGHT:
@@ -106,6 +125,7 @@ class Button (object):
         self.delay = 0
         self.target = Vector2(0, 0)
         self.pos = Vector2(0, 0)
+        self.offset = Vector2(0, 0)
         self.auto_delete = False
 
         self.vlist = pyglet.graphics.vertex_list(8,
@@ -121,9 +141,10 @@ class Button (object):
             self.delay -= 1
             return
 
-        delta = self.target - self.pos
+        target = self.target + self.offset
+        delta = target - self.pos
         if abs(delta) < self.THRESHOLD:
-            self.pos = self.target
+            self.pos = target
 
             if self.auto_delete:
                 self.delete()
@@ -143,15 +164,13 @@ class Button (object):
         self.label.delete()
         self.vlist.delete()
 
-    def clicked(self):
-        if callable(self.callback):
-            self.callback()
-        else:
-            return self.callback
+    def selected(self, offset):
+        self.offset.x = offset
+        color = (.4, .4, .2) if offset else (.2, .2, .2)
+        self.vlist.colors[12:] = color * 4
 
     def contains(self, x, y):
         px, py = self.pos
-        print self.label.text, x - px, y - py, self.width, self.height
         return -10 <= x - px <= self.width and -10 <= y - py <= self.height
 
 if __name__ == '__main__':
@@ -167,9 +186,9 @@ if __name__ == '__main__':
 
     def mk_handler(sub):
         if sub is DONE:
-            return pyglet.app.exit
+            return lambda _: pyglet.app.exit()
         elif sub:
-            def handler():
+            def handler(_):
                 man.push([Button(label, mk_handler(sub2)) for label, sub2 in sub] + [Button('Back', BACK)])
             return handler
 
