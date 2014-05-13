@@ -8,7 +8,7 @@ utils.populate_grid_from_string(game.grid, """
     # # # # # #
     # > . . \ #
     # . # . . #
-    # . o . . #
+    # o / + . #
     # . \ . / #
     # # # # # #
 """)
