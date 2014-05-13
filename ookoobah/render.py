@@ -35,6 +35,9 @@ class BlockRenderer (object):
     def __init__(self, batch, group, x, y, block):
         self.shape = shapes.Box(batch, group, (x, y, 0), self.size, self.color)
 
+    def delete(self):
+        self.shape.delete()
+
 class Wall (BlockRenderer):
     size = (.9, .9, .9)
     color = (.3, .3, .3)
@@ -108,7 +111,7 @@ class Mouse (object):
 
     def set_cursor(self, blockClass):
         if self.cursor:
-            self.cursor.shape.delete()
+            self.cursor.delete()
 
         rendererClass = GridRenderer.block_mapping[blockClass]
         self.cursor = rendererClass(self.batch, self.group, 0, 0, blockClass)
