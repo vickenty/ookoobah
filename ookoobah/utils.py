@@ -41,4 +41,4 @@ def dump_grid_to_string(grid, ball):
     (width, height) = grid.size()
     chars = ((place_ball(ball, (x, y), block_to_char(grid.get((x, y)))) for x in range(width)) for y in range(height))
 
-    return "\n".join("".join(row) for row in chars)
+    return "\n".join(" ".join(row) for row in chars)
