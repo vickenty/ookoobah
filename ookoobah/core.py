@@ -50,6 +50,10 @@ class Mirror(Block):
             ball.direction[0] * self.slope,
         )
 
+class Exit(Block):
+    def act(self, ball):
+        pass
+
 class Ball(object):
     DIR_RIGHT = (1, 0)
     DIR_DOWN = (0, 1)
@@ -71,6 +75,9 @@ class Ball(object):
         )
 
 class Game(object):
+    STATUS_ON = "on"
+    STATUS_VICTORY = "victory"
+
     def __init__(self):
         self.step_n = 0
         self.grid = Grid()
@@ -87,7 +94,18 @@ class Game(object):
 
         assert self.ball is not None, "no launcher blocks found"
 
+    def get_status(self):
+        block = self.grid.get(self.ball.pos)
+        if isinstance(block, Exit):
+            return Game.STATUS_VICTORY
+        else:
+            return Game.STATUS_ON
+
     def step(self):
+        state = self.get_status()
+        if state != Game.STATUS_ON:
+            return state
+
         keep_moving = True
         while keep_moving:
             self.ball.move()
@@ -96,4 +114,7 @@ class Game(object):
                 keep_moving = block.act(self.ball)
             else:
                 keep_moving = False
+
         self.step_n += 1
+
+        return self.get_status()
