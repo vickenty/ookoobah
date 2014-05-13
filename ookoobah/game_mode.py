@@ -1,3 +1,4 @@
+from __future__ import division
 import pyglet
 from pyglet.gl import *
 from pyglet.window import key
