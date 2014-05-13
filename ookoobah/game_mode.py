@@ -1,5 +1,6 @@
 import pyglet
 from pyglet.gl import *
+from pyglet.window import key
 import mode
 import core
 import render
@@ -7,6 +8,13 @@ from glutil import *
 
 class GameMode(mode.Mode):
     name = "game_mode"
+
+    # Key constants are defined in pyglet.window.key
+    key_2_block_class = {
+        key._1: core.Launcher,
+        key._2: core.Wall,
+        key._3: core.Mirror
+    }
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
@@ -78,6 +86,11 @@ class GameMode(mode.Mode):
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.mouse_pos = (x, y)
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol in self.key_2_block_class:
+            blockClass = self.key_2_block_class[symbol]
+            self.renderer.mouse.set_cursor(blockClass)
 
     def _create_test_game(self):
         game = core.Game()

@@ -25,14 +25,15 @@ class GameRenderer(object):
         self.grid_renderer = GridRenderer(game.grid, self.batch)
         self.ball_renderer = BallRenderer(game.ball, self.batch)
         self.mouse = Mouse(self.batch)
+        self.mouse.set_cursor(core.Wall)
 
     def draw(self):
         # We can draw th batch only after all renderers updated it
         self.batch.draw()
 
 class BlockRenderer (object):
-    def __init__(self, batch, x, y, block):
-        self.shape = shapes.Box(batch, None, (x, y, 0), self.size, self.color)
+    def __init__(self, batch, group, x, y, block):
+        self.shape = shapes.Box(batch, group, (x, y, 0), self.size, self.color)
 
 class Wall (BlockRenderer):
     size = (.9, .9, .9)
@@ -47,7 +48,7 @@ class Mirror (BlockRenderer):
     color = (.1, .9, .9)
 
 class GridRenderer(dict):
-    mapping = {
+    block_mapping = {
         core.Wall: Wall,
         core.Launcher: Launcher,
         core.Mirror: Mirror,
@@ -59,8 +60,8 @@ class GridRenderer(dict):
 
         for (x, y), block in self.grid.iteritems():
             blockClass = block.__class__
-            rendererClass = self.mapping[blockClass]
-            self[x, y] = rendererClass(batch, x, y, block)
+            rendererClass = self.block_mapping[blockClass]
+            self[x, y] = rendererClass(batch, None, x, y, block)
 
 class BallGroup (pyglet.graphics.Group):
     def __init__(self, ball, parent=None):
@@ -100,5 +101,14 @@ class FollowGroup (pyglet.graphics.Group):
 class Mouse (object):
     def __init__(self, batch):
         self.group = FollowGroup(self)
-        self.shape = shapes.Box(batch, self.group, (0, 0, 0), (1, 1, 1), (1, 0, 0))
+        # We need to cache the batch in order to change shapes on the fly
+        self.batch = batch
+        self.cursor = None
         self.pos = (0, 0, 0)
+
+    def set_cursor(self, blockClass):
+        if self.cursor:
+            self.cursor.shape.delete()
+
+        rendererClass = GridRenderer.block_mapping[blockClass]
+        self.cursor = rendererClass(self.batch, self.group, 0, 0, blockClass)

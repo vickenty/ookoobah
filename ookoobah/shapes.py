@@ -22,6 +22,9 @@ class Shape (object):
             ('c3f', color * count),
             ('n3f', norm))
 
+    def delete(self):
+        self.vlist.delete()
+
     def move_to(self, pos):
         self.vlist.vertices = [p + v * s
             for face in self.shape
