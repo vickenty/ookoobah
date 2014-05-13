@@ -54,6 +54,10 @@ class Exit(Block):
     def act(self, ball):
         pass
 
+class Trap(Block):
+    def act(self, ball):
+        pass
+
 class Ball(object):
     DIR_RIGHT = (1, 0)
     DIR_DOWN = (0, 1)
@@ -77,6 +81,7 @@ class Ball(object):
 class Game(object):
     STATUS_ON = "on"
     STATUS_VICTORY = "victory"
+    STATUS_DEFEAT = "defeat"
 
     def __init__(self):
         self.step_n = 0
@@ -98,6 +103,8 @@ class Game(object):
         block = self.grid.get(self.ball.pos)
         if isinstance(block, Exit):
             return Game.STATUS_VICTORY
+        elif isinstance(block, Trap):
+            return Game.STATUS_DEFEAT
         else:
             return Game.STATUS_ON
 

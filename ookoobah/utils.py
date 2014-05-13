@@ -10,6 +10,7 @@ CHAR_TO_BLOCK = {
     "/":  (core.Mirror, (("slope", core.Mirror.SLOPE_FORWARD),)),
     "\\": (core.Mirror, (("slope", core.Mirror.SLOPE_BACKWARD),)),
     "o":  (core.Exit, ()),
+    "+":  (core.Trap, ()),
 }
 
 BLOCK_TO_CHAR = {v: k for k, v in CHAR_TO_BLOCK.items()}
