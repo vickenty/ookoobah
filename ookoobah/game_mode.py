@@ -2,6 +2,7 @@ from __future__ import division
 import pyglet
 from pyglet.gl import *
 from pyglet.window import key
+from euclid import Vector3
 import mode
 import core
 import render
@@ -28,7 +29,7 @@ class GameMode(mode.Mode):
         self.projection = (GLdouble * 16)()
         self.viewport = (GLint * 4)()
         self.unproj = [GLdouble(), GLdouble(), GLdouble()]
-        self.mouse_pos = (0, 0)
+        self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
     def init_gl(self):
         glLoadIdentity()
@@ -71,11 +72,8 @@ class GameMode(mode.Mode):
 
         self.renderer.draw()
 
-    def unproject(self, (x, y)):
-        # NB: magic number is screen-space Z-coordinate (0, 0, 0).Since our
-        # levels are flat, it's okay to hard code this, and not call
-        # glGetPixels. Works only in strict top-down view.
-        gluUnProject(x, y, 0.9969,
+    def _unproject(self, x, y, z):
+        gluUnProject(x, y, z,
             self.modelview,
             self.projection,
             self.viewport,
@@ -83,7 +81,20 @@ class GameMode(mode.Mode):
             self.unproj[1],
             self.unproj[2]
         )
-        return [v.value for v in  self.unproj]
+        return Vector3(*[v.value for v in self.unproj])
+
+    def unproject(self, (x, y)):
+        # http://stackoverflow.com/questions/9406269/object-picking-with-ray-casting
+        l0 = self._unproject(x, y, 0.1)
+        l1 = self._unproject(x, y, 0.9)
+        ld = l1 - l0
+
+        # http://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+        # assuming that p0 = (0, 0, 0), and n = (0, 0, -1)
+        d = -l0.z / ld.z
+        p = l0 + ld * d
+
+        return p
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.mouse_pos = (x, y)
