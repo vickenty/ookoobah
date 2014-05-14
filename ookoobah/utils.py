@@ -48,7 +48,7 @@ def dump_game_to_string(game):
         return next(char for desc, char in BLOCK_TO_CHAR.items() if block_matches_desc(block, desc))
 
     def place_ball(ball, char_pos, char):
-        if ball.pos == char_pos:
+        if ball and ball.pos == char_pos:
             return "\x1b[7m%s\x1b[0m" % BALL_POS_TO_CHAR[ball.direction]
         else:
             return char

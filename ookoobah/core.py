@@ -59,9 +59,9 @@ class Mirror(Block):
         )
 
 class Exit(Block):
-    def __init__(self, is_on=None, *args, **kwargs):
+    def __init__(self, is_on=False, *args, **kwargs):
         super(Block, self).__init__(*args, **kwargs)
-        self.is_on = None
+        self.is_on = False
 
     def act(self, ball):
         if self.is_on:
