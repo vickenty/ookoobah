@@ -47,10 +47,6 @@ class Wall (BlockRenderer):
     size = (.9, .9, .9)
     color = (.3, .3, .3)
 
-class Launcher (BlockRenderer):
-    size = (.5, .5, .5)
-    color = (.5, .1, .1)
-
 class Mirror (BlockRenderer):
     size = (.8, .1, .9)
     color = (.1, .9, .9)
@@ -58,6 +54,28 @@ class Mirror (BlockRenderer):
     @property
     def rotate(self):
         return (0, math.pi * self.block.slope / 4, 0)
+
+class ScalerGroup (pyglet.graphics.Group):
+    def __init__(self, x, y, parent=None):
+        super(ScalerGroup, self).__init__(parent)
+        self.offset = x, y, 0
+
+    def set_state(self):
+        glPushMatrix()
+        glTranslatef(*self.offset)
+        glScalef(1/20, 1/20, 1/20)
+
+    def unset_state(self):
+        glPopMatrix()
+
+class GenericRenderer (object):
+    def __init__(self, batch, group, x, y, block):
+        self.block = block
+        self.shape = pyglet.text.Label(block.__class__.__name__[0],
+                batch=batch, anchor_x='center', anchor_y='center',
+                group=ScalerGroup(x, y, parent=group))
+    def delete(self):
+        self.shape.delete()
 
 class GridRenderer(dict):
     def __init__(self, grid, batch):
@@ -130,12 +148,12 @@ class Mouse (object):
             block = self.block_class()
             self.cursor = create_block_renderer(block, self.batch, self.group, 0, 0)
 
+CORE_MAPPING = {
+    core.Wall: Wall,
+    core.Mirror: Mirror
+}
+
 # TODO: move to a better place
 def create_block_renderer(block, batch, group, x, y):
-    CORE_MAPPING = {
-        core.Wall: Wall,
-        core.Launcher: Launcher,
-        core.Mirror: Mirror
-    }
-    renderer_class = CORE_MAPPING[block.__class__]
+    renderer_class = CORE_MAPPING.get(block.__class__, GenericRenderer)
     return renderer_class(batch, group, x, y, block)
