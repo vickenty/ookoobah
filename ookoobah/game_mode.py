@@ -1,5 +1,8 @@
 from __future__ import division
+import sys
+import os
 import pyglet
+import pickle
 from pyglet.gl import *
 from pyglet.window import key
 from euclid import Vector3
@@ -7,12 +10,15 @@ import mode
 import core
 import render
 import gui
+import utils
 from glutil import *
 
 class GameMode(mode.Mode):
     name = "game_mode"
+
     STEP_SIZE = 15
     SLOW_START = 120
+    DEFAULT_LEVEL_NAME = "test"
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
@@ -53,6 +59,8 @@ class GameMode(mode.Mode):
         # FIXME: Burn this with fire.
         blocks = (cls for cls in core.__dict__.values() if type(cls) == type and issubclass(cls, core.Block) and cls != core.Block)
         buttons = [gui.Button(cls.__name__, gui.SELECT, cls) for cls in blocks]
+        buttons.append(gui.Button('Save', self.save_level))
+        buttons.append(gui.Button('Load', self.load_level))
         self.gui.replace(buttons)
 
     def tick(self):
@@ -137,6 +145,35 @@ class GameMode(mode.Mode):
             return
         pos = self.mouse_pos_grid.xy
         self.game.grid[pos] = self.current_block_class()
+
+    def save_level(self, *args, **kwargs):
+        level_filename = self.get_level_filename()
+        with open(level_filename, 'w+') as level_file:
+            pickle.dump(self.game.grid, level_file)
+        # TODO: we could switch to this once the ball is out of game
+        #game_dump = utils.dump_game_to_string(self.game)
+        #with open(level_filename, 'w+') as f:
+        #    f.write(game_dump)
+
+    def load_level(self, *args, **kwargs):
+        level_filename = self.get_level_filename()
+        with open(level_filename, 'r') as level_file:
+            self.game.grid = pickle.load(level_file)
+        # TODO: we could switch to this once the ball is out of game
+        # with open(level_filename, 'r') as f:
+        #     game_dump = f.read()
+        #     utils.populate_grid_from_string(self.game.grid, game_dump)
+
+    def get_level_filename(self):
+        level_name = sys.argv[1] if len(sys.argv) == 2 else DEFAULT_LEVEL_NAME
+        data_dir = self.get_data_dir()
+        return os.path.join(data_dir, level_name + '.level')
+
+    def get_data_dir(self):
+        # TODO: pyglet.resource.get_script_home() returns empty string
+        game_dir = os.path.dirname(__file__)
+        data_dir = pyglet.resource.path[0]
+        return os.path.join(game_dir, data_dir)
 
     def _create_test_game(self):
         game = core.Game()
