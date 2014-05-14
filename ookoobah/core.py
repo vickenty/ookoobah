@@ -111,9 +111,9 @@ class Game(object):
     STATUS_VICTORY = "victory"
     STATUS_DEFEAT = "defeat"
 
-    def __init__(self):
+    def __init__(self, grid):
         self.step_n = 0
-        self.grid = Grid()
+        self.grid = grid
         self.ball = None
         self.exit = None
 
