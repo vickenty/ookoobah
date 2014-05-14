@@ -115,13 +115,12 @@ class Game(object):
         self.step_n = 0
         self.grid = Grid()
         self.ball = None
+        self.exit = None
 
     def __str__(self):
         return "<Game: step_n=%s, grid=%s, ball=%s>" % (self.step_n, self.grid, self.ball)
 
     def start(self):
-        self.exit = None
-
         for pos, block in self.grid.items():
             if isinstance(block, Launcher):
                 # TODO Shove balls into a list: there are may be multiple launchers, and thus balls
