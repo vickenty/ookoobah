@@ -18,14 +18,14 @@ class Grid(dict):
 
 class Block(object):
     def __init__(self, *args, **kwargs):
-        pass
+        self.locked = False
 
     def act(self, ball):
         raise NotImplementedError()
 
 class Launcher(Block):
-    def __init__(self, direction=None, *args, **kwargs):
-        super(Block, self).__init__(*args, **kwargs)
+    def __init__(self, direction=None):
+        super(Launcher, self).__init__()
         if direction is None:
             direction = Ball.DIR_RIGHT
         self.direction = direction
@@ -34,8 +34,8 @@ class Launcher(Block):
         pass
 
 class Wall(Block):
-    def __init__(self, *args, **kwargs):
-        super(Block, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(Wall, self).__init__()
 
     def act(self, ball):
         ball.direction = (
@@ -48,8 +48,8 @@ class Mirror(Block):
     SLOPE_BACKWARD = 1
     SLOPE_FORWARD = -1
 
-    def __init__(self, slope=SLOPE_BACKWARD, *args, **kwargs):
-        super(Block, self).__init__(*args, **kwargs)
+    def __init__(self, slope=SLOPE_BACKWARD):
+        super(Mirror, self).__init__()
         self.slope = slope
 
     def act(self, ball):
@@ -59,8 +59,8 @@ class Mirror(Block):
         )
 
 class Exit(Block):
-    def __init__(self, is_on=False, *args, **kwargs):
-        super(Block, self).__init__(*args, **kwargs)
+    def __init__(self, is_on=False):
+        super(Exit, self).__init__()
         self.is_on = False
 
     def act(self, ball):
@@ -68,16 +68,16 @@ class Exit(Block):
             ball.status = Ball.STATUS_LEFT
 
 class FlipFlop(Block):
-    def __init__(self, is_on=False, *args, **kwargs):
-        super(Block, self).__init__(*args, **kwargs)
+    def __init__(self, is_on=False):
+        super(FlipFlop, self).__init__()
         self.is_on = is_on
 
     def act(self, ball):
         self.is_on = not self.is_on
 
 class Trap(Block):
-    def __init__(self, *args, **kwargs):
-        super(Block, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(Trap, self).__init__()
 
     def act(self, ball):
         ball.status = Ball.STATUS_DEAD
