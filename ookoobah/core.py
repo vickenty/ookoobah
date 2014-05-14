@@ -20,7 +20,7 @@ class Block(object):
     def act(self, ball):
         raise NotImplementedError()
 
-class Launcher(object):
+class Launcher(Block):
     def __init__(self, direction=None):
         if direction is None:
             direction = Ball.DIR_RIGHT
