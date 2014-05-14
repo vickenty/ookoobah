@@ -108,6 +108,8 @@ class Controller(object):
         """Update the game logic.
 
         """
+        self.gui.tick()
+
         if self.handler is not None:
             self.handler.tick()
 
@@ -128,8 +130,7 @@ class Controller(object):
         """
         self.window = window.Window(visible=False, caption="Ookoobah", fullscreen=False)
         self.gui = gui.Manager(self.window)
-        clock.schedule_interval_soft(self.tick, 0.25)
-        clock.schedule_interval_soft(self.gui.tick, 1 / 60)
+        clock.schedule_interval_soft(self.tick, 1 / 60)
 
     def run(self):
         """Start the game.

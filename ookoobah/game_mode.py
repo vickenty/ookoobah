@@ -11,6 +11,7 @@ from glutil import *
 
 class GameMode(mode.Mode):
     name = "game_mode"
+    STEP_SIZE = 60
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
@@ -20,6 +21,9 @@ class GameMode(mode.Mode):
         self.current_block_class = None
         self.init_gl()
         self.init_gui()
+
+        self.time = 0
+        self.next_step = self.STEP_SIZE
 
         self.modelview = (GLdouble * 16)()
         self.projection = (GLdouble * 16)()
@@ -51,7 +55,10 @@ class GameMode(mode.Mode):
         self.gui.replace(buttons)
 
     def tick(self):
-        self.game.step()
+        self.time += 1
+        if self.time > self.next_step:
+            self.game.step()
+            self.next_step = self.time + self.STEP_SIZE # / (self.game.speed + 1)
 
     def on_resize(self, w, h):
         glViewport(0, 0, w, h)
