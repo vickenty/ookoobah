@@ -38,7 +38,7 @@ class EraseTool (BaseTool):
 
 class TriggerTool (BaseTool):
     def apply(self, pos, grid):
-        if hasattr(grid[pos], 'trigger'):
+        if hasattr(grid.get(pos), 'trigger'):
             grid[pos].trigger()
 
 class GameMode(mode.Mode):
