@@ -121,6 +121,7 @@ class Game(object):
         for pos, block in self.grid.items():
             if isinstance(block, Launcher):
                 # TODO Shove balls into a list: there are may be multiple launchers, and thus balls
+                assert self.ball is None, "launcher block redefined"
                 self.ball = Ball(direction=block.direction, pos=pos)
 
         assert self.ball is not None, "no launcher blocks found"
