@@ -26,6 +26,9 @@ class GameRenderer(object):
         self.ball_renderer = BallRenderer(game.ball, self.batch)
         self.mouse = Mouse(self.batch)
 
+    def update_grid(self, pos):
+        self.grid_renderer.update(pos)
+
     def draw(self):
         # We can draw the batch only after all renderers updated it
         self.batch.draw()
@@ -54,9 +57,14 @@ class GridRenderer(dict):
         self.grid = grid
         self.batch = batch
 
-        for (x, y), block in self.grid.iteritems():
-            blockClass = block.__class__
-            self[x, y] = create_block_renderer(blockClass, batch, None, x, y)
+        for pos in self.grid:
+            self.update(pos)
+
+    def update(self, pos):
+        old = self.get(pos)
+        if old:
+            old.delete()
+        self[pos] = create_block_renderer(self.grid[pos].__class__, self.batch, None, pos[0], pos[1])
 
 class BallGroup (pyglet.graphics.Group):
     def __init__(self, ball, parent=None):

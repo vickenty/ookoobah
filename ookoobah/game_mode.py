@@ -12,20 +12,12 @@ from glutil import *
 class GameMode(mode.Mode):
     name = "game_mode"
 
-    # Key constants are defined in pyglet.window.key
-    EDITOR_MAPPING = {
-        key._1: core.Launcher,
-        key._2: core.Wall,
-        key._3: core.Mirror
-    }
-
     def connect(self, controller):
         super(GameMode, self).connect(controller)
         self.game = self._create_test_game()
         self.game.start()
         self.renderer = render.GameRenderer(self.game)
-        # TODO: the edtor state could be moved to the Core
-        self.current_block_class = core.Wall
+        self.current_block_class = None
         self.init_gl()
         self.init_gui()
 
@@ -79,13 +71,12 @@ class GameMode(mode.Mode):
         glGetDoublev(GL_PROJECTION_MATRIX, self.projection)
 
         if self.gui.selected:
-            block_class ,= self.gui.selected.args
+            self.current_block_class ,= self.gui.selected.args
         else:
-            block_class = None
+            self.current_block_class = None
 
-        self.renderer.mouse.set_cursor(block_class)
-        self.renderer.mouse.pos = map(round, self.unproject(self.mouse_pos))
-
+        self.renderer.mouse.set_cursor(self.current_block_class)
+        self.update_mouse()
         self.renderer.draw()
 
         glPushAttrib(GL_ENABLE_BIT)
@@ -93,6 +84,11 @@ class GameMode(mode.Mode):
         glDisable(GL_DEPTH_TEST)
         self.gui.draw()
         glPopAttrib(GL_ENABLE_BIT)
+
+    def update_mouse(self):
+        self.mouse_pos_world = self.unproject(self.mouse_pos)
+        self.mouse_pos_grid = Vector3(*[int(round(v)) for v in self.mouse_pos_world])
+        self.renderer.mouse.pos = self.mouse_pos_grid
 
     def _unproject(self, x, y, z):
         gluUnProject(x, y, z,
@@ -121,23 +117,17 @@ class GameMode(mode.Mode):
     def on_mouse_motion(self, x, y, dx, dy):
         self.mouse_pos = (x, y)
 
-    def on_mouse_press(self, x, y, button, modifiers):
-        self.create_new_block(x, y)
+    def on_mouse_release(self, x, y, button, modifiers):
+        self.mouse_pos = (x, y)
+        self.update_mouse()
+        self.create_new_block()
 
-    def on_key_press(self, symbol, modifiers):
-        if symbol in self.EDITOR_MAPPING:
-            blockClass = self.EDITOR_MAPPING[symbol]
-            self.set_current_block_class(blockClass)
-
-    def set_current_block_class(self, blockClass):
-        self.current_block_class = blockClass
-        self.renderer.mouse.set_cursor(blockClass)
-
-    def create_new_block(self, x, y):
-        #TODO: figure out how to transform world coordinates to grid
-        #(grid_x, grid_y) = ???
-        #self.game.grid[grid_x, grid_y] = self.current_block_class()
-        pass
+    def create_new_block(self):
+        if not self.current_block_class:
+            return
+        pos = self.mouse_pos_grid.xy
+        self.game.grid[pos] = self.current_block_class()
+        self.renderer.update_grid(pos)
 
     def _create_test_game(self):
         game = core.Game()
