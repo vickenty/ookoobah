@@ -11,6 +11,8 @@ CHAR_TO_BLOCK = {
     "\\": (core.Mirror, (("slope", core.Mirror.SLOPE_BACKWARD),)),
     "o":  (core.Exit, ()),
     "+":  (core.Trap, ()),
+    "|":  (core.FlipFlop, (("is_on", False),)),
+    "-":  (core.FlipFlop, (("is_on", True),)),
 }
 
 BLOCK_TO_CHAR = {v: k for k, v in CHAR_TO_BLOCK.items()}

@@ -65,6 +65,14 @@ class Exit(Block):
     def act(self, ball):
         ball.status = Ball.STATUS_LEFT
 
+class FlipFlop(Block):
+    def __init__(self, is_on=False, *args, **kwargs):
+        super(Block, self).__init__(*args, **kwargs)
+        self.is_on = is_on
+
+    def act(self, ball):
+        self.is_on = not self.is_on
+
 class Trap(Block):
     def __init__(self, *args, **kwargs):
         super(Block, self).__init__(*args, **kwargs)
