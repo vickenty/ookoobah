@@ -159,6 +159,7 @@ class GameMode(mode.Mode):
         level_filename = self.get_level_filename()
         with open(level_filename, 'r') as level_file:
             self.game.grid = pickle.load(level_file)
+            self.renderer = render.GameRenderer(self.game)
         # TODO: we could switch to this once the ball is out of game
         # with open(level_filename, 'r') as f:
         #     game_dump = f.read()
@@ -182,6 +183,7 @@ class GameMode(mode.Mode):
         game.grid[4, 3] = core.Mirror(core.Mirror.SLOPE_FORWARD)
         game.grid[-3, 3] = core.Mirror()
         game.grid[-3, 0] = core.Mirror(core.Mirror.SLOPE_FORWARD)
+        game.grid[4, 4] = core.Exit()
         for x in range(-4, 5):
             game.grid[x, -5] = core.Wall()
             game.grid[x, 5] = core.Wall()
