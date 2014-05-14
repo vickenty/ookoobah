@@ -12,11 +12,11 @@ from glutil import *
 class GameMode(mode.Mode):
     name = "game_mode"
     STEP_SIZE = 15
+    SLOW_START = 120
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
         self.game = self._create_test_game()
-        self.game.start()
         self.renderer = render.GameRenderer(self.game)
         self.current_block_class = None
         self.init_gl()
@@ -57,7 +57,10 @@ class GameMode(mode.Mode):
 
     def tick(self):
         self.time += 1
-        if self.time > self.next_step:
+        if self.time > self.SLOW_START and not self.game.ball:
+            self.game.start()
+
+        if self.time > self.next_step and self.game.ball:
             self.game.step()
             self.next_step = self.time + self.STEP_SIZE # / (self.game.speed + 1)
 

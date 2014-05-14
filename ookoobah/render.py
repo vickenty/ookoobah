@@ -23,15 +23,20 @@ class GameRenderer(object):
 
         # Init the renderers for all game objects
         self.grid_renderer = GridRenderer(game.grid, self.batch)
-        self.ball_renderer = BallRenderer(game.ball, self.batch)
+        self.ball_renderer = None
         self.mouse = Mouse(self.batch)
 
-    def update_grid(self, pos):
-        self.grid_renderer.update(pos)
+    def update_ball(self):
+        if self.game.ball and not self.ball_renderer:
+            self.ball_renderer = BallRenderer(self.game.ball, self.batch)
+        elif not self.game.ball and self.ball_renderer:
+            self.ball_renderer.delete()
+            self.ball_renderer = None
 
     def draw(self):
         # We can draw the batch only after all renderers updated it
         self.grid_renderer.update()
+        self.update_ball()
         self.batch.draw()
 
 class BlockRenderer (object):
