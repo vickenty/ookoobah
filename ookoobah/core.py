@@ -61,9 +61,11 @@ class Mirror(Block):
 class Exit(Block):
     def __init__(self, *args, **kwargs):
         super(Block, self).__init__(*args, **kwargs)
+        self.is_on = None
 
     def act(self, ball):
-        ball.status = Ball.STATUS_LEFT
+        if self.is_on:
+            ball.status = Ball.STATUS_LEFT
 
 class FlipFlop(Block):
     def __init__(self, is_on=False, *args, **kwargs):
@@ -118,13 +120,21 @@ class Game(object):
         return "<Game: step_n=%s, grid=%s, ball=%s>" % (self.step_n, self.grid, self.ball)
 
     def start(self):
+        self.exit = None
+
         for pos, block in self.grid.items():
             if isinstance(block, Launcher):
                 # TODO Shove balls into a list: there are may be multiple launchers, and thus balls
                 assert self.ball is None, "launcher block redefined"
                 self.ball = Ball(direction=block.direction, pos=pos)
+            elif isinstance(block, Exit):
+                assert self.exit is None, "exit block redefined"
+                self.exit = block
 
         assert self.ball is not None, "no launcher blocks found"
+        assert self.exit is not None, "no exit block found"
+
+        self._update_exit()
 
     def get_status(self):
         if self.ball.status == Ball.STATUS_LEFT:
@@ -142,12 +152,19 @@ class Game(object):
         keep_moving = True
         while keep_moving:
             self.ball.move()
+
             block = self.grid.get(self.ball.pos)
             if block:
                 keep_moving = block.act(self.ball)
             else:
                 keep_moving = False
 
+            self._update_exit()
+
         self.step_n += 1
 
         return state
+
+    def _update_exit(self):
+        # TODO Cache me, maybe
+        self.exit.is_on = all(ff.is_on for ff in self.grid.values() if isinstance(ff, FlipFlop))
