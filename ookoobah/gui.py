@@ -40,6 +40,7 @@ class Manager (object):
 
     def pop(self):
         self.hide(True)
+        self.selected = None
         self.active = self.stack.pop()
         self.show()
 
