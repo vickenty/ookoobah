@@ -158,7 +158,8 @@ class GameMode(mode.Mode):
     def load_level(self, *args, **kwargs):
         level_filename = self.get_level_filename()
         with open(level_filename, 'r') as level_file:
-            self.game.grid = pickle.load(level_file)
+            grid = pickle.load(level_file)
+        self.game = core.Game(grid)
         self.renderer.reset(self.game)
         # TODO: we could switch to this once the ball is out of game
         # with open(level_filename, 'r') as f:
@@ -177,17 +178,18 @@ class GameMode(mode.Mode):
         return os.path.join(game_dir, data_dir)
 
     def _create_test_game(self):
-        game = core.Game()
-        game.grid[2, 0] = core.Launcher()
-        game.grid[4, 0] = core.Mirror()
-        game.grid[4, 3] = core.Mirror(core.Mirror.SLOPE_FORWARD)
-        game.grid[-3, 3] = core.Mirror()
-        game.grid[-3, 0] = core.Mirror(core.Mirror.SLOPE_FORWARD)
-        game.grid[4, 4] = core.Exit()
+        grid = core.Grid()
+        grid[2, 0] = core.Launcher()
+        grid[4, 0] = core.Mirror()
+        grid[4, 3] = core.Mirror(core.Mirror.SLOPE_FORWARD)
+        grid[-3, 3] = core.Mirror()
+        grid[-3, 0] = core.Mirror(core.Mirror.SLOPE_FORWARD)
+        grid[4, 4] = core.Exit()
         for x in range(-4, 5):
-            game.grid[x, -5] = core.Wall()
-            game.grid[x, 5] = core.Wall()
+            grid[x, -5] = core.Wall()
+            grid[x, 5] = core.Wall()
         for y in range(-4, 5):
-            game.grid[-5, y] = core.Wall()
-            game.grid[5, y] = core.Wall()
+            grid[-5, y] = core.Wall()
+            grid[5, y] = core.Wall()
+        game = core.Game(grid)
         return game

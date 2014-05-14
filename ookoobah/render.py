@@ -41,6 +41,7 @@ class GameRenderer(object):
         self.batch.draw()
 
     def reset(self, game):
+        self.game = game
         self.grid_renderer.delete()
         self.grid_renderer = GridRenderer(game.grid, self.batch)
 
