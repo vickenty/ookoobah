@@ -134,7 +134,6 @@ class GameMode(mode.Mode):
             return
         pos = self.mouse_pos_grid.xy
         self.game.grid[pos] = self.current_block_class()
-        self.renderer.update_grid(pos)
 
     def _create_test_game(self):
         game = core.Game()

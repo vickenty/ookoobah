@@ -31,6 +31,7 @@ class GameRenderer(object):
 
     def draw(self):
         # We can draw the batch only after all renderers updated it
+        self.grid_renderer.update()
         self.batch.draw()
 
 class BlockRenderer (object):
@@ -81,15 +82,14 @@ class GridRenderer(dict):
     def __init__(self, grid, batch):
         self.grid = grid
         self.batch = batch
+        self.update()
 
-        for pos in self.grid:
-            self.update(pos)
-
-    def update(self, pos):
-        old = self.get(pos)
-        if old:
-            old.delete()
-        self[pos] = create_block_renderer(self.grid[pos], self.batch, None, pos[0], pos[1])
+    def update(self):
+        for pos in self.grid.get_dirty():
+            old = self.get(pos)
+            if old:
+                old.delete()
+            self[pos] = create_block_renderer(self.grid[pos], self.batch, None, pos[0], pos[1])
 
 class BallGroup (pyglet.graphics.Group):
     def __init__(self, ball, parent=None):
