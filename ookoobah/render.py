@@ -77,7 +77,7 @@ class Mirror (BlockRenderer):
         return (0, math.pi * self.block.slope / 4, 0)
 
 class FlipFlop (BlockRenderer):
-    size = (.5, .5, .5)
+    size = (.3, .3, .3)
     shape_class = shapes.Disc
 
     colors = {
