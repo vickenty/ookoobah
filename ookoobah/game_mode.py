@@ -133,10 +133,13 @@ class GameMode(mode.Mode):
         game = core.Game()
         game.grid[2, 0] = core.Launcher()
         game.grid[4, 0] = core.Mirror()
+        game.grid[4, 3] = core.Mirror(core.Mirror.SLOPE_FORWARD)
+        game.grid[-3, 3] = core.Mirror()
+        game.grid[-3, 0] = core.Mirror(core.Mirror.SLOPE_FORWARD)
         for x in range(-4, 5):
             game.grid[x, -5] = core.Wall()
             game.grid[x, 5] = core.Wall()
         for y in range(-4, 5):
-            game.grid[-4, y] = core.Wall()
-            game.grid[4, y] = core.Wall()
+            game.grid[-5, y] = core.Wall()
+            game.grid[5, y] = core.Wall()
         return game

@@ -128,7 +128,7 @@ class Controller(object):
         """
         self.window = window.Window(visible=False, caption="Ookoobah", fullscreen=False)
         self.gui = gui.Manager(self.window)
-        clock.schedule_interval_soft(self.tick, 1.0)
+        clock.schedule_interval_soft(self.tick, 0.25)
         clock.schedule_interval_soft(self.gui.tick, 1 / 60)
 
     def run(self):
