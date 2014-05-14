@@ -1,6 +1,12 @@
 from contextlib import contextmanager
 from pyglet.gl import *
 
+__all__ = [
+    'ptr',
+    'gl_disable',
+    'gl_ortho',
+]
+
 def ptr(*args):
     return (GLfloat * len(args))(*args)
 
