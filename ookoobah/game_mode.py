@@ -155,6 +155,7 @@ class GameMode(mode.Mode):
         level_filename = self.get_level_filename()
         with open(level_filename, 'w+') as level_file:
             pickle.dump(self.game.grid, level_file)
+        self.gui.show_popup('Saved')
 
     def load_level(self, *args, **kwargs):
         level_filename = self.get_level_filename()
@@ -162,6 +163,7 @@ class GameMode(mode.Mode):
             grid = pickle.load(level_file)
         self.game = core.Game(grid)
         self.renderer.reset(self.game)
+        self.gui.show_popup('Loaded')
 
     def get_level_filename(self):
         level_name = sys.argv[1] if len(sys.argv) == 2 else self.DEFAULT_LEVEL_NAME

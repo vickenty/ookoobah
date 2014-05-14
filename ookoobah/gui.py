@@ -1,9 +1,12 @@
 from __future__ import division
 
+from collections import deque
+
 import pyglet
 from pyglet.window import mouse
 from pyglet.gl import *
 from euclid import Vector2
+from spring import Spring
 
 DONE = object()
 BACK = object()
@@ -14,12 +17,22 @@ class Manager (object):
     MARGIN = 20
     SPACING = 25
 
+    colors = {
+        'okay': (0x34, 0xB2, 0x7D, 0xFF),
+    }
+
     def __init__(self, window):
         self.window = window
         self.stack = []
         self.active = []
         self.buttons = []
         self.selected = None
+        self.popup = None
+        self.popup_queue = deque()
+
+    def show_popup(self, text, color='okay'):
+        color = self.colors[color]
+        self.popup_queue.append((text, color))
 
     def replace(self, buttons):
         self.hide(True, True)
@@ -66,11 +79,21 @@ class Manager (object):
     def tick(self, dt=None):
         self.buttons = [b for b in self.buttons if b.tick() is not DONE]
 
+        if self.popup and self.popup.tick() is DONE:
+            self.popup = None
+
+        if not self.popup and self.popup_queue:
+            text, color = self.popup_queue.popleft()
+            self.popup = Popup(text, color)
+
     def draw(self):
         glPushMatrix()
         glTranslatef(0, self.window.height, 0)
         [btn.draw() for btn in self.buttons]
         glPopMatrix()
+
+        if self.popup:
+            self.popup.draw(self.window)
 
     def on_mouse_release(self, x, y, btn, mods):
         if not self.active:
@@ -115,7 +138,7 @@ class Button (object):
     THRESHOLD = 1
     SPEED = 0.4
 
-    def __init__(self, text, callback, args=None):
+    def __init__(self, text, callback, args=None, color=None):
         self.label = pyglet.text.Label(text)
         self.callback = callback
         self.args = args
@@ -188,6 +211,39 @@ class Submenu (object):
     def build(self):
         return [Button(label, callback, args) for label, callback, args in self.choices]
 
+class Popup (object):
+    SPEED = 0.2
+    SNAP = 0.001
+    SLEEP = 60
+    POS_Y = 0.3
+
+    def __init__(self, text, color):
+        self.label = pyglet.text.Label(text, anchor_x = 'center', font_size=32, color = color)
+        self.offset = Spring(Vector2(1.5, self.POS_Y), self.SPEED, self.SNAP)
+        self.offset.next_value = Vector2(.5, self.POS_Y)
+        self.sleep = self.SLEEP
+        self.done = False
+
+    def tick(self):
+        self.offset.tick()
+        if self.offset.static:
+            if self.done:
+                self.label.delete()
+                return DONE
+
+            if self.sleep > 0:
+                self.sleep -= 1
+            else:
+                self.offset.next_value = Vector2(-.5, self.POS_Y)
+                self.done = True
+
+    def draw(self, window):
+        x, y = self.offset.value.xy
+        glPushMatrix()
+        glTranslatef(x * window.width, y * window.height, 0)
+        self.label.draw()
+        glPopMatrix()
+
 if __name__ == '__main__':
     win = pyglet.window.Window(width=640, height=480)
     man = Manager(win)
@@ -196,6 +252,7 @@ if __name__ == '__main__':
             ('Spam', (('Eggs', SELECT), ('Bacon', SELECT), ('Spam', SELECT))),
             ('Bacon', SELECT)
         )),
+        ('Welcome', lambda man, args: man.show_popup('Welcome')),
         ('Quit', DONE),
     ]
 
@@ -203,6 +260,8 @@ if __name__ == '__main__':
         if sub is DONE:
             return lambda man, args: pyglet.app.exit()
         elif sub is SELECT:
+            return sub
+        elif callable(sub):
             return sub
         elif sub:
             def handler(manager, args):
