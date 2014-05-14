@@ -10,8 +10,8 @@ import mode
 import core
 import render
 import gui
-import utils
 from glutil import *
+from camera import Camera
 
 class GameMode(mode.Mode):
     name = "game_mode"
@@ -25,17 +25,14 @@ class GameMode(mode.Mode):
         self.game = self._create_test_game()
         self.renderer = render.GameRenderer(self.game)
         self.current_block_class = None
+
+        self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
         self.init_gl()
         self.init_gui()
 
         self.time = 0
         self.next_step = self.STEP_SIZE
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], 16))
-
-        self.modelview = (GLdouble * 16)()
-        self.projection = (GLdouble * 16)()
-        self.viewport = (GLint * 4)()
-        self.unproj = [GLdouble(), GLdouble(), GLdouble()]
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
     def init_gl(self):
@@ -72,22 +69,17 @@ class GameMode(mode.Mode):
             self.game.step()
             self.next_step = self.time + self.STEP_SIZE # / (self.game.speed + 1)
 
-    def on_resize(self, w, h):
-        glViewport(0, 0, w, h)
-        self.viewport[:] = (0, 0, w, h)
+        self.camera.tick()
 
-        glMatrixMode(gl.GL_PROJECTION)
-        glLoadIdentity()
-        glu.gluPerspective(45.0, w / h, 0.1, 50)
-        glMatrixMode(gl.GL_MODELVIEW)
+    def on_resize(self, w, h):
+        self.camera.resize(0, 0, w, h)
         return pyglet.event.EVENT_HANDLED
 
     def on_draw(self):
         self.window.clear()
         glLoadIdentity()
-        gluLookAt(0, 0, 20, 0, 0, 0, 0, 1, 0)
-        glGetDoublev(GL_MODELVIEW_MATRIX, self.modelview)
-        glGetDoublev(GL_PROJECTION_MATRIX, self.projection)
+
+        self.camera.setup()
 
         if self.gui.selected:
             self.current_block_class ,= self.gui.selected.args
@@ -104,33 +96,10 @@ class GameMode(mode.Mode):
                 self.fps_magic.draw()
 
     def update_mouse(self):
-        self.mouse_pos_world = self.unproject(self.mouse_pos)
+        self.mouse_pos_world = self.camera.unproject(self.mouse_pos)
         self.mouse_pos_grid = Vector3(*[int(round(v)) for v in self.mouse_pos_world])
         self.renderer.mouse.pos = self.mouse_pos_grid
 
-    def _unproject(self, x, y, z):
-        gluUnProject(x, y, z,
-            self.modelview,
-            self.projection,
-            self.viewport,
-            self.unproj[0],
-            self.unproj[1],
-            self.unproj[2]
-        )
-        return Vector3(*[v.value for v in self.unproj])
-
-    def unproject(self, (x, y)):
-        # http://stackoverflow.com/questions/9406269/object-picking-with-ray-casting
-        l0 = self._unproject(x, y, 0.1)
-        l1 = self._unproject(x, y, 0.9)
-        ld = l1 - l0
-
-        # http://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
-        # assuming that p0 = (0, 0, 0), and n = (0, 0, -1)
-        d = -l0.z / ld.z
-        p = l0 + ld * d
-
-        return p
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.mouse_pos = (x, y)
