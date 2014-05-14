@@ -163,7 +163,7 @@ class GameMode(mode.Mode):
         # TODO: we could switch to this once the ball is out of game
         # with open(level_filename, 'r') as f:
         #     game_dump = f.read()
-        #     utils.populate_grid_from_string(self.game.grid, game_dump)
+        #     new_grid = utils.populate_grid_from_string(game_dump)
 
     def get_level_filename(self):
         level_name = sys.argv[1] if len(sys.argv) == 2 else DEFAULT_LEVEL_NAME

@@ -18,12 +18,14 @@ CHAR_TO_BLOCK = {
 
 BLOCK_TO_CHAR = {v: k for k, v in CHAR_TO_BLOCK.items()}
 
-def populate_grid_from_string(grid, string):
+def make_grid_from_string(string):
+    grid = core.Grid()
     for y, line in enumerate(string.strip().split("\n")):
         for x, char in enumerate(c for c in line if not c.isspace()):
             block, param = CHAR_TO_BLOCK[char]
             if block:
                 grid[x, y] = block(**dict(param))
+    return grid
 
 BALL_POS_TO_CHAR = {
     core.Ball.DIR_RIGHT: ">",

@@ -3,8 +3,7 @@
 from ookoobah import core
 from ookoobah import utils
 
-game = core.Game()
-utils.populate_grid_from_string(game.grid, """
+grid = utils.make_grid_from_string("""
     # # # # # #
     # > . . \ #
     # . # . | #
@@ -12,6 +11,8 @@ utils.populate_grid_from_string(game.grid, """
     # . \ . / #
     # # # # # #
 """)
+
+game = core.Game(grid=grid)
 game.start()
 
 print "hit <enter> to render next; ^C to abort"
