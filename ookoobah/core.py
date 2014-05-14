@@ -52,11 +52,11 @@ class Mirror(Block):
 
 class Exit(Block):
     def act(self, ball):
-        pass
+        ball.status = Ball.STATUS_LEFT
 
 class Trap(Block):
     def act(self, ball):
-        pass
+        ball.status = Ball.STATUS_DEAD
 
 class Ball(object):
     DIR_RIGHT = (1, 0)
@@ -64,9 +64,14 @@ class Ball(object):
     DIR_LEFT = (-1, 0)
     DIR_UP = (0, -1)
 
-    def __init__(self, direction=DIR_RIGHT, pos=(0, 0)):
+    STATUS_ALIVE = 0
+    STATUS_DEAD = 1
+    STATUS_LEFT = 2
+
+    def __init__(self, direction=DIR_RIGHT, pos=(0, 0), status=STATUS_ALIVE):
         self.direction = direction
         self.pos = pos
+        self.status = status
 
     def __str__(self):
         return "<Ball: pos=%s, direction=%s>" % (self.pos, self.direction)
@@ -99,10 +104,9 @@ class Game(object):
         assert self.ball is not None, "no launcher blocks found"
 
     def get_status(self):
-        block = self.grid.get(self.ball.pos)
-        if isinstance(block, Exit):
+        if self.ball.status == Ball.STATUS_LEFT:
             return Game.STATUS_VICTORY
-        elif isinstance(block, Trap):
+        elif self.ball.status == Ball.STATUS_DEAD:
             return Game.STATUS_DEFEAT
         else:
             return Game.STATUS_ON
