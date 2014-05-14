@@ -107,6 +107,7 @@ class Ball(object):
         )
 
 class Game(object):
+    STATUS_NEW = "new"
     STATUS_ON = "on"
     STATUS_VICTORY = "victory"
     STATUS_DEFEAT = "defeat"
@@ -136,7 +137,9 @@ class Game(object):
         self._update_exit()
 
     def get_status(self):
-        if self.ball.status == Ball.STATUS_LEFT:
+        if not self.ball:
+            return Game.STATUS_NEW
+        elif self.ball.status == Ball.STATUS_LEFT:
             return Game.STATUS_VICTORY
         elif self.ball.status == Ball.STATUS_DEAD:
             return Game.STATUS_DEFEAT
@@ -145,6 +148,7 @@ class Game(object):
 
     def step(self):
         state = self.get_status()
+        assert state != Game.STATUS_NEW, "game has not been started"
         if state != Game.STATUS_ON:
             return state
 
