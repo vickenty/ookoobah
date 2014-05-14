@@ -124,4 +124,4 @@ class Game(object):
 
         self.step_n += 1
 
-        return self.get_status()
+        return state

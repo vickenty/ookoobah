@@ -22,5 +22,4 @@ while status == core.Game.STATUS_ON:
     status = game.step()
     raw_input()
 
-print utils.dump_game_to_string(game)
-print "game status: %s" % game.get_status()
+print "game status: %s" % status
