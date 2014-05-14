@@ -17,11 +17,15 @@ class Grid(dict):
         return dirty
 
 class Block(object):
+    def __init__(self, *args, **kwargs):
+        pass
+
     def act(self, ball):
         raise NotImplementedError()
 
 class Launcher(Block):
-    def __init__(self, direction=None):
+    def __init__(self, direction=None, *args, **kwargs):
+        super(Block, self).__init__(*args, **kwargs)
         if direction is None:
             direction = Ball.DIR_RIGHT
         self.direction = direction
@@ -30,6 +34,9 @@ class Launcher(Block):
         pass
 
 class Wall(Block):
+    def __init__(self, *args, **kwargs):
+        super(Block, self).__init__(*args, **kwargs)
+
     def act(self, ball):
         ball.direction = (
             -ball.direction[0],
@@ -41,7 +48,8 @@ class Mirror(Block):
     SLOPE_BACKWARD = 1
     SLOPE_FORWARD = -1
 
-    def __init__(self, slope=SLOPE_BACKWARD):
+    def __init__(self, slope=SLOPE_BACKWARD, *args, **kwargs):
+        super(Block, self).__init__(*args, **kwargs)
         self.slope = slope
 
     def act(self, ball):
@@ -51,10 +59,16 @@ class Mirror(Block):
         )
 
 class Exit(Block):
+    def __init__(self, *args, **kwargs):
+        super(Block, self).__init__(*args, **kwargs)
+
     def act(self, ball):
         ball.status = Ball.STATUS_LEFT
 
 class Trap(Block):
+    def __init__(self, *args, **kwargs):
+        super(Block, self).__init__(*args, **kwargs)
+
     def act(self, ball):
         ball.status = Ball.STATUS_DEAD
 
