@@ -5,6 +5,7 @@ import math
 
 import core
 import shapes
+from euclid import Vector3
 
 class GameRenderer(object):
     """Top level renderer.
@@ -45,13 +46,22 @@ class GameRenderer(object):
 
 class BlockRenderer (object):
     rotate = None
+    shape_class = shapes.Box
 
     def __init__(self, batch, group, x, y, block):
+        self.x = x
+        self.y = y
         self.block = block
-        self.shape = shapes.Box(batch, group, (x, y, 0), self.size, self.color, self.rotate)
+        self.shape = self.make_shape(batch, group)
+
+    def make_shape(self, batch, group):
+        return self.shape_class(batch, group, (self.x, self.y, 0), self.size, tuple(self.color), self.rotate)
 
     def delete(self):
         self.shape.delete()
+
+    def update(self):
+        pass
 
 class Wall (BlockRenderer):
     size = (.9, .9, .9)
@@ -64,6 +74,36 @@ class Mirror (BlockRenderer):
     @property
     def rotate(self):
         return (0, math.pi * self.block.slope / 4, 0)
+
+class FlipFlop (BlockRenderer):
+    size = (.5, .5, .5)
+    shape_class = shapes.Disc
+
+    colors = {
+        False: Vector3(.5, .5, .5),
+        True: Vector3(.8, .8, .2)
+    }
+
+    THRESHOLD = 0.1
+    SPEED = 0.1
+
+    def __init__(self, batch, group, x, y, block):
+        self.old_is_on = block.is_on
+        self.new_color = self.color = self.colors[block.is_on]
+        super(FlipFlop, self).__init__(batch, group, x, y, block)
+
+    def update(self):
+        if self.old_is_on != self.block.is_on:
+            self.new_color = self.colors[self.block.is_on]
+            self.old_is_on = self.block.is_on
+
+        delta = self.new_color - self.color
+        if abs(delta) < self.THRESHOLD:
+            self.color = self.new_color.copy()
+        else:
+            self.color += delta * self.SPEED
+
+        self.shape.set_color(tuple(self.color))
 
 class ScalerGroup (pyglet.graphics.Group):
     def __init__(self, x, y, parent=None):
@@ -78,15 +118,12 @@ class ScalerGroup (pyglet.graphics.Group):
     def unset_state(self):
         glPopMatrix()
 
-class GenericRenderer (object):
+class GenericRenderer (BlockRenderer):
     def __init__(self, batch, group, x, y, block):
         self.block = block
         self.shape = pyglet.text.Label(block.__class__.__name__[0],
                 batch=batch, anchor_x='center', anchor_y='center',
                 group=ScalerGroup(x, y, parent=group))
-
-    def delete(self):
-        self.shape.delete()
 
 class GridRenderer(dict):
     def __init__(self, grid, batch):
@@ -108,6 +145,8 @@ class GridRenderer(dict):
     def delete(self):
         for renderer in self.values():
             renderer.delete()
+
+        [r.update() for r in self.itervalues()]
 
 class BallGroup (pyglet.graphics.Group):
     def __init__(self, ball, parent=None):
@@ -171,7 +210,8 @@ class Mouse (object):
 
 CORE_MAPPING = {
     core.Wall: Wall,
-    core.Mirror: Mirror
+    core.Mirror: Mirror,
+    core.FlipFlop: FlipFlop,
 }
 
 # TODO: move to a better place

@@ -24,7 +24,7 @@ class Shape (object):
                 real.extend(matrix * Point3(*vert))
                 norm.extend(n)
 
-        vertex_count = len(self.shape) * 3
+        vertex_count = self.vertex_count = len(self.shape) * 3
         self.vlist = batch.add(vertex_count, GL_TRIANGLES, group,
             ('v3f', real),
             ('c3f', color * vertex_count),
@@ -39,6 +39,9 @@ class Shape (object):
             for vert in face
             for p, v, s in zip(pos, vert, self.size)
         ]
+
+    def set_color(self, color):
+        self.vlist.colors = color * self.vertex_count
 
 class Box (Shape):
     shape = [
