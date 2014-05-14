@@ -55,10 +55,13 @@ class GameMode(mode.Mode):
     def init_gui(self):
         # FIXME: Burn this with fire.
         blocks = (cls for cls in core.__dict__.values() if type(cls) == type and issubclass(cls, core.Block) and cls != core.Block)
-        buttons = [gui.Button(cls.__name__, gui.SELECT, cls) for cls in blocks]
-        buttons.append(gui.Button('Save', self.save_level))
-        buttons.append(gui.Button('Load', self.load_level))
-        self.gui.replace(buttons)
+        build_menu = gui.Submenu([(cls.__name__, gui.SELECT, (cls,)) for cls in blocks])
+        file_menu = gui.Submenu([('Save', self.save_level, ()), ('Load', self.load_level, ())])
+
+        self.gui.replace([
+            gui.Button('File', file_menu),
+            gui.Button('Build', build_menu),
+        ])
 
     def tick(self):
         self.time += 1

@@ -92,7 +92,7 @@ class Manager (object):
                         return pyglet.event.EVENT_HANDLED
 
                     if callable(obj.callback):
-                        ret = obj.callback(obj, *obj.args, **obj.kwargs)
+                        ret = obj.callback(self, *obj.args, **obj.kwargs)
                     else:
                         ret = obj.callback
 
@@ -176,6 +176,17 @@ class Button (object):
     def contains(self, x, y):
         px, py = self.pos
         return -10 <= x - px <= self.width and -10 <= y - py <= self.height
+
+class Submenu (object):
+    def __init__(self, choices):
+        self.choices = choices
+
+    def __call__(self, manager):
+        buttons = self.build()
+        manager.push(buttons)
+
+    def build(self):
+        return [Button(label, callback, *args) for label, callback, args in self.choices]
 
 if __name__ == '__main__':
     win = pyglet.window.Window(width=640, height=480)
