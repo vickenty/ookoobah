@@ -159,7 +159,7 @@ class GameMode(mode.Mode):
         self.renderer.reset(self.game)
 
     def get_level_filename(self):
-        level_name = sys.argv[1] if len(sys.argv) == 2 else DEFAULT_LEVEL_NAME
+        level_name = sys.argv[1] if len(sys.argv) == 2 else self.DEFAULT_LEVEL_NAME
         data_dir = self.get_data_dir()
         return os.path.join(data_dir, level_name + '.level')
 
