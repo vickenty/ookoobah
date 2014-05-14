@@ -1,4 +1,5 @@
 from __future__ import division
+import math
 from euclid import Vector3, Matrix4, Point3
 from pyglet.gl import GL_TRIANGLES
 
@@ -63,6 +64,19 @@ class Pyramid (Shape):
        ((.5, -.5, -.5), (.5, .5, -.5), (0, 0, .5)),
        ((.5, .5, -.5), (-.5, .5, -.5), (0, 0, .5)),
        ((-.5, .5, -.5), (-.5, -.5, -.5), (0, 0, .5)),
+    ]
+
+def pairwise(seq):
+    it = iter(seq)
+    first = prev = next(it)
+    for item in it:
+        yield (prev, item)
+        prev = item
+    yield (prev, first)
+
+class Disc (Shape):
+    shape = [
+        ((0, 0, 0), p1, p2) for p1, p2 in pairwise((math.cos(phi), math.sin(phi), 0) for phi in (math.pi / 8 * i for i in range(0, 16)))
     ]
 
 class Ico (Shape):
