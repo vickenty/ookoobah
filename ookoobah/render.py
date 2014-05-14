@@ -133,19 +133,17 @@ class GridRenderer(dict):
         self.update(True)
 
     def update(self, force=False):
-        if force == True:
-            for pos in  self.grid:
-                self[pos] = create_block_renderer(self.grid[pos], self.batch, None, pos[0], pos[1])
-        else:
-            for pos in self.grid.get_dirty():
-                old = self.get(pos)
-                if old:
-                    old.delete()
+        items = self.grid if force else self.grid.get_dirty()
 
-                if self.grid[pos]:
-                    self[pos] = create_block_renderer(self.grid[pos], self.batch, None, *pos)
-                else:
-                    del self[pos]
+        for pos in items:
+            old = self.get(pos)
+            if old:
+                old.delete()
+
+            if self.grid[pos]:
+                self[pos] = create_block_renderer(self.grid[pos], self.batch, None, *pos)
+            else:
+                del self[pos]
 
         [r.update() for r in self.itervalues()]
 
