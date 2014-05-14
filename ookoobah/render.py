@@ -143,11 +143,11 @@ class GridRenderer(dict):
                     old.delete()
                 self[pos] = create_block_renderer(self.grid[pos], self.batch, None, pos[0], pos[1])
 
+        [r.update() for r in self.itervalues()]
+
     def delete(self):
         for renderer in self.values():
             renderer.delete()
-
-        [r.update() for r in self.itervalues()]
 
 class BallGroup (pyglet.graphics.Group):
     def __init__(self, ball, parent=None):
