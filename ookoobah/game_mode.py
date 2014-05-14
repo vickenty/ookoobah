@@ -159,7 +159,7 @@ class GameMode(mode.Mode):
         level_filename = self.get_level_filename()
         with open(level_filename, 'r') as level_file:
             self.game.grid = pickle.load(level_file)
-            self.renderer = render.GameRenderer(self.game)
+        self.renderer.reset(self.game)
         # TODO: we could switch to this once the ball is out of game
         # with open(level_filename, 'r') as f:
         #     game_dump = f.read()

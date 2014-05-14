@@ -39,6 +39,10 @@ class GameRenderer(object):
         self.update_ball()
         self.batch.draw()
 
+    def reset(self, game):
+        self.grid_renderer.delete()
+        self.grid_renderer = GridRenderer(game.grid, self.batch)
+
 class BlockRenderer (object):
     rotate = None
 
@@ -80,6 +84,7 @@ class GenericRenderer (object):
         self.shape = pyglet.text.Label(block.__class__.__name__[0],
                 batch=batch, anchor_x='center', anchor_y='center',
                 group=ScalerGroup(x, y, parent=group))
+
     def delete(self):
         self.shape.delete()
 
@@ -87,14 +92,22 @@ class GridRenderer(dict):
     def __init__(self, grid, batch):
         self.grid = grid
         self.batch = batch
-        self.update()
+        self.update(True)
 
-    def update(self):
-        for pos in self.grid.get_dirty():
-            old = self.get(pos)
-            if old:
-                old.delete()
-            self[pos] = create_block_renderer(self.grid[pos], self.batch, None, pos[0], pos[1])
+    def update(self, force=False):
+        if force == True:
+            for pos in  self.grid:
+                self[pos] = create_block_renderer(self.grid[pos], self.batch, None, pos[0], pos[1])
+        else:
+            for pos in self.grid.get_dirty():
+                old = self.get(pos)
+                if old:
+                    old.delete()
+                self[pos] = create_block_renderer(self.grid[pos], self.batch, None, pos[0], pos[1])
+
+    def delete(self):
+        for renderer in self.values():
+            renderer.delete()
 
 class BallGroup (pyglet.graphics.Group):
     def __init__(self, ball, parent=None):
@@ -113,6 +126,9 @@ class BallRenderer(object):
     def __init__(self, ball, batch):
         self.group = BallGroup(ball)
         self.shape = shapes.Ico(batch, self.group, (0, 0, 0), (.3, .3, .3), (1, 1, 0))
+
+    def delete(self):
+        self.shape.delete()
 
 class FollowGroup (pyglet.graphics.Group):
     def __init__(self, target, parent=None):
