@@ -165,7 +165,7 @@ class GameMode(mode.Mode):
 
     def get_data_dir(self):
         # TODO: pyglet.resource.get_script_home() returns empty string
-        game_dir = os.path.dirname(__file__)
+        game_dir = sys.path[0]
         data_dir = pyglet.resource.path[0]
         return os.path.join(game_dir, data_dir)
 
