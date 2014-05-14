@@ -150,10 +150,6 @@ class GameMode(mode.Mode):
         level_filename = self.get_level_filename()
         with open(level_filename, 'w+') as level_file:
             pickle.dump(self.game.grid, level_file)
-        # TODO: we could switch to this once the ball is out of game
-        #game_dump = utils.dump_game_to_string(self.game)
-        #with open(level_filename, 'w+') as f:
-        #    f.write(game_dump)
 
     def load_level(self, *args, **kwargs):
         level_filename = self.get_level_filename()
@@ -161,10 +157,6 @@ class GameMode(mode.Mode):
             grid = pickle.load(level_file)
         self.game = core.Game(grid)
         self.renderer.reset(self.game)
-        # TODO: we could switch to this once the ball is out of game
-        # with open(level_filename, 'r') as f:
-        #     game_dump = f.read()
-        #     new_grid = utils.populate_grid_from_string(game_dump)
 
     def get_level_filename(self):
         level_name = sys.argv[1] if len(sys.argv) == 2 else DEFAULT_LEVEL_NAME
