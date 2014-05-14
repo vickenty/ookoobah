@@ -11,7 +11,7 @@ from glutil import *
 
 class GameMode(mode.Mode):
     name = "game_mode"
-    STEP_SIZE = 60
+    STEP_SIZE = 15
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
@@ -24,6 +24,7 @@ class GameMode(mode.Mode):
 
         self.time = 0
         self.next_step = self.STEP_SIZE
+        self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], 16))
 
         self.modelview = (GLdouble * 16)()
         self.projection = (GLdouble * 16)()
@@ -86,11 +87,10 @@ class GameMode(mode.Mode):
         self.update_mouse()
         self.renderer.draw()
 
-        glPushAttrib(GL_ENABLE_BIT)
-        glDisable(GL_LIGHTING)
-        glDisable(GL_DEPTH_TEST)
-        self.gui.draw()
-        glPopAttrib(GL_ENABLE_BIT)
+        with gl_disable(GL_LIGHTING, GL_DEPTH_TEST):
+            with gl_ortho(self.window):
+                self.gui.draw()
+                self.fps_magic.draw()
 
     def update_mouse(self):
         self.mouse_pos_world = self.unproject(self.mouse_pos)

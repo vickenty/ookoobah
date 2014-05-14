@@ -66,18 +66,10 @@ class Manager (object):
         self.buttons = [b for b in self.buttons if b.tick() is not DONE]
 
     def draw(self):
-        glMatrixMode(GL_PROJECTION)
         glPushMatrix()
-        glLoadIdentity()
-        gluOrtho2D(0, self.window.width, 0, self.window.height, -1, 1)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
         glTranslatef(0, self.window.height, 0)
         [btn.draw() for btn in self.buttons]
-
-        glMatrixMode(GL_PROJECTION)
         glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
 
     def on_mouse_release(self, x, y, btn, mods):
         if not self.active:
