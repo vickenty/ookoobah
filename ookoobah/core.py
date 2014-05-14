@@ -67,7 +67,6 @@ class Ball(object):
     def __init__(self, direction=DIR_RIGHT, pos=(0, 0)):
         self.direction = direction
         self.pos = pos
-        pass
 
     def __str__(self):
         return "<Ball: pos=%s, direction=%s>" % (self.pos, self.direction)
