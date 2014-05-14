@@ -25,6 +25,7 @@ class GameRenderer(object):
         # Init the renderers for all game objects
         self.grid_renderer = GridRenderer(game.grid, self.batch)
         self.ball_renderer = None
+        self.lock_renderer = LockRenderer()
         self.mouse = Mouse(self.batch)
 
     def update_ball(self):
@@ -34,11 +35,13 @@ class GameRenderer(object):
             self.ball_renderer.delete()
             self.ball_renderer = None
 
-    def draw(self):
+    def draw(self, show_locks):
         # We can draw the batch only after all renderers updated it
         self.grid_renderer.update()
         self.update_ball()
         self.batch.draw()
+        if show_locks:
+            self.lock_renderer.draw(self.game.grid)
 
     def reset(self, game):
         self.game = game
@@ -150,6 +153,22 @@ class GridRenderer(dict):
     def delete(self):
         for renderer in self.values():
             renderer.delete()
+
+class LockRenderer (object):
+    def __init__(self):
+        self.sprite = pyglet.graphics.vertex_list(4,
+            ('v3f', (-.4, -.4, 0, .4, -.4, 0, .4, .4, 0, -.4, .4, 0)),
+            ('c4f', (.8, 0, 0, .5) * 4)
+        )
+
+    def draw(self, grid):
+        for (x, y), block in grid.iteritems():
+            if not block.locked:
+                continue
+            glPushMatrix()
+            glTranslatef(x, y, 1.1)
+            self.sprite.draw(GL_QUADS)
+            glPopMatrix()
 
 class BallGroup (pyglet.graphics.Group):
     def __init__(self, ball, parent=None):

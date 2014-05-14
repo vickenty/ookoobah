@@ -14,6 +14,7 @@ from glutil import *
 from camera import Camera
 
 class BaseTool (object):
+    draw_locks = False
     def update_cursor(self, mouse):
         mouse.set_cursor(None)
 
@@ -35,6 +36,13 @@ class DrawTool (BaseTool):
 class EraseTool (BaseTool):
     def apply(self, pos, grid):
         grid[pos] = None
+
+class LockTool (BaseTool):
+    draw_locks = True
+    def apply(self, pos, grid):
+        obj = grid.get(pos)
+        if obj:
+            obj.locked = not obj.locked
 
 class TriggerTool (BaseTool):
     def apply(self, pos, grid):
@@ -85,6 +93,7 @@ class GameMode(mode.Mode):
         blocks = (cls for cls in core.__dict__.values() if type(cls) == type and issubclass(cls, core.Block) and cls != core.Block)
         build_menu = gui.Submenu([(cls.__name__, gui.SELECT, (DrawTool(cls),)) for cls in blocks])
         build_menu.choices.append(('Remove', gui.SELECT, (EraseTool(),)))
+        build_menu.choices.append(('Lock', gui.SELECT, (LockTool(),)))
         file_menu = gui.Submenu([('Save', self.save_level, ()), ('Load', self.load_level, ())])
 
         self.gui.replace([
@@ -120,7 +129,7 @@ class GameMode(mode.Mode):
 
         self.update_mouse()
 
-        self.renderer.draw()
+        self.renderer.draw(self.tool.draw_locks)
 
         with gl_disable(GL_LIGHTING, GL_DEPTH_TEST):
             with gl_ortho(self.window):
