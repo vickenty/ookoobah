@@ -93,7 +93,7 @@ class Manager (object):
                         return pyglet.event.EVENT_HANDLED
 
                     if callable(obj.callback):
-                        ret = obj.callback(self, *obj.args, **obj.kwargs)
+                        ret = obj.callback(self, obj.args)
                     else:
                         ret = obj.callback
 
@@ -115,11 +115,10 @@ class Button (object):
     THRESHOLD = 1
     SPEED = 0.4
 
-    def __init__(self, text, callback, *args, **kwargs):
+    def __init__(self, text, callback, args=None):
         self.label = pyglet.text.Label(text)
         self.callback = callback
         self.args = args
-        self.kwargs = kwargs
 
         w = self.label.content_width
         h = self.label.content_height
@@ -182,12 +181,12 @@ class Submenu (object):
     def __init__(self, choices):
         self.choices = choices
 
-    def __call__(self, manager):
+    def __call__(self, manager, args):
         buttons = self.build()
         manager.push(buttons)
 
     def build(self):
-        return [Button(label, callback, *args) for label, callback, args in self.choices]
+        return [Button(label, callback, args) for label, callback, args in self.choices]
 
 if __name__ == '__main__':
     win = pyglet.window.Window(width=640, height=480)
@@ -202,12 +201,12 @@ if __name__ == '__main__':
 
     def mk_handler(sub):
         if sub is DONE:
-            return lambda _: pyglet.app.exit()
+            return lambda man, args: pyglet.app.exit()
         elif sub is SELECT:
             return sub
         elif sub:
-            def handler(_):
-                man.push([Button(label, mk_handler(sub2)) for label, sub2 in sub])
+            def handler(manager, args):
+                manager.push([Button(label, mk_handler(sub2)) for label, sub2 in sub])
             return handler
 
     man.replace(Button(t, mk_handler(sub)) for t, sub in txt)

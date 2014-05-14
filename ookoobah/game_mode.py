@@ -91,9 +91,9 @@ class GameMode(mode.Mode):
     def init_gui(self):
         # FIXME: Burn this with fire.
         blocks = (cls for cls in core.__dict__.values() if type(cls) == type and issubclass(cls, core.Block) and cls != core.Block)
-        build_menu = gui.Submenu([(cls.__name__, gui.SELECT, (DrawTool(cls),)) for cls in blocks])
-        build_menu.choices.append(('Remove', gui.SELECT, (EraseTool(),)))
-        build_menu.choices.append(('Lock', gui.SELECT, (LockTool(),)))
+        build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in blocks])
+        build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
+        build_menu.choices.append(('Lock', gui.SELECT, LockTool()))
         file_menu = gui.Submenu([('Save', self.save_level, ()), ('Load', self.load_level, ())])
 
         self.gui.replace([
@@ -123,7 +123,7 @@ class GameMode(mode.Mode):
         self.camera.setup()
 
         if self.gui.selected:
-            self.tool ,= self.gui.selected.args
+            self.tool = self.gui.selected.args
         else:
             self.tool = TriggerTool()
 
