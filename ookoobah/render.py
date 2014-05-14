@@ -141,7 +141,11 @@ class GridRenderer(dict):
                 old = self.get(pos)
                 if old:
                     old.delete()
-                self[pos] = create_block_renderer(self.grid[pos], self.batch, None, pos[0], pos[1])
+
+                if self.grid[pos]:
+                    self[pos] = create_block_renderer(self.grid[pos], self.batch, None, *pos)
+                else:
+                    del self[pos]
 
         [r.update() for r in self.itervalues()]
 

@@ -13,6 +13,34 @@ import gui
 from glutil import *
 from camera import Camera
 
+class BaseTool (object):
+    def update_cursor(self, mouse):
+        mouse.set_cursor(None)
+
+class DrawTool (BaseTool):
+    def __init__(self, block_class):
+        self.block_class = block_class
+
+    def apply(self, pos, grid):
+        old = grid.get(pos)
+        if old.__class__ == self.block_class:
+            if hasattr(old, 'trigger'):
+                old.trigger()
+        else:
+            grid[pos] = self.block_class()
+
+    def update_cursor(self, mouse):
+        mouse.set_cursor(self.block_class)
+
+class EraseTool (BaseTool):
+    def apply(self, pos, grid):
+        grid[pos] = None
+
+class TriggerTool (BaseTool):
+    def apply(self, pos, grid):
+        if hasattr(grid[pos], 'trigger'):
+            grid[pos].trigger()
+
 class GameMode(mode.Mode):
     name = "game_mode"
 
@@ -24,7 +52,7 @@ class GameMode(mode.Mode):
         super(GameMode, self).connect(controller)
         self.game = self._create_test_game()
         self.renderer = render.GameRenderer(self.game)
-        self.current_block_class = None
+        self.tool = TriggerTool()
 
         self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
         self.init_gl()
@@ -55,7 +83,8 @@ class GameMode(mode.Mode):
     def init_gui(self):
         # FIXME: Burn this with fire.
         blocks = (cls for cls in core.__dict__.values() if type(cls) == type and issubclass(cls, core.Block) and cls != core.Block)
-        build_menu = gui.Submenu([(cls.__name__, gui.SELECT, (cls,)) for cls in blocks])
+        build_menu = gui.Submenu([(cls.__name__, gui.SELECT, (DrawTool(cls),)) for cls in blocks])
+        build_menu.choices.append(('Remove', gui.SELECT, (EraseTool(),)))
         file_menu = gui.Submenu([('Save', self.save_level, ()), ('Load', self.load_level, ())])
 
         self.gui.replace([
@@ -85,12 +114,12 @@ class GameMode(mode.Mode):
         self.camera.setup()
 
         if self.gui.selected:
-            self.current_block_class ,= self.gui.selected.args
+            self.tool ,= self.gui.selected.args
         else:
-            self.current_block_class = None
+            self.tool = TriggerTool()
 
-        self.renderer.mouse.set_cursor(self.current_block_class)
         self.update_mouse()
+
         self.renderer.draw()
 
         with gl_disable(GL_LIGHTING, GL_DEPTH_TEST):
@@ -102,7 +131,7 @@ class GameMode(mode.Mode):
         self.mouse_pos_world = self.camera.unproject(self.mouse_pos)
         self.mouse_pos_grid = Vector3(*[int(round(v)) for v in self.mouse_pos_world])
         self.renderer.mouse.pos = self.mouse_pos_grid
-
+        self.tool.update_cursor(self.renderer.mouse)
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.mouse_pos = (x, y)
@@ -110,13 +139,8 @@ class GameMode(mode.Mode):
     def on_mouse_release(self, x, y, button, modifiers):
         self.mouse_pos = (x, y)
         self.update_mouse()
-        self.create_new_block()
-
-    def create_new_block(self):
-        if not self.current_block_class:
-            return
-        pos = self.mouse_pos_grid.xy
-        self.game.grid[pos] = self.current_block_class()
+        if self.tool:
+            self.tool.apply(self.mouse_pos_grid.xy, self.game.grid)
 
     def save_level(self, *args, **kwargs):
         level_filename = self.get_level_filename()
