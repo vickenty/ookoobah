@@ -34,8 +34,11 @@ class GameRenderer(object):
         self.batch.draw()
 
 class BlockRenderer (object):
+    rotate = None
+
     def __init__(self, batch, group, x, y, block):
-        self.shape = shapes.Box(batch, group, (x, y, 0), self.size, self.color)
+        self.block = block
+        self.shape = shapes.Box(batch, group, (x, y, 0), self.size, self.color, self.rotate)
 
     def delete(self):
         self.shape.delete()
@@ -49,8 +52,12 @@ class Launcher (BlockRenderer):
     color = (.5, .1, .1)
 
 class Mirror (BlockRenderer):
-    size = (1, 1, .4)
+    size = (.8, .1, .9)
     color = (.1, .9, .9)
+
+    @property
+    def rotate(self):
+        return (0, math.pi * self.block.slope / 4, 0)
 
 class GridRenderer(dict):
     def __init__(self, grid, batch):
@@ -64,7 +71,7 @@ class GridRenderer(dict):
         old = self.get(pos)
         if old:
             old.delete()
-        self[pos] = create_block_renderer(self.grid[pos].__class__, self.batch, None, pos[0], pos[1])
+        self[pos] = create_block_renderer(self.grid[pos], self.batch, None, pos[0], pos[1])
 
 class BallGroup (pyglet.graphics.Group):
     def __init__(self, ball, parent=None):
@@ -119,15 +126,16 @@ class Mouse (object):
             self.cursor.delete()
             self.cursor = None
 
-        if blockClass:
-            self.cursor = create_block_renderer(blockClass, self.batch, self.group, 0, 0)
+        if self.block_class:
+            block = self.block_class()
+            self.cursor = create_block_renderer(block, self.batch, self.group, 0, 0)
 
 # TODO: move to a better place
-def create_block_renderer(blockClass, batch, group, x, y):
+def create_block_renderer(block, batch, group, x, y):
     CORE_MAPPING = {
         core.Wall: Wall,
         core.Launcher: Launcher,
         core.Mirror: Mirror
     }
-    renderer_class = CORE_MAPPING[blockClass]
-    return renderer_class(batch, group, x, y, blockClass)
+    renderer_class = CORE_MAPPING[block.__class__]
+    return renderer_class(batch, group, x, y, block)

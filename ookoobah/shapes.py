@@ -1,11 +1,18 @@
 from __future__ import division
-from euclid import Vector3
+from euclid import Vector3, Matrix4, Point3
 from pyglet.gl import GL_TRIANGLES
 
 class Shape (object):
-    def __init__(self, batch, group, pos, size, color):
+    def __init__(self, batch, group, pos, size, color, rotate=None):
         real = []
         norm = []
+
+        matrix = Matrix4()
+        matrix.translate(*pos)
+        if rotate:
+            matrix.rotate_euler(*rotate)
+        matrix.scale(*size)
+
         self.size = size
         for face in self.shape:
             a = Vector3(*face[1]) - Vector3(*face[0])
@@ -13,7 +20,7 @@ class Shape (object):
             n = a.cross(b).normalize()
 
             for vert in face:
-                real.extend(p + v * s for p, v, s in zip(pos, vert, size))
+                real.extend(matrix * Point3(*vert))
                 norm.extend(n)
 
         vertex_count = len(self.shape) * 3
