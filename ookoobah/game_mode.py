@@ -179,6 +179,8 @@ class GameMode(mode.Mode):
         grid[-1, -4] = core.Exit()
         grid[0, -1] = core.FlipFlop()
         grid[-1, 4] = core.Trap()
+        grid[0, 4] = core.Trap()
+        grid[1, 4] = core.Trap()
         for x in range(-4, 5):
             grid[x, -5] = core.Wall()
             grid[x, 5] = core.Wall()
