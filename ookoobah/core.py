@@ -18,7 +18,7 @@ class Grid(dict):
 
 class Block(object):
     def __init__(self, *args, **kwargs):
-        self.locked = False
+        self.locked = True
 
     def act(self, ball):
         raise NotImplementedError()
