@@ -59,7 +59,7 @@ class Mirror(Block):
         )
 
 class Exit(Block):
-    def __init__(self, is_on, *args, **kwargs):
+    def __init__(self, is_on=None, *args, **kwargs):
         super(Block, self).__init__(*args, **kwargs)
         self.is_on = None
 
