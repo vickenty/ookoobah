@@ -176,7 +176,9 @@ class GameMode(mode.Mode):
         grid[4, 3] = core.Mirror(core.Mirror.SLOPE_FORWARD)
         grid[-3, 3] = core.Mirror()
         grid[-3, 0] = core.Mirror(core.Mirror.SLOPE_FORWARD)
-        grid[4, 4] = core.Exit()
+        grid[-1, -4] = core.Exit()
+        grid[0, -1] = core.FlipFlop()
+        grid[-1, 4] = core.Trap()
         for x in range(-4, 5):
             grid[x, -5] = core.Wall()
             grid[x, 5] = core.Wall()
