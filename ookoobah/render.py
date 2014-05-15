@@ -205,11 +205,13 @@ class BallRenderer(object):
         self.shape = shapes.Ico(batch, self.group, (0, 0, 0), (.2, .2, .2), (1, 1, 0))
 
         self.old_pos = None
+        self.old_dir = None
         self.update()
 
     def update(self):
-        if self.old_pos != self.ball.pos:
+        if self.old_pos != self.ball.pos or self.old_dir != self.ball.direction:
             self.old_pos = self.ball.pos
+            self.old_dir = self.ball.direction
 
             self.frame = 0
             x, y = self.ball.pos
