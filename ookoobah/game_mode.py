@@ -112,10 +112,13 @@ class GameMode(mode.Mode):
 
     def tick(self):
         self.time += 1
-        if self.time > self.SLOW_START and not self.game_session.game.ball:
+
+        game_status = self.game_session.game.get_status()
+
+        if self.time > self.SLOW_START and game_status == core.Game.STATUS_NEW:
             self.game_session.start()
 
-        if self.time > self.next_step and self.game_session.game.ball:
+        if self.time > self.next_step and game_status == core.Game.STATUS_ON:
             self.game_session.game.step()
             self.next_step = self.time + self.STEP_SIZE # / (self.game_session.game.speed + 1)
 
