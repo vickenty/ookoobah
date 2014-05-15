@@ -10,5 +10,5 @@ import os
 
 from pyglet import resource
 
-resource.path = [ 'data' ]
+resource.path = [ os.path.join('..', 'data') ]
 resource.reindex()
