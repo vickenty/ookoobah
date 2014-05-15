@@ -8,6 +8,7 @@ from pyglet.window import key
 from euclid import Vector3
 import mode
 import core
+import session
 import render
 import gui
 from glutil import *
@@ -57,8 +58,8 @@ class GameMode(mode.Mode):
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
-        self.game = self._create_test_game()
-        self.renderer = render.GameRenderer(self.game)
+        self.game_session = self._create_test_session()
+        self.renderer = render.GameRenderer(self.game_session.game)
         self.tool = TriggerTool()
 
         self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
@@ -110,12 +111,12 @@ class GameMode(mode.Mode):
 
     def tick(self):
         self.time += 1
-        if self.time > self.SLOW_START and not self.game.ball:
-            self.game.start()
+        if self.time > self.SLOW_START and not self.game_session.game.ball:
+            self.game_session.game.start()
 
-        if self.time > self.next_step and self.game.ball:
-            self.game.step()
-            self.next_step = self.time + self.STEP_SIZE # / (self.game.speed + 1)
+        if self.time > self.next_step and self.game_session.game.ball:
+            self.game_session.game.step()
+            self.next_step = self.time + self.STEP_SIZE # / (self.game_session.game.speed + 1)
 
         self.camera.tick()
         self.renderer.tick()
@@ -157,7 +158,7 @@ class GameMode(mode.Mode):
         self.mouse_pos = (x, y)
         self.update_mouse()
         if self.tool:
-            self.tool.apply(self.mouse_pos_grid.xy, self.game.grid)
+            self.tool.apply(self.mouse_pos_grid.xy, self.game_session.game.grid)
 
     def on_back_pressed(self, manager, args):
         # Go back to the main menu (=menu mode),
@@ -167,15 +168,15 @@ class GameMode(mode.Mode):
     def save_level(self, *args, **kwargs):
         level_filename = self.get_level_filename()
         with open(level_filename, 'w+') as level_file:
-            pickle.dump(self.game.grid, level_file)
+            pickle.dump(self.game_session.game.grid, level_file)
         self.gui.show_popup('Saved')
 
     def load_level(self, *args, **kwargs):
         level_filename = self.get_level_filename()
         with open(level_filename, 'r') as level_file:
             grid = pickle.load(level_file)
-        self.game = core.Game(grid)
-        self.renderer.reset(self.game)
+        self.game_session = session.Session(grid)
+        self.renderer.reset(self.game_session.game)
         self.gui.show_popup('Loaded')
 
     def get_level_filename(self):
@@ -189,7 +190,7 @@ class GameMode(mode.Mode):
         data_dir = pyglet.resource.path[0]
         return os.path.join(game_dir, data_dir)
 
-    def _create_test_game(self):
+    def _create_test_session(self):
         grid = core.Grid()
         grid[2, 0] = core.Launcher()
         grid[4, 0] = core.Mirror()
@@ -211,5 +212,5 @@ class GameMode(mode.Mode):
         for y in range(-4, 5):
             grid[-5, y] = core.Wall()
             grid[5, y] = core.Wall()
-        game = core.Game(grid)
-        return game
+        game_session = session.Session(grid)
+        return game_session
