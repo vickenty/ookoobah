@@ -5,6 +5,7 @@ import math
 
 import core
 import shapes
+from spring import Spring
 from euclid import Vector3
 
 class GameRenderer(object):
@@ -76,13 +77,37 @@ class Wall (BlockRenderer):
     size = (.9, .9, .9)
     color = (.3, .3, .3)
 
+class MirrorGroup (pyglet.graphics.Group):
+    def __init__(self, x, y, angle, parent=None):
+        super(MirrorGroup, self).__init__(parent)
+        self.x = x
+        self.y = y
+        self.angle = angle
+
+    def set_state(self):
+        glPushMatrix()
+        glTranslatef(self.x, self.y, 0)
+        glRotatef(self.angle, 0, 0, 1)
+
+    def unset_state(self):
+        glPopMatrix()
+
 class Mirror (BlockRenderer):
     size = (.8, .1, .9)
     color = (.1, .9, .9)
 
-    @property
-    def rotate(self):
-        return (0, math.pi * self.block.slope / 4, 0)
+    def __init__(self, batch, group, x, y, block):
+        group = MirrorGroup(x, y, block.slope, parent=group)
+        super(Mirror, self).__init__(batch, group, 0, 0, block)
+
+        self.group = group
+        self.slope = Spring(block.slope, 0.2, 0.1)
+
+    def update(self):
+        self.slope.next_value = self.block.slope
+        self.slope.tick()
+        self.group.angle = 45 * self.slope.value
+
 
 class Trap (BlockRenderer):
     size = (.4, .4, .4)
