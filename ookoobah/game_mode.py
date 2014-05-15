@@ -106,6 +106,7 @@ class GameMode(mode.Mode):
         self.gui.replace([
             gui.Button('File', file_menu),
             gui.Button('Build', build_menu),
+            gui.Button('Reset', self.on_game_reset),
             gui.Button('Back', self.on_back_pressed),
         ])
 
@@ -160,6 +161,12 @@ class GameMode(mode.Mode):
         if self.tool:
             self.tool.apply(self.mouse_pos_grid.xy, self.game_session.game.grid)
 
+    def on_game_reset(self, manager, args):
+        # TODO There is a similar piece under load_level(), unify maybe?
+        self.game_session.reset()
+        self.renderer.reset(self.game_session.game)
+        self.gui.show_popup('Reset')
+
     def on_back_pressed(self, manager, args):
         # Go back to the main menu (=menu mode),
         # all game state is lost
@@ -175,6 +182,7 @@ class GameMode(mode.Mode):
         level_filename = self.get_level_filename()
         with open(level_filename, 'r') as level_file:
             grid = pickle.load(level_file)
+        # TODO There is a similar piece under on_game_reset(), unify maybe?
         self.game_session = session.Session(grid)
         self.renderer.reset(self.game_session.game)
         self.gui.show_popup('Loaded')
