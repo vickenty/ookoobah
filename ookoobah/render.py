@@ -193,7 +193,7 @@ class BallRenderer(object):
         self.ball = ball
 
         self.group = BallGroup(self)
-        self.shape = shapes.Ico(batch, self.group, (0, 0, 0), (.3, .3, .3), (1, 1, 0))
+        self.shape = shapes.Ico(batch, self.group, (0, 0, 0), (.2, .2, .2), (1, 1, 0))
 
         self.old_pos = None
         self.update()
