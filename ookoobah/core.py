@@ -13,9 +13,6 @@ class Ball(object):
         self.pos = pos
         self.status = status
 
-    def __str__(self):
-        return "<Ball: pos=%s, direction=%s>" % (self.pos, self.direction)
-
     def move(self):
         self.pos = (
             self.pos[0] + self.direction[0],
@@ -121,9 +118,6 @@ class Game(object):
         self.grid = grid
         self.ball = None
         self.exit = None
-
-    def __str__(self):
-        return "<Game: step_n=%s, grid=%s, ball=%s>" % (self.step_n, self.grid, self.ball)
 
     def start(self):
         for pos, block in self.grid.items():
