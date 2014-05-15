@@ -113,13 +113,13 @@ class GameMode(mode.Mode):
     def tick(self):
         self.time += 1
 
-        game_status = self.game_session.game.get_status()
+        game_status = self.game_session.get_status()
 
         if self.time > self.SLOW_START and game_status == core.Game.STATUS_NEW:
             self.game_session.start()
 
         if self.time > self.next_step and game_status == core.Game.STATUS_ON:
-            self.game_session.game.step()
+            self.game_session.step()
             self.next_step = self.time + self.STEP_SIZE # / (self.game_session.game.speed + 1)
 
         self.camera.tick()
