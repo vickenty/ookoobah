@@ -96,9 +96,7 @@ class GameMode(mode.Mode):
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0)
 
     def init_gui(self):
-        # FIXME: Burn this with fire.
-        blocks = (cls for cls in core.__dict__.values() if type(cls) == type and issubclass(cls, core.Block) and cls != core.Block)
-        build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in blocks])
+        build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
         build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
         file_menu = gui.Submenu([('Save', self.save_level, ()), ('Load', self.load_level, ())])
 
