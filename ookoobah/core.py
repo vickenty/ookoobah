@@ -59,6 +59,12 @@ class Block(object):
             setattr(self, k, v)
 
 class Launcher(Block):
+    all_states = (
+        (("direction", Ball.DIR_RIGHT),),
+        (("direction", Ball.DIR_DOWN),),
+        (("direction", Ball.DIR_LEFT),),
+        (("direction", Ball.DIR_UP),),
+    )
 
     def act(self, ball):
         pass
@@ -75,6 +81,10 @@ class Mirror(Block):
     SLOPE_BACKWARD = 1
     SLOPE_FORWARD = -1
 
+    all_states = (
+        (("slope", SLOPE_BACKWARD),),
+        (("slope", SLOPE_FORWARD),),
+    )
 
     def act(self, ball):
         ball.direction = (
@@ -88,6 +98,10 @@ class Exit(Block):
             ball.status = Ball.STATUS_LEFT
 
 class FlipFlop(Block):
+    all_states = (
+        (("is_on", True),),
+        (("is_on", False),),
+    )
 
     def act(self, ball):
         self.is_on = not self.is_on
