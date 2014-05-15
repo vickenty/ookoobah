@@ -82,6 +82,14 @@ class Disc (Shape):
         ((0, 0, 0), p1, p2) for p1, p2 in pairwise((math.cos(phi), math.sin(phi), 0) for phi in (math.pi / 8 * i for i in range(0, 16)))
     ]
 
+class Cross (Shape):
+    shape = [
+        ((-.1, -1, 0), (.1, 1, 0), (-.1, 1, 0)),
+        ((-.1, -1, 0), (.1, -1, 0), (.1, 1, 0)),
+        ((-1, -.1, 0), (1, -.1, 0), (1, .1, 0)),
+        ((-1, -.1, 0), (1, .1, 0), (-1, .1, 0))
+    ]
+
 class Ico (Shape):
     r1 = 0.8506508082
     r2 = 0.5257311120

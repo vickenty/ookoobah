@@ -82,6 +82,12 @@ class Mirror (BlockRenderer):
     def rotate(self):
         return (0, math.pi * self.block.slope / 4, 0)
 
+class Trap (BlockRenderer):
+    size = (.4, .4, .4)
+    color = (0.743, 0.29, 0.251)
+    rotate = (0, math.pi/4, 0)
+    shape_class = shapes.Cross
+
 class FlipFlop (BlockRenderer):
     size = (.3, .3, .3)
     shape_class = shapes.Disc
@@ -263,6 +269,7 @@ CORE_MAPPING = {
     core.Wall: Wall,
     core.Mirror: Mirror,
     core.FlipFlop: FlipFlop,
+    core.Trap: Trap,
 }
 
 # TODO: move to a better place
