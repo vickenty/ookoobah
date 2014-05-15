@@ -18,8 +18,6 @@ class GameRenderer(object):
         self.game = game
         self.batch = pyglet.graphics.Batch()
 
-        #glClearColor(*self.BACKGROUND_COLOR)
-
         # TODO: render the score and other labels
 
         # Init the renderers for all game objects
@@ -37,6 +35,8 @@ class GameRenderer(object):
 
     def draw(self, show_locks):
         # We can draw the batch only after all renderers updated it
+        if self.ball_renderer:
+            self.ball_renderer.update()
         self.grid_renderer.update()
         self.update_ball()
         self.batch.draw()
@@ -171,22 +171,48 @@ class LockRenderer (object):
             glPopMatrix()
 
 class BallGroup (pyglet.graphics.Group):
-    def __init__(self, ball, parent=None):
+    def __init__(self, renderer, parent=None):
         super(BallGroup, self).__init__(parent)
-        self.ball = ball
+        self.renderer = renderer
 
     def set_state(self):
         glPushMatrix()
-        x, y = self.ball.pos
-        glTranslatef(x, y, 0)
+        glTranslatef(*self.renderer.pos)
+
+        s = max(0, self.renderer.size)
+
+        glScalef(s, s, s)
 
     def unset_state(self):
         glPopMatrix()
 
 class BallRenderer(object):
+    SPEED = 0.02
+
     def __init__(self, ball, batch):
-        self.group = BallGroup(ball)
+        self.ball = ball
+
+        self.group = BallGroup(self)
         self.shape = shapes.Ico(batch, self.group, (0, 0, 0), (.3, .3, .3), (1, 1, 0))
+
+        self.old_pos = None
+        self.update()
+
+    def update(self):
+        if self.old_pos != self.ball.pos:
+            self.old_pos = self.ball.pos
+
+            self.frame = 0
+            x, y = self.ball.pos
+            self.pos = Vector3(x, y, 0)
+
+            dx, dy = self.ball.direction
+            self.vel = Vector3(dx, dy, 0) * self.SPEED
+        else:
+            self.frame += 1
+            self.pos += self.vel
+
+        self.size = 1 - self.frame / 20 + (self.frame % 5) / 50
 
     def delete(self):
         self.shape.delete()
