@@ -1,3 +1,4 @@
+from __future__ import division
 from contextlib import contextmanager
 from pyglet.gl import *
 
@@ -5,6 +6,8 @@ __all__ = [
     'ptr',
     'gl_disable',
     'gl_ortho',
+    'hex_color_i',
+    'hex_color_f',
 ]
 
 def ptr(*args):
@@ -34,3 +37,10 @@ def gl_ortho(window):
     glMatrixMode(GL_PROJECTION)
     glPopMatrix()
     glMatrixMode(GL_MODELVIEW)
+
+def hex_color_i(value):
+    return tuple(int(value[i:i+2], 16) for i in range(0, len(value), 2))
+
+def hex_color_f(value):
+    return tuple(v / 255 for v in hex_color_i(value))
+
