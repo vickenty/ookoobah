@@ -25,8 +25,7 @@ class DrawTool (BaseTool):
     def apply(self, pos, grid):
         old = grid.get(pos)
         if old.__class__ == self.block_class:
-            if hasattr(old, 'trigger'):
-                old.trigger()
+            old.cycle_states()
         else:
             grid[pos] = self.block_class()
 
@@ -46,8 +45,7 @@ class LockTool (BaseTool):
 
 class TriggerTool (BaseTool):
     def apply(self, pos, grid):
-        if hasattr(grid.get(pos), 'trigger'):
-            grid[pos].trigger()
+        grid[pos].cycle_states()
 
 class GameMode(mode.Mode):
     name = "game_mode"
