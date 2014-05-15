@@ -109,6 +109,7 @@ class GameMode(mode.Mode):
             self.next_step = self.time + self.STEP_SIZE # / (self.game.speed + 1)
 
         self.camera.tick()
+        self.renderer.tick()
 
     def on_resize(self, w, h):
         self.camera.resize(0, 0, w, h)

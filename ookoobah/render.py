@@ -33,12 +33,14 @@ class GameRenderer(object):
             self.ball_renderer.delete()
             self.ball_renderer = None
 
-    def draw(self, show_locks):
-        # We can draw the batch only after all renderers updated it
+    def tick(self):
         if self.ball_renderer:
             self.ball_renderer.update()
         self.grid_renderer.update()
         self.update_ball()
+
+    def draw(self, show_locks):
+        # We can draw the batch only after all renderers updated it
         self.batch.draw()
         if show_locks:
             self.lock_renderer.draw(self.game.grid)
