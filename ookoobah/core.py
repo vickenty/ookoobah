@@ -1,3 +1,27 @@
+class Ball(object):
+    DIR_RIGHT = (1, 0)
+    DIR_DOWN = (0, 1)
+    DIR_LEFT = (-1, 0)
+    DIR_UP = (0, -1)
+
+    STATUS_ALIVE = 0
+    STATUS_DEAD = 1
+    STATUS_LEFT = 2
+
+    def __init__(self, direction=DIR_RIGHT, pos=(0, 0), status=STATUS_ALIVE):
+        self.direction = direction
+        self.pos = pos
+        self.status = status
+
+    def __str__(self):
+        return "<Ball: pos=%s, direction=%s>" % (self.pos, self.direction)
+
+    def move(self):
+        self.pos = (
+            self.pos[0] + self.direction[0],
+            self.pos[1] + self.direction[1],
+        )
+
 class Grid(dict):
     def __init__(self, *args, **kwargs):
         super(Grid, self).__init__(*args, **kwargs)
@@ -24,10 +48,8 @@ class Block(object):
         raise NotImplementedError()
 
 class Launcher(Block):
-    def __init__(self, direction=None):
+    def __init__(self, direction=Ball.DIR_RIGHT):
         super(Launcher, self).__init__()
-        if direction is None:
-            direction = Ball.DIR_RIGHT
         self.direction = direction
 
     def act(self, ball):
@@ -81,30 +103,6 @@ class Trap(Block):
 
     def act(self, ball):
         ball.status = Ball.STATUS_DEAD
-
-class Ball(object):
-    DIR_RIGHT = (1, 0)
-    DIR_DOWN = (0, 1)
-    DIR_LEFT = (-1, 0)
-    DIR_UP = (0, -1)
-
-    STATUS_ALIVE = 0
-    STATUS_DEAD = 1
-    STATUS_LEFT = 2
-
-    def __init__(self, direction=DIR_RIGHT, pos=(0, 0), status=STATUS_ALIVE):
-        self.direction = direction
-        self.pos = pos
-        self.status = status
-
-    def __str__(self):
-        return "<Ball: pos=%s, direction=%s>" % (self.pos, self.direction)
-
-    def move(self):
-        self.pos = (
-            self.pos[0] + self.direction[0],
-            self.pos[1] + self.direction[1],
-        )
 
 class Game(object):
     STATUS_NEW = "new"
