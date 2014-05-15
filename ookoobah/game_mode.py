@@ -71,6 +71,12 @@ class GameMode(mode.Mode):
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], 16))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
+    def disconnect(self):
+        if self.renderer:
+            self.renderer.delete()
+        glDisable(GL_LIGHTING)
+        glDisable(GL_DEPTH_TEST)
+
     def init_gl(self):
         glLoadIdentity()
 
@@ -99,6 +105,7 @@ class GameMode(mode.Mode):
         self.gui.replace([
             gui.Button('File', file_menu),
             gui.Button('Build', build_menu),
+            gui.Button('Back', self.on_back_pressed)
         ])
 
     def tick(self):
@@ -151,6 +158,11 @@ class GameMode(mode.Mode):
         self.update_mouse()
         if self.tool:
             self.tool.apply(self.mouse_pos_grid.xy, self.game.grid)
+
+    def on_back_pressed(self, manager, args):
+        # Go back to the main menu (=menu mode),
+        # all game state is lost
+        self.control.switch_handler("menu_mode")
 
     def save_level(self, *args, **kwargs):
         level_filename = self.get_level_filename()

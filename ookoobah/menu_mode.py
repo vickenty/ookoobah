@@ -12,10 +12,13 @@ class MenuMode(mode.Mode):
 
     def connect(self, controller):
         super(MenuMode, self).connect(controller)
+        self.init_opengl()
         self.init_menu()
 
+    def disconnect(self):
+        pass
+
     def init_menu(self):
-        #build_menu = gui.Submenu([ ('Play', gui.SELECT) ])
         buttons = [
             gui.Button('Play', self.on_play_pressed),
             gui.Button('Edit', self.on_edit_pressed),
@@ -36,3 +39,9 @@ class MenuMode(mode.Mode):
         self.window.clear()
         self.gui.draw()
 
+    def init_opengl(self):
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluOrtho2D(0, self.window.width, 0, self.window.height, -1, 1)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()

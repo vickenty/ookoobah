@@ -47,12 +47,17 @@ class GameRenderer(object):
         if show_locks:
             self.lock_renderer.draw(self.game.grid)
 
-    def reset(self, game):
-        self.game = game
-        self.ball_renderer.delete()
-        self.ball_renderer = None
+    def delete(self):
+        if self.ball_renderer:
+            self.ball_renderer.delete()
+            self.ball_renderer = None
+        if self.grid_renderer:
+            self.grid_renderer.delete()
+            self.grid_renderer = None
 
-        self.grid_renderer.delete()
+    def reset(self, game):
+        self.delete()
+        self.game = game
         self.grid_renderer = GridRenderer(game.grid, self.batch)
 
 class BlockRenderer (object):
