@@ -41,7 +41,7 @@ class Grid(dict):
         return dirty
 
 class Block(object):
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         self.locked = True
 
     def act(self, ball):
