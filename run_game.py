@@ -5,9 +5,11 @@ Configures module path and libraries and then calls lib.main.main.
 
 """
 
+import sys
+sys.path.insert(0, 'pyglet-c9188efc2e30')
+
 import getopt
 import os
-import sys
 import ookoobah.main
 
 def run():
