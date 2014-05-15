@@ -62,6 +62,7 @@ class GameMode(mode.Mode):
         self.tool = TriggerTool()
 
         self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
+        self.camera.resize(0, 0, self.window.width, self.window.height)
         self.init_gl()
         self.init_gui()
 

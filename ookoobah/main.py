@@ -13,9 +13,10 @@ from pyglet import window
 from pyglet.gl import *
 
 import data
-import mode
 import gui
+import mode
 import game_mode
+import menu_mode
 
 class Controller(object):
     """Top level controller object.
@@ -138,7 +139,7 @@ class Controller(object):
         """
         self.setup_pyglet()
         self.setup_gl()
-        self.switch_handler("game_mode")
+        self.switch_handler("menu_mode")
         self.window.set_visible()
         app.run()
 
