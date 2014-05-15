@@ -96,8 +96,8 @@ class Exit(Block):
 
 class FlipFlop(Block):
     all_states = (
-        (("is_on", True),),
         (("is_on", False),),
+        (("is_on", True),),
     )
 
     def act(self, ball):
