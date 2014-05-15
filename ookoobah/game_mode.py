@@ -54,6 +54,7 @@ class GameMode(mode.Mode):
 
     STEP_SIZE = 15
     SLOW_START = 120
+    FPS_FONT_SIZE = 10
     DEFAULT_LEVEL_NAME = "test"
 
     def connect(self, controller):
@@ -64,21 +65,20 @@ class GameMode(mode.Mode):
 
         self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
         self.camera.resize(0, 0, self.window.width, self.window.height)
-        self.init_gl()
+        self.init_opengl()
         self.init_gui()
 
         self.time = 0
         self.next_step = self.STEP_SIZE
-        self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], 16))
+        self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
     def disconnect(self):
         if self.renderer:
             self.renderer.delete()
-        glDisable(GL_LIGHTING)
-        glDisable(GL_DEPTH_TEST)
+        self.shutdown_opengl()
 
-    def init_gl(self):
+    def init_opengl(self):
         glLoadIdentity()
 
         glEnable(GL_COLOR_MATERIAL)
@@ -94,6 +94,10 @@ class GameMode(mode.Mode):
         glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, ptr(.5, .5, .5, 1))
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ptr(0, 0, 0, 0))
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0)
+
+    def shutdown_opengl(self):
+        glDisable(GL_LIGHTING)
+        glDisable(GL_DEPTH_TEST)
 
     def init_gui(self):
         build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
