@@ -45,6 +45,9 @@ class GameRenderer(object):
 
     def reset(self, game):
         self.game = game
+        self.ball_renderer.delete()
+        self.ball_renderer = None
+
         self.grid_renderer.delete()
         self.grid_renderer = GridRenderer(game.grid, self.batch)
 
