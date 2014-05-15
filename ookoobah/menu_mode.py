@@ -22,7 +22,7 @@ class MenuMode(mode.Mode):
         buttons = [
             gui.Button('Play', self.on_play_pressed),
             gui.Button('Edit', self.on_edit_pressed),
-            gui.Button('Exit', self.on_exit_pressed)
+            gui.Button('Exit', self.on_exit_pressed),
         ]
         self.gui.replace(buttons)
 

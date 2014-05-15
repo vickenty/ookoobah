@@ -106,7 +106,7 @@ class GameMode(mode.Mode):
         self.gui.replace([
             gui.Button('File', file_menu),
             gui.Button('Build', build_menu),
-            gui.Button('Back', self.on_back_pressed)
+            gui.Button('Back', self.on_back_pressed),
         ])
 
     def tick(self):
