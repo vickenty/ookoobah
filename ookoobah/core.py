@@ -41,11 +41,22 @@ class Grid(dict):
         return dirty
 
 class Block(object):
+    all_states = ((),)
+    all_states_idx = -1
+
     def __init__(self):
         self.locked = True
+        self.cycle_states()
 
     def act(self, ball):
         raise NotImplementedError()
+
+    def cycle_states(self):
+        self.all_states_idx += 1
+        if self.all_states_idx == len(self.all_states):
+            self.all_states_idx = 0
+        for k, v in self.all_states[self.all_states_idx]:
+            setattr(self, k, v)
 
 class Launcher(Block):
     def __init__(self, direction=Ball.DIR_RIGHT):
