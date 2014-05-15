@@ -24,7 +24,10 @@ def make_grid_from_string(string):
         for x, char in enumerate(c for c in line if not c.isspace()):
             block, param = CHAR_TO_BLOCK[char]
             if block:
-                grid[x, y] = block(**dict(param))
+                b = block()
+                for k, v in param:
+                    setattr(b, k, v)
+                grid[x, y] = b
     return grid
 
 BALL_POS_TO_CHAR = {

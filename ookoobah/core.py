@@ -59,17 +59,11 @@ class Block(object):
             setattr(self, k, v)
 
 class Launcher(Block):
-    def __init__(self, direction=Ball.DIR_RIGHT):
-        super(Launcher, self).__init__()
-        self.direction = direction
 
     def act(self, ball):
         pass
 
 class Wall(Block):
-    def __init__(self):
-        super(Wall, self).__init__()
-
     def act(self, ball):
         ball.direction = (
             -ball.direction[0],
@@ -81,9 +75,6 @@ class Mirror(Block):
     SLOPE_BACKWARD = 1
     SLOPE_FORWARD = -1
 
-    def __init__(self, slope=SLOPE_BACKWARD):
-        super(Mirror, self).__init__()
-        self.slope = slope
 
     def act(self, ball):
         ball.direction = (
@@ -92,26 +83,16 @@ class Mirror(Block):
         )
 
 class Exit(Block):
-    def __init__(self, is_on=False):
-        super(Exit, self).__init__()
-        self.is_on = False
-
     def act(self, ball):
         if self.is_on:
             ball.status = Ball.STATUS_LEFT
 
 class FlipFlop(Block):
-    def __init__(self, is_on=False):
-        super(FlipFlop, self).__init__()
-        self.is_on = is_on
 
     def act(self, ball):
         self.is_on = not self.is_on
 
 class Trap(Block):
-    def __init__(self):
-        super(Trap, self).__init__()
-
     def act(self, ball):
         ball.status = Ball.STATUS_DEAD
 
