@@ -100,12 +100,12 @@ class GameMode(mode.Mode):
         blocks = (cls for cls in core.__dict__.values() if type(cls) == type and issubclass(cls, core.Block) and cls != core.Block)
         build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in blocks])
         build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
-        build_menu.choices.append(('Lock', gui.SELECT, LockTool()))
         file_menu = gui.Submenu([('Save', self.save_level, ()), ('Load', self.load_level, ())])
 
         self.gui.replace([
             gui.Button('File', file_menu),
             gui.Button('Build', build_menu),
+            gui.Button('Lock', gui.SELECT, LockTool()),
             gui.Button('Reset', self.on_game_reset),
             gui.Button('Back', self.on_back_pressed),
         ])
