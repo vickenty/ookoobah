@@ -180,9 +180,13 @@ class GameMode(mode.Mode):
         grid = core.Grid()
         grid[2, 0] = core.Launcher()
         grid[4, 0] = core.Mirror()
-        grid[4, 3] = core.Mirror(core.Mirror.SLOPE_FORWARD)
+        grid[4, 0].slope = core.Mirror.SLOPE_BACKWARD
+        grid[4, 3] = core.Mirror()
+        grid[4, 3].slope = core.Mirror.SLOPE_FORWARD
         grid[-3, 3] = core.Mirror()
-        grid[-3, 0] = core.Mirror(core.Mirror.SLOPE_FORWARD)
+        grid[-3, 3].slope = core.Mirror.SLOPE_BACKWARD
+        grid[-3, 0] = core.Mirror()
+        grid[-3, 0].slope = core.Mirror.SLOPE_FORWARD
         grid[-1, -4] = core.Exit()
         grid[0, -1] = core.FlipFlop()
         grid[-1, 4] = core.Trap()
