@@ -7,6 +7,7 @@ import core
 import shapes
 from spring import Spring
 from euclid import Vector3
+from glutil import *
 
 class GameRenderer(object):
     """Top level renderer.
@@ -77,9 +78,9 @@ class Wall (BlockRenderer):
     size = (.9, .9, .9)
     color = (.3, .3, .3)
 
-class MirrorGroup (pyglet.graphics.Group):
+class RotateGroup (pyglet.graphics.Group):
     def __init__(self, x, y, angle, parent=None):
-        super(MirrorGroup, self).__init__(parent)
+        super(RotateGroup, self).__init__(parent)
         self.x = x
         self.y = y
         self.angle = angle
@@ -97,7 +98,7 @@ class Mirror (BlockRenderer):
     color = (.1, .9, .9)
 
     def __init__(self, batch, group, x, y, block):
-        group = MirrorGroup(x, y, block.slope, parent=group)
+        group = RotateGroup(x, y, block.slope, parent=group)
         super(Mirror, self).__init__(batch, group, 0, 0, block)
 
         self.group = group
@@ -108,6 +109,26 @@ class Mirror (BlockRenderer):
         self.slope.tick()
         self.group.angle = 45 * self.slope.value
 
+class FlipFlopMirror (Mirror):
+    color = (.2, .5, .9)
+
+class Launcher (BlockRenderer):
+    size = (.4, .4, .8)
+    color = hex_color_f("4D77CB")
+    rotate = (math.pi / 2, 0, 0)
+    shape_class = shapes.Pyramid
+
+    def __init__(self, batch, group, x, y, block):
+        group = RotateGroup(x, y, block.all_states_idx, parent=group)
+        super(Launcher, self).__init__(batch, group, 0, 0, block)
+
+        self.group = group
+        self.state = Spring(block.all_states_idx, 0.2, 0.1)
+
+    def update(self):
+        self.state.next_value = self.block.all_states_idx
+        self.state.tick()
+        self.group.angle = 90 * self.state.value
 
 class Trap (BlockRenderer):
     size = (.4, .4, .4)
@@ -297,8 +318,10 @@ class Mouse (object):
 CORE_MAPPING = {
     core.Wall: Wall,
     core.Mirror: Mirror,
+    core.FlipFlopMirror: FlipFlopMirror,
     core.FlipFlop: FlipFlop,
     core.Trap: Trap,
+    core.Launcher: Launcher,
 }
 
 # TODO: move to a better place
