@@ -5,19 +5,13 @@ Configures module path and libraries and then calls lib.main.main.
 
 """
 
-import sys
-sys.path.insert(0, 'pyglet-c9188efc2e30')
-
-import getopt
 import os
-import ookoobah.main
-
-def run():
-    ookoobah.main.main()
+import sys
+import getopt
 
 if __name__ == "__main__":
     # Change to the game directory
     os.chdir(os.path.dirname(os.path.join(".", sys.argv[0])))
-
-    # Start the actual game
-    run()
+    sys.path.insert(0, 'pyglet-c9188efc2e30')
+    import ookoobah.main
+    ookoobah.main.main()
