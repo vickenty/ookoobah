@@ -45,7 +45,8 @@ class LockTool (BaseTool):
 
 class TriggerTool (BaseTool):
     def apply(self, pos, grid):
-        grid[pos].cycle_states()
+        if grid.get(pos):
+            grid[pos].cycle_states()
 
 class GameMode(mode.Mode):
     name = "game_mode"
