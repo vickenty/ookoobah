@@ -9,6 +9,7 @@ CHAR_TO_BLOCK = {
     "#":  (core.Wall, ()),
     "/":  (core.Mirror, (("slope", core.Mirror.SLOPE_FORWARD),)),
     "\\": (core.Mirror, (("slope", core.Mirror.SLOPE_BACKWARD),)),
+    "X":  (core.FlipFlopMirror, ()),
     "o":  (core.Exit, (("is_on", False),)),
     "O":  (core.Exit, (("is_on", True),)),
     "+":  (core.Trap, ()),
@@ -44,7 +45,7 @@ def dump_game_to_string(game):
         b_type, b_attrs = desc
         return (block is None and b_type is None) \
             or (b_type is not None \
-                and isinstance(block, b_type) \
+                and type(block) is b_type \
                 and all(hasattr(block, k) and getattr(block, k) == v for k, v in b_attrs))
 
     def block_to_char(block):

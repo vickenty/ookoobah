@@ -8,7 +8,7 @@ grid = utils.make_grid_from_string("""
     # # # # # #
     # > . . \ #
     # . # . | #
-    # . / | o #
+    # . X | o #
     # . \ . / #
     # # # # # #
 """)

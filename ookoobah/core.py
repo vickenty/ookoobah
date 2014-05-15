@@ -89,6 +89,11 @@ class Mirror(Block):
             ball.direction[0] * self.slope,
         )
 
+class FlipFlopMirror(Mirror):
+    def act(self, ball):
+        super(FlipFlopMirror, self).act(ball)
+        self.cycle_states()
+
 class Exit(Block):
     def act(self, ball):
         if self.is_on:
