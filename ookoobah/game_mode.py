@@ -74,6 +74,10 @@ class GameMode(mode.Mode):
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
+        # TODO: enable once the dirty() bug is fixed
+        # level_name = self.get_current_level_name()
+        # self.load_level(level_name)
+
     def disconnect(self):
         if self.renderer:
             self.renderer.delete()
@@ -103,7 +107,10 @@ class GameMode(mode.Mode):
     def init_gui(self):
         build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
         build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
-        file_menu = gui.Submenu([('Save', self.save_level, ()), ('Load', self.load_level, ())])
+        file_menu = gui.Submenu([
+            ('Save', self.on_save_pressed, ()),
+            ('Load', self.on_load_pressed, ())
+        ])
 
         self.gui.replace([
             gui.Button('File', file_menu),
@@ -178,14 +185,25 @@ class GameMode(mode.Mode):
         # all game state is lost
         self.control.switch_handler("menu_mode")
 
-    def save_level(self, *args, **kwargs):
-        level_filename = self.get_level_filename()
+    def on_save_pressed(self, manager, args):
+        level_name = self.get_current_level_name()
+        self.save_level(level_name)
+
+    def on_load_pressed(self, manager, args):
+        level_name = self.get_current_level_name()
+        self.load_level(level_name)
+
+    def get_current_level_name(self):
+        return sys.argv[1] if len(sys.argv) == 2 else self.DEFAULT_LEVEL_NAME
+
+    def save_level(self, level_name, *args, **kwargs):
+        level_filename = self.get_level_filename(level_name)
         with open(level_filename, 'w+') as level_file:
             pickle.dump(self.game_session.game.grid, level_file)
         self.gui.show_popup('Saved')
 
-    def load_level(self, *args, **kwargs):
-        level_filename = self.get_level_filename()
+    def load_level(self, level_name, *args, **kwargs):
+        level_filename = self.get_level_filename(level_name)
         with open(level_filename, 'r') as level_file:
             grid = pickle.load(level_file)
         # TODO There is a similar piece under on_game_reset(), unify maybe?
@@ -193,8 +211,7 @@ class GameMode(mode.Mode):
         self.renderer.reset(self.game_session.game)
         self.gui.show_popup('Loaded')
 
-    def get_level_filename(self):
-        level_name = sys.argv[1] if len(sys.argv) == 2 else self.DEFAULT_LEVEL_NAME
+    def get_level_filename(self, level_name):
         data_dir = self.get_data_dir()
         return os.path.join(data_dir, level_name + '.level')
 
