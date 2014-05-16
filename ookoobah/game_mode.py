@@ -76,8 +76,10 @@ class GameMode(mode.Mode):
 
         self.renderer = None
         self.game_session = None
+
         level_name = self.get_current_level_name()
-        self.load_level(level_name)
+        grid = self.load_grid_from_file(level_name)
+        self.set_level(grid)
 
     def disconnect(self):
         if self.renderer:
@@ -178,7 +180,7 @@ class GameMode(mode.Mode):
                 self.renderer.mark_dirty(mpos)
 
     def on_game_reset(self, manager, args):
-        # TODO There is a similar piece under load_level() and connect(), unify maybe?
+        # TODO There is a similar piece under set_level() and connect(), unify maybe?
         self.time = 0
         self.next_step = self.STEP_SIZE
         self.renderer.delete()
@@ -197,7 +199,8 @@ class GameMode(mode.Mode):
 
     def on_load_pressed(self, manager, args):
         level_name = self.get_current_level_name()
-        self.load_level(level_name)
+        grid = self.load_grid_from_file(level_name)
+        self.set_level(grid)
 
     def get_current_level_name(self):
         return sys.argv[1] if len(sys.argv) == 2 else self.DEFAULT_LEVEL_NAME
@@ -208,10 +211,13 @@ class GameMode(mode.Mode):
             pickle.dump(self.game_session.game.grid, level_file)
         self.gui.show_popup('Saved')
 
-    def load_level(self, level_name):
+    def load_grid_from_file(self, level_name):
         level_filename = self.get_level_filename(level_name)
         with open(level_filename, 'r') as level_file:
             grid = pickle.load(level_file)
+        return grid
+
+    def set_level(self, grid):
         # TODO There is a similar piece under on_game_reset() and connect(), unify maybe?
         self.time = 0
         self.next_step = self.STEP_SIZE
