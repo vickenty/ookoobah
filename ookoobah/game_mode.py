@@ -117,12 +117,13 @@ class GameMode(mode.Mode):
         build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
 
         self.gui.replace([
-            gui.Button('Build...', build_menu),
-            gui.Button('Save', self.on_save_pressed),
-            gui.Button('Lock', gui.SELECT, LockTool()),
-            gui.Button('Start/Stop', self.on_game_start_stop),
-            gui.Button('Reset', self.on_game_reset),
-            gui.Button('Back', self.on_back_pressed),
+            # TODO: split button among modes and remove [labels]
+            gui.Button('[both] Build...', build_menu),
+            gui.Button('[edit] Save', self.on_save_pressed),
+            gui.Button('[edit] Lock', gui.SELECT, LockTool()),
+            gui.Button('[edit] Start/Stop', self.on_game_start_stop),
+            gui.Button('[play] Reset', self.on_game_reset),
+            gui.Button('[both] Back', self.on_back_pressed),
         ])
 
     def tick(self):
