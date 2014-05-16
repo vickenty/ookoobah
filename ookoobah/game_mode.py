@@ -49,7 +49,7 @@ class LockTool (BaseTool):
 
 class TriggerTool (BaseTool):
     def apply(self, pos, grid):
-        if grid.get(pos):
+        if pos in grid:
             grid[pos].cycle_states()
 
 class GameMode(mode.Mode):

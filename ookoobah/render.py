@@ -210,9 +210,9 @@ class GridRenderer(dict):
             if old:
                 old.delete()
 
-            if self.grid[pos]:
+            if self.grid.get(pos):
                 self[pos] = create_block_renderer(self.grid[pos], self.batch, None, *pos)
-            elif self[pos]:
+            elif pos in self:
                 del self[pos]
 
         [r.update() for r in self.itervalues()]
