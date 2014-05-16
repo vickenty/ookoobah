@@ -27,10 +27,10 @@ class MenuMode(mode.Mode):
         self.gui.replace(buttons)
 
     def on_play_pressed(self, manager, args):
-        self.control.switch_handler("game_mode")
+        self.control.switch_handler("game_mode", False)
 
     def on_edit_pressed(self, manager, args):
-        self.control.switch_handler("game_mode")
+        self.control.switch_handler("game_mode", True)
 
     def on_exit_pressed(self, manager, args):
         sys.exit(0)

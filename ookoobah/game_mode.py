@@ -117,14 +117,21 @@ class GameMode(mode.Mode):
         build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
         build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
 
-        self.gui.replace([
-            gui.Button('Build...', build_menu),
-            gui.Button('Save', self.on_save_pressed),
-            gui.Button('Lock', gui.SELECT, LockTool()),
-            gui.Button('Start', self.on_game_start),
-            gui.Button('Reset', self.on_game_reset),
-            gui.Button('Back', self.on_back_pressed),
-        ])
+        if self.editor_mode:
+            self.gui.replace([
+                gui.Button('Build', build_menu),
+                gui.Button('Save', self.on_save_pressed),
+                gui.Button('Lock', gui.SELECT, LockTool()),
+                gui.Button('Start', self.on_game_start),
+                gui.Button('Reset', self.on_game_reset),
+                gui.Button('Back', self.on_back_pressed),
+            ])
+        else:
+            self.gui.replace([
+                gui.Button(u'Mirror \u00d7 \u221e', gui.SELECT, DrawTool(core.Mirror)),
+                gui.Button('Remove', gui.SELECT, EraseTool()),
+                gui.Button('Retry', self.on_game_reset),
+            ])
 
     def tick(self):
         self.time += 1
