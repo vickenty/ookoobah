@@ -60,6 +60,10 @@ class GameMode(mode.Mode):
     FPS_FONT_SIZE = 10
     DEFAULT_LEVEL_NAME = "test"
 
+    def __init__(self, editor_mode=True):
+        super(GameMode, self).__init__()
+        self.editor_mode = editor_mode
+
     def connect(self, controller):
         super(GameMode, self).connect(controller)
         self.tool = TriggerTool()
@@ -72,11 +76,8 @@ class GameMode(mode.Mode):
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
-        # TODO gimme some love
-        self.is_super_power_god_mode_for_editing_level_enabled = False
-
         level_name = self.get_current_level_name()
-        if self.is_super_power_god_mode_for_editing_level_enabled:
+        if self.editor_mode:
             try:
                 grid = self.load_grid_from_file(level_name)
             except IOError:
@@ -130,7 +131,7 @@ class GameMode(mode.Mode):
 
         game_status = self.game_session.get_status()
 
-        if not self.is_super_power_god_mode_for_editing_level_enabled and self.time > self.SLOW_START and game_status == core.Game.STATUS_NEW:
+        if not self.editor_mode and self.time > self.SLOW_START and game_status == core.Game.STATUS_NEW:
             self.game_session.start()
 
         if self.time > self.next_step and game_status == core.Game.STATUS_ON:
