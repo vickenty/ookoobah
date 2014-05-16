@@ -179,7 +179,10 @@ class GameMode(mode.Mode):
                 self.renderer.mark_dirty(mpos)
 
     def on_game_reset(self, manager, args):
-        # TODO There is a similar piece under load_level(), unify maybe?
+        # TODO There is a similar piece under load_level() and connect(), unify maybe?
+        self.time = 0
+        self.next_step = self.STEP_SIZE
+        self.renderer.delete()
         self.game_session.reset()
         self.renderer.reset(self.game_session.game)
         self.gui.show_popup('Reset')
@@ -210,7 +213,10 @@ class GameMode(mode.Mode):
         level_filename = self.get_level_filename(level_name)
         with open(level_filename, 'r') as level_file:
             grid = pickle.load(level_file)
-        # TODO There is a similar piece under on_game_reset(), unify maybe?
+        # TODO There is a similar piece under on_game_reset() and connect(), unify maybe?
+        self.time = 0
+        self.next_step = self.STEP_SIZE
+        self.renderer.delete()
         self.game_session = session.Session(grid)
         self.renderer.reset(self.game_session.game)
         self.gui.show_popup('Loaded')
