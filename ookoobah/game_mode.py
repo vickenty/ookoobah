@@ -72,12 +72,16 @@ class GameMode(mode.Mode):
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
+        # TODO gimme some love
         self.is_super_power_god_mode_for_editing_level_enabled = False
 
+        level_name = self.get_current_level_name()
         if self.is_super_power_god_mode_for_editing_level_enabled:
-            grid = {}
+            try:
+                grid = self.load_grid_from_file(level_name)
+            except IOError:
+                grid = {}
         else:
-            level_name = self.get_current_level_name()
             grid = self.load_grid_from_file(level_name)
         self.game_session = session.Session(grid)
         self.reinit_level()
