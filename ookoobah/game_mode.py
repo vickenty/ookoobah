@@ -29,6 +29,7 @@ class DrawTool (BaseTool):
             old.cycle_states()
         else:
             grid[pos] = self.block_class()
+            return True
 
     def update_cursor(self, mouse):
         mouse.set_cursor(self.block_class)
@@ -37,6 +38,7 @@ class EraseTool (BaseTool):
     def apply(self, pos, grid):
         if grid.get(pos):
             grid[pos] = None
+        return True
 
 class LockTool (BaseTool):
     draw_locks = True
@@ -172,7 +174,9 @@ class GameMode(mode.Mode):
         self.mouse_pos = (x, y)
         self.update_mouse()
         if self.tool:
-            self.tool.apply(self.mouse_pos_grid.xy, self.game_session.game.grid)
+            mpos = self.mouse_pos_grid.xy
+            if self.tool.apply(mpos, self.game_session.game.grid):
+                self.renderer.mark_dirty(mpos)
 
     def on_game_reset(self, manager, args):
         # TODO There is a similar piece under load_level(), unify maybe?
@@ -222,7 +226,7 @@ class GameMode(mode.Mode):
         return os.path.join(game_dir, data_dir)
 
     def _create_test_session(self):
-        grid = core.Grid()
+        grid = {}
         grid[2, 0] = core.Launcher()
         grid[4, 0] = core.Mirror()
         grid[4, 0].slope = core.Mirror.SLOPE_BACKWARD

@@ -60,6 +60,9 @@ class GameRenderer(object):
         self.game = game
         self.grid_renderer = GridRenderer(game.grid, self.batch)
 
+    def mark_dirty(self, pos):
+        self.grid_renderer.dirty.append(pos)
+
 class BlockRenderer (object):
     rotate = None
     shape_class = shapes.Box
@@ -195,10 +198,11 @@ class GridRenderer(dict):
     def __init__(self, grid, batch):
         self.grid = grid
         self.batch = batch
+        self.dirty = []
         self.update(True)
 
     def update(self, force=False):
-        items = self.grid if force else self.grid.get_dirty()
+        items = self.grid if force else self.dirty
 
         for pos in items:
             old = self.get(pos)
