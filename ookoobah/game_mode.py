@@ -208,7 +208,7 @@ class GameMode(mode.Mode):
             pickle.dump(self.game_session.game.grid, level_file)
         self.gui.show_popup('Saved')
 
-    def load_level(self, level_name, *args, **kwargs):
+    def load_level(self, level_name):
         level_filename = self.get_level_filename(level_name)
         with open(level_filename, 'r') as level_file:
             grid = pickle.load(level_file)
