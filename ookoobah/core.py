@@ -8,10 +8,10 @@ class Ball(object):
     STATUS_DEAD = 1
     STATUS_LEFT = 2
 
-    def __init__(self, direction=DIR_RIGHT, pos=(0, 0), status=STATUS_ALIVE):
+    def __init__(self, direction, pos):
         self.direction = direction
         self.pos = pos
-        self.status = status
+        self.status = Ball.STATUS_ALIVE
 
     def move(self):
         self.pos = (
