@@ -77,8 +77,14 @@ class GameMode(mode.Mode):
         self.renderer = None
         self.game_session = None
 
-        level_name = self.get_current_level_name()
-        grid = self.load_grid_from_file(level_name)
+        self.is_super_power_god_mode_for_editing_level_enabled = False
+
+        if self.is_super_power_god_mode_for_editing_level_enabled:
+            grid = {}
+        else:
+            level_name = self.get_current_level_name()
+            grid = self.load_grid_from_file(level_name)
+
         self.set_level(grid)
 
     def disconnect(self):
@@ -128,7 +134,7 @@ class GameMode(mode.Mode):
 
         game_status = self.game_session.get_status()
 
-        if self.time > self.SLOW_START and game_status == core.Game.STATUS_NEW:
+        if not self.is_super_power_god_mode_for_editing_level_enabled and self.time > self.SLOW_START and game_status == core.Game.STATUS_NEW:
             self.game_session.start()
 
         if self.time > self.next_step and game_status == core.Game.STATUS_ON:
