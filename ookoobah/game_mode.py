@@ -116,6 +116,7 @@ class GameMode(mode.Mode):
             gui.Button('Build...', build_menu),
             gui.Button('Save', self.on_save_pressed),
             gui.Button('Lock', gui.SELECT, LockTool()),
+            gui.Button('Start', self.on_game_start),
             gui.Button('Reset', self.on_game_reset),
             gui.Button('Back', self.on_back_pressed),
         ])
@@ -175,6 +176,10 @@ class GameMode(mode.Mode):
             mpos = self.mouse_pos_grid.xy
             if self.tool.apply(mpos, self.game_session.game.grid):
                 self.renderer.mark_dirty(mpos)
+
+    def on_game_start(self, manager, args):
+        self.game_session.start()
+        self.gui.show_popup('Started')
 
     def on_game_reset(self, manager, args):
         self.reinit_level()
