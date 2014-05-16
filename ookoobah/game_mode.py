@@ -85,6 +85,7 @@ class GameMode(mode.Mode):
                 grid = {}
         else:
             grid = self.load_grid_from_file(level_name)
+            self.gui.show_popup('Get ready!')
         self.game_session = session.Session(grid)
         self.reinit_level()
 
@@ -118,13 +119,14 @@ class GameMode(mode.Mode):
         build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
         build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
 
+        self.b_start_stop = gui.Button('Start', self.on_game_start_stop)
+
         if self.editor_mode:
             self.gui.replace([
                 gui.Button('Build', build_menu),
                 gui.Button('Save', self.on_save_pressed),
                 gui.Button('Lock', gui.SELECT, LockTool()),
-                gui.Button('Start', self.on_game_start),
-                gui.Button('Reset', self.on_game_reset),
+                self.b_start_stop,
                 gui.Button('Back', self.on_back_pressed),
             ])
         else:
@@ -216,9 +218,17 @@ class GameMode(mode.Mode):
         cam_pos = self.camera.eye.next_value
         cam_pos.z -= scroll_y
 
-    def on_game_start(self, manager, args):
-        self.game_session.start()
-        self.gui.show_popup('Started')
+    def on_game_start_stop(self, manager, args):
+        if self.game_session.get_status() == core.Game.STATUS_NEW:
+            try:
+                self.game_session.start()
+                self.b_start_stop.label.text = 'Stop'
+            except Exception, e:
+                self.gui.show_popup("%s" % e)
+                self.reinit_level()
+        else:
+            self.reinit_level()
+            self.b_start_stop.label.text = 'Start'
 
     def on_game_reset(self, manager, args):
         self.reinit_level()
