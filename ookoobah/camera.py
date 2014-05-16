@@ -7,7 +7,7 @@ from spring import Spring
 
 class Camera (object):
     SPEED = 0.1
-    CLIP  = 0.1
+    CLIP  = 0.01
     def __init__(self, eye, center, up):
         self.eye = Spring(eye, self.SPEED, self.CLIP)
         self.vec = Spring(center - eye, self.SPEED, self.CLIP)

@@ -137,6 +137,22 @@ class GameMode(mode.Mode):
             self.game_session.step()
             self.next_step = self.time + self.STEP_SIZE # / (self.game_session.game.speed + 1)
 
+        cam_idx = 2 if self.keys[key.LSHIFT] or self.keys[key.RSHIFT] else 1
+        cam_pos = self.camera.eye.next_value
+        if self.keys[key.UP]:
+            cam_pos[cam_idx] += 0.2
+        if self.keys[key.DOWN]:
+            cam_pos[cam_idx] -= 0.2
+        if self.keys[key.LEFT]:
+            cam_pos.x -= 0.2
+        if self.keys[key.RIGHT]:
+            cam_pos.x += 0.2
+
+        cam_pos.x = min(20, max(-20, cam_pos.x))
+        cam_pos.y = min(20, max(-20, cam_pos.y))
+        cam_pos.z = min(40, max(5, cam_pos.z))
+
+
         self.camera.tick()
         self.renderer.tick()
 
@@ -180,6 +196,10 @@ class GameMode(mode.Mode):
             mpos = self.mouse_pos_grid.xy
             if self.tool.apply(mpos, self.game_session.game.grid):
                 self.renderer.mark_dirty(mpos)
+
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        cam_pos = self.camera.eye.next_value
+        cam_pos.z -= scroll_y
 
     def on_game_start(self, manager, args):
         self.game_session.start()
