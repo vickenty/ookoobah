@@ -69,13 +69,8 @@ class GameMode(mode.Mode):
         self.init_opengl()
         self.init_gui()
 
-        self.time = 0
-        self.next_step = self.STEP_SIZE
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
-
-        self.renderer = None
-        self.game_session = None
 
         self.is_super_power_god_mode_for_editing_level_enabled = False
 
@@ -84,8 +79,8 @@ class GameMode(mode.Mode):
         else:
             level_name = self.get_current_level_name()
             grid = self.load_grid_from_file(level_name)
-
-        self.set_level(grid)
+        self.game_session = session.Session(grid)
+        self.reinit_level()
 
     def disconnect(self):
         if self.renderer:
@@ -182,12 +177,7 @@ class GameMode(mode.Mode):
                 self.renderer.mark_dirty(mpos)
 
     def on_game_reset(self, manager, args):
-        # TODO There is a similar piece under set_level() and connect(), unify maybe?
-        self.time = 0
-        self.next_step = self.STEP_SIZE
-        self.renderer.delete()
-        self.game_session.reset()
-        self.renderer.reset(self.game_session.game)
+        self.reinit_level()
         self.gui.show_popup('Reset')
 
     def on_back_pressed(self, manager, args):
@@ -214,13 +204,11 @@ class GameMode(mode.Mode):
             grid = pickle.load(level_file)
         return grid
 
-    def set_level(self, grid):
-        # TODO There is a similar piece under on_game_reset() and connect(), unify maybe?
+    def reinit_level(self):
         self.time = 0
         self.next_step = self.STEP_SIZE
-        self.game_session = session.Session(grid)
+        self.game_session.reset()
         self.renderer = render.GameRenderer(self.game_session.game)
-        self.gui.show_popup('Loaded')
 
     def get_level_filename(self, level_name):
         data_dir = self.get_data_dir()
