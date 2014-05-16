@@ -203,6 +203,7 @@ class GridRenderer(dict):
 
     def update(self, force=False):
         items = self.grid if force else self.dirty
+        self.dirty = []
 
         for pos in items:
             old = self.get(pos)
