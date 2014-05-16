@@ -62,8 +62,8 @@ class GameMode(mode.Mode):
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
-        self.game_session = self._create_test_session()
-        self.renderer = render.GameRenderer(self.game_session.game)
+        # TODO: enable once the dirty() bug is fixed
+        self.renderer = None
         self.tool = TriggerTool()
 
         self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
@@ -76,9 +76,8 @@ class GameMode(mode.Mode):
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
-        # TODO: enable once the dirty() bug is fixed
-        # level_name = self.get_current_level_name()
-        # self.load_level(level_name)
+        level_name = self.get_current_level_name()
+        self.load_level(level_name)
 
     def disconnect(self):
         if self.renderer:
@@ -218,7 +217,7 @@ class GameMode(mode.Mode):
         self.next_step = self.STEP_SIZE
         self.renderer.delete()
         self.game_session = session.Session(grid)
-        self.renderer.reset(self.game_session.game)
+        self.renderer = render.GameRenderer(self.game_session.game)
         self.gui.show_popup('Loaded')
 
     def get_level_filename(self, level_name):
