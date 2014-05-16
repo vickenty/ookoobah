@@ -70,7 +70,7 @@ class GameMode(mode.Mode):
 
         self.time = 0
         self.next_step = self.STEP_SIZE
-        self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], FPS_FONT_SIZE))
+        self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
     def disconnect(self):
