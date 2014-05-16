@@ -62,7 +62,6 @@ class GameMode(mode.Mode):
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
-        # TODO: enable once the dirty() bug is fixed
         self.tool = TriggerTool()
 
         self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
