@@ -118,7 +118,7 @@ class GameMode(mode.Mode):
         build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
 
         self.gui.replace([
-            gui.Button('Build', build_menu),
+            gui.Button('Build...', build_menu),
             gui.Button('Save', self.on_save_pressed),
             gui.Button('Lock', gui.SELECT, LockTool()),
             gui.Button('Reset', self.on_game_reset),
