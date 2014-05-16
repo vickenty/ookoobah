@@ -23,32 +23,33 @@ class DrawTool (BaseTool):
     def __init__(self, block_class):
         self.block_class = block_class
 
-    def apply(self, pos, grid):
+    def apply(self, pos, grid, editor):
         old = grid.get(pos)
         if old.__class__ == self.block_class:
             old.cycle_states()
         else:
             grid[pos] = self.block_class()
+            grid[pos].locked = editor
             return True
 
     def update_cursor(self, mouse):
         mouse.set_cursor(self.block_class)
 
 class EraseTool (BaseTool):
-    def apply(self, pos, grid):
+    def apply(self, pos, grid, editor):
         if grid.get(pos):
             grid[pos] = None
         return True
 
 class LockTool (BaseTool):
     draw_locks = True
-    def apply(self, pos, grid):
+    def apply(self, pos, grid, editor):
         obj = grid.get(pos)
         if obj:
             obj.locked = not obj.locked
 
 class TriggerTool (BaseTool):
-    def apply(self, pos, grid):
+    def apply(self, pos, grid, editor):
         if pos in grid:
             grid[pos].cycle_states()
 
@@ -200,10 +201,16 @@ class GameMode(mode.Mode):
     def on_mouse_release(self, x, y, button, modifiers):
         self.mouse_pos = (x, y)
         self.update_mouse()
-        if self.tool:
-            mpos = self.mouse_pos_grid.xy
-            if self.tool.apply(mpos, self.game_session.game.grid):
-                self.renderer.mark_dirty(mpos)
+
+        mpos = self.mouse_pos_grid.xy
+        grid = self.game_session.game.grid
+        block = grid.get(mpos)
+
+        if block and block.locked and not self.editor_mode:
+            return
+
+        if self.tool.apply(mpos, self.game_session.game.grid, self.editor_mode):
+            self.renderer.mark_dirty(mpos)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         cam_pos = self.camera.eye.next_value
