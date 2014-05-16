@@ -116,14 +116,10 @@ class GameMode(mode.Mode):
     def init_gui(self):
         build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
         build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
-        file_menu = gui.Submenu([
-            ('Save', self.on_save_pressed, ()),
-            ('Load', self.on_load_pressed, ())
-        ])
 
         self.gui.replace([
-            gui.Button('File', file_menu),
             gui.Button('Build', build_menu),
+            gui.Button('Save', self.on_save_pressed),
             gui.Button('Lock', gui.SELECT, LockTool()),
             gui.Button('Reset', self.on_game_reset),
             gui.Button('Back', self.on_back_pressed),
@@ -202,11 +198,6 @@ class GameMode(mode.Mode):
     def on_save_pressed(self, manager, args):
         level_name = self.get_current_level_name()
         self.save_level(level_name)
-
-    def on_load_pressed(self, manager, args):
-        level_name = self.get_current_level_name()
-        grid = self.load_grid_from_file(level_name)
-        self.set_level(grid)
 
     def get_current_level_name(self):
         return sys.argv[1] if len(sys.argv) == 2 else self.DEFAULT_LEVEL_NAME
