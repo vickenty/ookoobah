@@ -83,6 +83,7 @@ class GameMode(mode.Mode):
                 grid = {}
         else:
             grid = self.load_grid_from_file(level_name)
+            self.gui.show_popup('Get ready!')
         self.game_session = session.Session(grid)
         self.reinit_level()
 
