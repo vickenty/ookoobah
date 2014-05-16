@@ -37,8 +37,10 @@ class DrawTool (BaseTool):
 
 class EraseTool (BaseTool):
     def apply(self, pos, grid, editor):
-        if grid.get(pos):
-            grid[pos] = None
+        try:
+            del grid[pos]
+        except KeyError:
+            pass
         return True
 
 class LockTool (BaseTool):
