@@ -202,7 +202,7 @@ class GameMode(mode.Mode):
     def get_current_level_name(self):
         return sys.argv[1] if len(sys.argv) == 2 else self.DEFAULT_LEVEL_NAME
 
-    def save_level(self, level_name, *args, **kwargs):
+    def save_level(self, level_name):
         level_filename = self.get_level_filename(level_name)
         with open(level_filename, 'w+') as level_file:
             pickle.dump(self.game_session.game.grid, level_file)
