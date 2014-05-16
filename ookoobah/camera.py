@@ -1,6 +1,7 @@
 from __future__ import division
 
 from pyglet.gl import *
+from random import uniform
 
 from euclid import Vector3
 from spring import Spring
@@ -12,6 +13,7 @@ class Camera (object):
         self.eye = Spring(eye, self.SPEED, self.CLIP)
         self.vec = Spring(center - eye, self.SPEED, self.CLIP)
         self.up = Spring(up, self.SPEED, self.CLIP)
+        self.ofs = Spring(0, 0.1, 0.01)
 
         self.modelview = (GLdouble * 16)()
         self.projection = (GLdouble * 16)()
@@ -31,13 +33,17 @@ class Camera (object):
         self.vec.next_value = center - eye
         self.up.next_value = up
 
+    def shake(self, amount):
+        self.ofs.value = amount
+
     def tick(self):
         self.eye.tick()
         self.vec.tick()
         self.up.tick()
+        self.ofs.tick()
 
     def setup(self):
-        eye = self.eye.value
+        eye = self.eye.value + Vector3(uniform(0, 1), uniform(0, 1), uniform(0, 1)) * self.ofs.value
         center = eye + self.vec.value
         up = self.up.value
         gluLookAt(eye.x, eye.y, eye.z,

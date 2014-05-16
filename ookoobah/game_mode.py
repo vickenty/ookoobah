@@ -140,6 +140,9 @@ class GameMode(mode.Mode):
         self.time += 1
 
         game_status = self.game_session.get_status()
+        if self.game_status == core.Game.STATUS_ON and game_status == core.Game.STATUS_DEFEAT:
+            self.camera.shake(1)
+        self.game_status = game_status
 
         if not self.editor_mode and self.time > self.SLOW_START and game_status == core.Game.STATUS_NEW:
             self.game_session.start()
@@ -162,7 +165,6 @@ class GameMode(mode.Mode):
         cam_pos.x = min(20, max(-20, cam_pos.x))
         cam_pos.y = min(20, max(-20, cam_pos.y))
         cam_pos.z = min(40, max(5, cam_pos.z))
-
 
         self.camera.tick()
         self.renderer.tick()
@@ -209,6 +211,7 @@ class GameMode(mode.Mode):
         block = grid.get(mpos)
 
         if block and block.locked and not self.editor_mode:
+            self.camera.shake(0.5)
             return
 
         if self.tool.apply(mpos, self.game_session.game.grid, self.editor_mode):
@@ -262,6 +265,7 @@ class GameMode(mode.Mode):
         self.time = 0
         self.next_step = self.STEP_SIZE
         self.game_session.reset()
+        self.game_status = None
         self.renderer = render.GameRenderer(self.game_session.game)
 
     def get_level_filename(self, level_name):
