@@ -202,8 +202,12 @@ class GameMode(mode.Mode):
         cam_pos.z -= scroll_y
 
     def on_game_start(self, manager, args):
-        self.game_session.start()
-        self.gui.show_popup('Started')
+        try:
+            self.game_session.start()
+            self.gui.show_popup('Started')
+        except Exception, e:
+            self.gui.show_popup("%s" % e)
+            self.reinit_level()
 
     def on_game_reset(self, manager, args):
         self.reinit_level()

@@ -107,17 +107,27 @@ class Game(object):
         self.exit = None
 
     def start(self):
+        assert self.get_status() == Game.STATUS_NEW, "game has been started already"
+
+        ball = None
+        exit = None
+
         for pos, block in self.grid.items():
             if isinstance(block, Launcher):
                 # TODO Shove balls into a list: there are may be multiple launchers, and thus balls
-                assert self.ball is None, "launcher block redefined"
-                self.ball = Ball(direction=block.direction, pos=pos)
+                if ball is not None:
+                    raise Exception("must be a single launcher")
+                ball = Ball(direction=block.direction, pos=pos)
             elif isinstance(block, Exit):
-                assert self.exit is None, "exit block redefined"
-                self.exit = block
+                if exit is not None:
+                    raise Exception("must be a single exit")
+                exit = block
 
-        assert self.ball is not None, "no launcher blocks found"
-        assert self.exit is not None, "no exit block found"
+        if ball is None:
+            raise Exception("no launcher found")
+
+        self.ball = ball
+        self.exit = exit
 
         self._update_exit()
 
