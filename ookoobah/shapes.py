@@ -27,7 +27,7 @@ class Shape (object):
         vertex_count = self.vertex_count = len(self.shape) * 3
         self.vlist = batch.add(vertex_count, GL_TRIANGLES, group,
             ('v3f', real),
-            ('c3f', color * vertex_count),
+            ('c%df' % len(color), color * vertex_count),
             ('n3f', norm))
 
     def delete(self):
@@ -131,6 +131,14 @@ class Ico (Shape):
         ( 3,  0,  1),
         ( 2,  1,  0),
     ]]
+
+class Arrows (Shape):
+    shape = [
+        ((-.3, -.5, .1), (-.3, -.3, .1), (-.5, -.3, .1)),
+        ((.3, .5, .1), (.3, .3, .1), (.5, .3, .1)),
+        ((.3, -.5, .1), (.5, -.3, .1), (.3, -.3, .1)),
+        ((-.3, .5, .1), (-.5, .3, .1), (-.3, .3, .1))
+    ]
 
 if __name__ == '__main__':
     import pyglet

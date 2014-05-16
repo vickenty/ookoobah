@@ -174,6 +174,41 @@ class FlipFlop (BlockRenderer):
 
         self.shape.set_color(tuple(self.color))
 
+class Exit (BlockRenderer):
+    size = (.3,) * 3
+    size_arrow = (.9,) * 3
+    color = (.5,) * 3
+    shape_class = shapes.Disc
+    color_on = hex_color_f("34B27D")
+    color_arr = hex_color_f("DBDB5780")
+
+    def __init__(self, batch, group, x, y, block):
+        super(Exit, self).__init__(batch, group, x, y, block)
+        self.arrows = shapes.Arrows(batch, group, (x, y, 0), self.size_arrow, self.color_arr)
+        self.alpha_arr = Spring(self.color_arr[3], .2, .01)
+        self.color_spr = Spring(Vector3(*self.color), .1, .01)
+        self.is_on = block.is_on
+
+    def delete(self):
+        super(Exit, self).delete()
+        self.arrows.delete()
+
+    def update(self):
+        if self.is_on != self.block.is_on:
+            self.is_on = self.block.is_on
+            if self.is_on:
+                self.alpha_arr.next_value = 1
+                self.color_spr.next_value = Vector3(*self.color_on)
+            else:
+                self.alpha_arr.next_value = self.color_arr[3]
+                self.color_spr.next_value = Vector3(*self.color)
+
+        self.alpha_arr.tick()
+        self.color_spr.tick()
+
+        self.shape.vlist.colors[:] = tuple(self.color_spr.value) * self.shape.vertex_count
+        self.arrows.vlist.colors[3::4] = (self.alpha_arr.value,) * self.arrows.vertex_count
+
 class ScalerGroup (pyglet.graphics.Group):
     def __init__(self, x, y, parent=None):
         super(ScalerGroup, self).__init__(parent)
@@ -332,6 +367,7 @@ CORE_MAPPING = {
     core.FlipFlop: FlipFlop,
     core.Trap: Trap,
     core.Launcher: Launcher,
+    core.Exit: Exit,
 }
 
 # TODO: move to a better place
