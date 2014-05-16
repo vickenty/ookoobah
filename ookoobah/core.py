@@ -77,6 +77,10 @@ class FlipFlopMirror(Mirror):
         self.cycle_states()
 
 class Exit(Block):
+    all_states = (
+        (("is_on", False),),
+    )
+
     def act(self, ball):
         if self.is_on:
             ball.status = Ball.STATUS_LEFT
