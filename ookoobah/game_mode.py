@@ -235,7 +235,7 @@ class GameMode(mode.Mode):
         data_dir = pyglet.resource.path[0]
         return os.path.join(game_dir, data_dir)
 
-    def _create_test_session(self):
+    def _create_test_grid(self):
         grid = {}
         grid[2, 0] = core.Launcher()
         grid[4, 0] = core.Mirror()
@@ -257,5 +257,4 @@ class GameMode(mode.Mode):
         for y in range(-4, 5):
             grid[-5, y] = core.Wall()
             grid[5, y] = core.Wall()
-        game_session = session.Session(grid)
-        return game_session
+        return grid
