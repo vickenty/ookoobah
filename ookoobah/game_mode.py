@@ -63,7 +63,6 @@ class GameMode(mode.Mode):
     def connect(self, controller):
         super(GameMode, self).connect(controller)
         # TODO: enable once the dirty() bug is fixed
-        self.renderer = None
         self.tool = TriggerTool()
 
         self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
@@ -76,6 +75,8 @@ class GameMode(mode.Mode):
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
+        self.renderer = None
+        self.game_session = None
         level_name = self.get_current_level_name()
         self.load_level(level_name)
 
@@ -215,7 +216,6 @@ class GameMode(mode.Mode):
         # TODO There is a similar piece under on_game_reset() and connect(), unify maybe?
         self.time = 0
         self.next_step = self.STEP_SIZE
-        self.renderer.delete()
         self.game_session = session.Session(grid)
         self.renderer = render.GameRenderer(self.game_session.game)
         self.gui.show_popup('Loaded')
