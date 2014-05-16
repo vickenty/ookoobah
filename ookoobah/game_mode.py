@@ -120,7 +120,7 @@ class GameMode(mode.Mode):
             gui.Button('Build...', build_menu),
             gui.Button('Save', self.on_save_pressed),
             gui.Button('Lock', gui.SELECT, LockTool()),
-            gui.Button('Start', self.on_game_start),
+            gui.Button('Start/Stop', self.on_game_start_stop),
             gui.Button('Reset', self.on_game_reset),
             gui.Button('Back', self.on_back_pressed),
         ])
@@ -201,13 +201,17 @@ class GameMode(mode.Mode):
         cam_pos = self.camera.eye.next_value
         cam_pos.z -= scroll_y
 
-    def on_game_start(self, manager, args):
-        try:
-            self.game_session.start()
-            self.gui.show_popup('Started')
-        except Exception, e:
-            self.gui.show_popup("%s" % e)
+    def on_game_start_stop(self, manager, args):
+        if self.game_session.get_status() == core.Game.STATUS_NEW:
+            try:
+                self.game_session.start()
+                self.gui.show_popup('Started')
+            except Exception, e:
+                self.gui.show_popup("%s" % e)
+                self.reinit_level()
+        else:
             self.reinit_level()
+            self.gui.show_popup('Stopped')
 
     def on_game_reset(self, manager, args):
         self.reinit_level()
