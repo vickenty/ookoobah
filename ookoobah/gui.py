@@ -72,7 +72,7 @@ class Manager (object):
         self.hide()
         self.stack.append(self.active)
         if add_back:
-            buttons += [ Button(LABEL_BACK, BACK) ]
+            buttons += [ Button(LABEL_BACK, GameMenuFont(), BACK) ]
         self.set_active(buttons)
 
     def set_active(self, buttons):
@@ -238,10 +238,10 @@ class CountButton (Button):
     THRESHOLD = 1
     SPEED = 0.4
 
-    def __init__(self, text, count, callback, args=None, color=None):
+    def __init__(self, text, font, count, callback, args=None, color=None):
         self._text = text
         self._count = count
-        super(CountButton, self).__init__(self.text_count, callback, args, color)
+        super(CountButton, self).__init__(self.text_count, font, callback, args, color)
 
     @property
     def text(self):
@@ -274,7 +274,7 @@ class Submenu (object):
         manager.push(buttons)
 
     def build(self):
-        return [Button(label, callback, args) for label, callback, args in self.choices]
+        return [Button(label, font, callback, args) for label, font, callback, args in self.choices]
 
 class Popup (object):
     SPEED = 0.2
@@ -341,7 +341,8 @@ if __name__ == '__main__':
                 manager.push([Button(label, mk_handler(sub2)) for label, sub2 in sub])
             return handler
 
-    man.replace(CountButton(t, 15, mk_handler(sub)) for t, sub in txt)
+    font = GameMenuFont()
+    man.replace(CountButton(t, font, 15, mk_handler(sub)) for t, sub in txt)
 
     glClearColor(.3, .3, .3, 1)
 
