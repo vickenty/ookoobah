@@ -191,7 +191,7 @@ class GameMode(mode.Mode):
             if self.tool.apply(mpos, self.game_session.game, self.editor_mode):
                 self.renderer.mark_dirty(mpos)
         except Exception as e:
-            self.gui.show_popup(str(e))
+            self.camera.shake(0.2)
 
         if not self.editor_mode:
             for cls, count in self.game_session.game.inventory.items():
