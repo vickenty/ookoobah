@@ -15,6 +15,14 @@ from tools import *
 from glutil import *
 from camera import Camera
 
+LEVELS = (
+    "intro",
+    "cloud-intro"
+    # TODO: these are not playable currently
+    #"01-first-blood",
+    #"02-looking-glass"
+)
+
 class GameMode(mode.Mode):
     name = "game_mode"
 
@@ -23,9 +31,10 @@ class GameMode(mode.Mode):
     FPS_FONT_SIZE = 10
     DEFAULT_LEVEL_NAME = "01-first-blood"
 
-    def __init__(self, editor_mode=True):
+    def __init__(self, editor_mode=True, level_name=None):
         super(GameMode, self).__init__()
         self.editor_mode = editor_mode
+        self.level_name = level_name
 
     def connect(self, controller):
         super(GameMode, self).connect(controller)
@@ -37,20 +46,15 @@ class GameMode(mode.Mode):
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
-        level_name = self.get_current_level_name()
-        try:
-            grid = self.load_grid_from_file(level_name)
-        except IOError:
-            if not self.editor_mode:
-                raise
-            grid = {}
+        self.renderer = None
+        self.game_session = None
+        self.game_status = None
 
-        self.game_session = session.Session(grid)
+        if not self.level_name:
+            self.level_name = self.get_default_level_name()
 
-        if not self.editor_mode:
-            self.game_session.game.build_inventory()
-
-        self.reinit_level()
+        self.init_level(self.level_name)
+        self.init_renderer()
         self.init_gui()
         self.init_camera()
 
@@ -74,8 +78,7 @@ class GameMode(mode.Mode):
         self.camera.resize(0, 0, self.window.width, self.window.height)
 
     def disconnect(self):
-        if self.renderer:
-            self.renderer.delete()
+        self.delete_renderer()
         self.shutdown_opengl()
 
     def init_opengl(self):
@@ -98,6 +101,14 @@ class GameMode(mode.Mode):
     def shutdown_opengl(self):
         glDisable(GL_LIGHTING)
         glDisable(GL_DEPTH_TEST)
+
+    def init_renderer(self):
+        self.renderer = render.GameRenderer(self.game_session.game)
+
+    def delete_renderer(self):
+        if self.renderer:
+            self.renderer.delete()
+        self.renderer = None
 
     def init_gui(self):
         font = gui.GameMenuFont()
@@ -131,15 +142,20 @@ class GameMode(mode.Mode):
     def tick(self):
         self.time += 1
 
-        game_status = self.game_session.get_status()
-        if self.game_status == core.Game.STATUS_ON and game_status == core.Game.STATUS_DEFEAT:
+        new_status = self.game_session.get_status()
+        if self.game_status == core.Game.STATUS_ON and new_status == core.Game.STATUS_DEFEAT:
             self.camera.shake(1)
-        self.game_status = game_status
+        self.game_status = new_status
 
-        if not self.editor_mode and self.time > self.SLOW_START and game_status == core.Game.STATUS_NEW:
+        if new_status == core.Game.STATUS_VICTORY:
+            level_name = self.get_next_level_name()
+            self.control.switch_handler("game_mode", False, level_name)
+            return
+
+        if not self.editor_mode and self.time > self.SLOW_START and new_status == core.Game.STATUS_NEW:
             self.game_session.start()
 
-        if self.time > self.next_step and game_status == core.Game.STATUS_ON:
+        if self.time > self.next_step and new_status == core.Game.STATUS_ON:
             self.game_session.step()
             self.next_step = self.time + self.STEP_SIZE # / (self.game_session.game.speed + 1)
 
@@ -233,13 +249,13 @@ class GameMode(mode.Mode):
                 self.b_start_stop.label.text = gui.LABEL_STOP
             except Exception, e:
                 self.gui.show_popup("%s" % e)
-                self.reinit_level()
+                self.init_level(self.level_name)
         else:
-            self.reinit_level()
+            self.init_level(self.level_name)
             self.b_start_stop.label.text = gui.LABEL_START
 
     def on_game_reset(self, manager, args):
-        self.reinit_level()
+        self.init_level(self.level_name)
         self.gui.show_popup('Reset')
 
     def on_back_pressed(self, manager, args):
@@ -248,11 +264,18 @@ class GameMode(mode.Mode):
         self.control.switch_handler("menu_mode")
 
     def on_save_pressed(self, manager, args):
-        level_name = self.get_current_level_name()
-        self.save_level(level_name)
+        self.save_level(self.level_name)
 
-    def get_current_level_name(self):
-        return sys.argv[1] if len(sys.argv) == 2 else self.DEFAULT_LEVEL_NAME
+    def get_default_level_name(self):
+        first_level = LEVELS[0]
+        if self.editor_mode:
+            return sys.argv[1] if len(sys.argv) == 2 else first_level
+        else:
+            return first_level
+
+    def get_next_level_name(self):
+        current_level_index = LEVELS.index(self.level_name)
+        return LEVELS[current_level_index+1] if current_level_index >= 0 else None
 
     def save_level(self, level_name):
         level_filename = self.get_level_filename(level_name)
@@ -266,11 +289,24 @@ class GameMode(mode.Mode):
             grid = pickle.load(level_file)
         return grid
 
-    def reinit_level(self):
+    def init_level(self, level_name):
+        try:
+            grid = self.load_grid_from_file(level_name)
+        except IOError:
+            if not self.editor_mode:
+                raise
+            grid = {}
+
+        self.game_session = session.Session(grid)
         self.time = 0
         self.next_step = self.STEP_SIZE
         self.game_session.reset()
         self.game_status = None
+        if not self.editor_mode:
+            self.game_session.game.build_inventory()
+
+        if self.renderer:
+            self.renderer.delete()
         self.renderer = render.GameRenderer(self.game_session.game)
 
     def get_level_filename(self, level_name):
