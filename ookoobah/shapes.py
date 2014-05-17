@@ -1,9 +1,11 @@
 from __future__ import division
 import math
 from euclid import Vector3, Matrix4, Point3
-from pyglet.gl import GL_TRIANGLES
+from pyglet.gl import GL_TRIANGLES, GL_POINTS
+import random
 
 class Shape (object):
+    primitive = GL_TRIANGLES
     def __init__(self, batch, group, pos, size, color, rotate=None):
         real = []
         norm = []
@@ -15,20 +17,27 @@ class Shape (object):
         matrix.scale(*size)
 
         self.size = size
+        self.vertex_count = 0
         for face in self.shape:
-            a = Vector3(*face[1]) - Vector3(*face[0])
-            b = Vector3(*face[2]) - Vector3(*face[0])
-            n = a.cross(b).normalize()
+            if self.primitive != GL_POINTS:
+                a = Vector3(*face[1]) - Vector3(*face[0])
+                b = Vector3(*face[2]) - Vector3(*face[0])
+                n = a.cross(b).normalize()
 
             for vert in face:
+                self.vertex_count += 1
                 real.extend(matrix * Point3(*vert))
-                norm.extend(n)
+                if self.primitive != GL_POINTS:
+                    norm.extend(n)
 
-        vertex_count = self.vertex_count = len(self.shape) * 3
-        self.vlist = batch.add(vertex_count, GL_TRIANGLES, group,
+        data = [
             ('v3f', real),
-            ('c%df' % len(color), color * vertex_count),
-            ('n3f', norm))
+            ('c%df' % len(color), color * self.vertex_count)
+        ]
+        if self.primitive != GL_POINTS:
+            data.append(('n3f', norm))
+
+        self.vlist = batch.add(self.vertex_count, self.primitive, group, *data)
 
     def delete(self):
         self.vlist.delete()
@@ -139,6 +148,20 @@ class Arrows (Shape):
         ((.3, -.5, .1), (.5, -.3, .1), (.3, -.3, .1)),
         ((-.3, .5, .1), (-.5, .3, .1), (-.3, .3, .1))
     ]
+
+class Cloud (Shape):
+    primitive = GL_POINTS
+
+    @property
+    def shape(self):
+        return [
+            ((
+                random.gauss(0, .25),
+                random.gauss(0, .25),
+                random.gauss(0, .25)
+            ),)
+            for _ in range(1000)
+        ]
 
 if __name__ == '__main__':
     import pyglet
