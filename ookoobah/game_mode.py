@@ -119,23 +119,23 @@ class GameMode(mode.Mode):
 
     def init_gui(self):
         build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
-        build_menu.choices.append(('Remove', gui.SELECT, EraseTool()))
+        build_menu.choices.append((gui.LABEL_REMOVE, gui.SELECT, EraseTool()))
 
-        self.b_start_stop = gui.Button('Start', self.on_game_start_stop)
+        self.b_start_stop = gui.Button(gui.LABEL_START, self.on_game_start_stop)
 
         if self.editor_mode:
             self.gui.replace([
-                gui.Button('Build', build_menu),
-                gui.Button('Save', self.on_save_pressed),
-                gui.Button('Lock', gui.SELECT, LockTool()),
+                gui.Button(u'\u270f Build\u2026', build_menu),
+                gui.Button(u'\u2798 Save', self.on_save_pressed),
+                gui.Button(u'\u2744 Lock', gui.SELECT, LockTool()),
                 self.b_start_stop,
-                gui.Button('Back', self.on_back_pressed),
+                gui.Button(u'\u276e Back', self.on_back_pressed),
             ])
         else:
             self.gui.replace([
                 gui.Button(u'Mirror \u00d7 \u221e', gui.SELECT, DrawTool(core.Mirror)),
-                gui.Button('Remove', gui.SELECT, EraseTool()),
-                gui.Button('Retry', self.on_game_reset),
+                gui.Button(gui.LABEL_REMOVE, gui.SELECT, EraseTool()),
+                gui.Button(u'\u21ba Retry', self.on_game_reset),
             ])
 
     def tick(self):
@@ -227,13 +227,13 @@ class GameMode(mode.Mode):
         if self.game_session.get_status() == core.Game.STATUS_NEW:
             try:
                 self.game_session.start()
-                self.b_start_stop.label.text = 'Stop'
+                self.b_start_stop.label.text = gui.LABEL_STOP
             except Exception, e:
                 self.gui.show_popup("%s" % e)
                 self.reinit_level()
         else:
             self.reinit_level()
-            self.b_start_stop.label.text = 'Start'
+            self.b_start_stop.label.text = gui.LABEL_START
 
     def on_game_reset(self, manager, args):
         self.reinit_level()

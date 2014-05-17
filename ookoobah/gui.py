@@ -12,6 +12,11 @@ DONE = object()
 BACK = object()
 SELECT = object()
 
+LABEL_BACK = u'\u276e Back'
+LABEL_REMOVE = u'\u2716 Remove'
+LABEL_START = u'\u25b6 Start'
+LABEL_STOP = u'\u25a0 Stop'
+
 class Manager (object):
     ANIM_STRIDE = 2
     MARGIN = 20
@@ -43,7 +48,7 @@ class Manager (object):
         self.hide()
         self.stack.append(self.active)
         if add_back:
-            buttons += [ Button('Back', BACK) ]
+            buttons += [ Button(LABEL_BACK, BACK) ]
         self.set_active(buttons)
 
     def set_active(self, buttons):
