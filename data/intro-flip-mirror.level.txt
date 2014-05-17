@@ -1,1 +1,1 @@
-TBD
+Flip mirrors change their orientation after each contact with the photon.

@@ -1,1 +1,3 @@
-TBD
+The photon cannot change direction while passing through gluon plasma clouds,
+thus you can't place mirrors in those areas.
+
