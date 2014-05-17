@@ -61,7 +61,7 @@ class GameMode(mode.Mode):
     STEP_SIZE = 15
     SLOW_START = 120
     FPS_FONT_SIZE = 10
-    DEFAULT_LEVEL_NAME = "test"
+    DEFAULT_LEVEL_NAME = "01-first-blood"
 
     def __init__(self, editor_mode=True):
         super(GameMode, self).__init__()
