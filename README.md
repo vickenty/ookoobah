@@ -5,7 +5,7 @@ Puzzle game about a photon lost inside a quantum computer or something like that
 * Entry in PyWeek May 2014, #18 <http://www.pyweek.org/>
 * URL: https://pyweek.org/e/latitude11/
 * Team: latitude11
-* Members: vickenty, mvuets, ashpachenko
+* Members (GitHub handles): vickenty, mvuets, ashpachenko
 * Source code: https://github.com/vickenty/ookoobah/
 * License: see LICENSE.txt
 
@@ -15,7 +15,7 @@ Open a terminal / console and "cd" to the game directory and run:
 
     python run_game.py
 
-The game was tested on Python 2.7 under Ubuntu 14.04, Fedura 20, and MacOSX 10.9.
+The game was tested on Python 2.7 under Ubuntu 14.04, Fedora 20, and MacOSX 10.9.
 
 ## How to Play the Game
 
