@@ -95,8 +95,14 @@ class GameMode(mode.Mode):
                 gui.Button(gui.LABEL_BACK, self.on_back_pressed),
             ])
         else:
-            self.gui.replace([
-                gui.Button(u'Mirror \u00d7 \u221e', gui.SELECT, DrawTool(core.Mirror)),
+            self.block_buttons = {
+                block_class: gui.CountButton(block_class.__name__, count, gui.SELECT, DrawTool(block_class))
+                for block_class, count in self.game_session.game.inventory.items()
+            }
+
+            block_buttons = [self.block_buttons[cls] for cls in core.ALL_BLOCKS if cls in self.block_buttons]
+
+            self.gui.replace(block_buttons + [
                 gui.Button(gui.LABEL_REMOVE, gui.SELECT, EraseTool()),
                 gui.Button(u'\u21ba Retry', self.on_game_reset),
                 gui.Button(gui.LABEL_BACK, self.on_back_pressed),
@@ -185,6 +191,9 @@ class GameMode(mode.Mode):
                 self.renderer.mark_dirty(mpos)
         except Exception as e:
             self.gui.show_popup(str(e))
+
+        for cls, count in self.game_session.game.inventory.items():
+            self.block_buttons[cls].count = count
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         cam_pos = self.camera.eye.next_value

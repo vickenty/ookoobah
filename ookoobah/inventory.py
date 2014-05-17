@@ -18,6 +18,9 @@ class Inventory (object):
     def add_block(self, block_class):
         self.inventory[block_class] += 1
 
+    def items(self):
+        return self.inventory.items()
+
 if __name__ == '__main__':
     inv = Inventory()
     inv.add_block(Inventory)
