@@ -54,7 +54,7 @@ class GameMode(mode.Mode):
         self.game_session = session.Session(grid)
         self.game_status = None
 
-        self.init_level(self.level_name)
+        self.init_level()
         self.init_renderer()
         self.init_gui()
         self.init_camera()
@@ -250,13 +250,13 @@ class GameMode(mode.Mode):
                 self.b_start_stop.label.text = gui.LABEL_STOP
             except Exception, e:
                 self.gui.show_popup("%s" % e)
-                self.init_level(self.level_name)
+                self.init_level()
         else:
-            self.init_level(self.level_name)
+            self.init_level()
             self.b_start_stop.label.text = gui.LABEL_START
 
     def on_game_reset(self, manager, args):
-        self.init_level(self.level_name)
+        self.init_level()
         self.gui.show_popup('Reset')
 
     def on_back_pressed(self, manager, args):
@@ -296,7 +296,7 @@ class GameMode(mode.Mode):
 
         return grid
 
-    def init_level(self, level_name):
+    def init_level(self):
         self.time = 0
         self.next_step = self.STEP_SIZE
         self.game_session.reset()
