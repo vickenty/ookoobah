@@ -17,17 +17,23 @@ class MenuMode(mode.Mode):
 
     @property
     def full_screen_label(self):
-        return 'Windowed' if self.window.fullscreen else 'Fullscreen'
+        return 'Exit full screen' if self.window.fullscreen else 'Fullscreen'
 
     def init_menu(self):
         font = gui.MainMenuFont()
-        self.b_fullscreen = gui.Button(self.full_screen_label, font, self.on_toggle_full_screen)
-        buttons = [
-            gui.Button('Play', font, self.on_play_pressed),
-            gui.Button('Edit levels', font, self.on_edit_pressed),
-            self.b_fullscreen,
-            gui.Button('Exit', font, self.on_exit_pressed),
-        ]
+        font2 = gui.GameMenuFont()
+        self.b_fullscreen = gui.Button(self.full_screen_label, font2, self.on_toggle_full_screen)
+
+        buttons = []
+        if len(sys.argv) > 2:
+            print sys.argv
+            buttons.append(gui.Button('Play', font, self.on_play_pressed))
+            buttons.append(gui.Button('Edit', font, self.on_edit_pressed))
+        else:
+            buttons.append(gui.Button('New game', font, self.on_play_pressed))
+            #buttons.append(gui.Button('Continue', font, self.on_play_pressed))
+        buttons.append(self.b_fullscreen)
+        buttons.append(gui.Button('Exit', font2, self.on_exit_pressed))
         self.gui.replace(buttons)
 
     def on_toggle_full_screen(self, manager, args):
