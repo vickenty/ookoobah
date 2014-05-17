@@ -14,6 +14,7 @@ import gui
 from tools import *
 from glutil import *
 from camera import Camera
+from text_float import TextFloat
 
 LEVELS = (
     "intro",
@@ -52,9 +53,15 @@ class GameMode(mode.Mode):
         if not self.level_name:
             self.level_name = self.get_default_level_name()
 
-        grid = self.load_grid_from_file(self.level_name)
+        grid, level_help = self.load_grid_from_file(self.level_name)
         self.game_session = session.Session(grid)
         self.game_status = None
+        self.level_help = None
+
+        if level_help and not self.editor_mode:
+            level_help += '\n\nClick to continue.\n'
+            font = gui.GameMenuFont()
+            self.level_help = TextFloat(level_help, 0, -200, 500, font.name, 12)
 
         self.init_level()
         self.init_renderer()
@@ -143,7 +150,8 @@ class GameMode(mode.Mode):
             ])
 
     def tick(self):
-        self.time += 1
+        if not self.level_help:
+            self.time += 1
 
         new_status = self.game_session.get_status()
         if self.game_status == core.Game.STATUS_ON and new_status == core.Game.STATUS_DEFEAT:
@@ -208,6 +216,8 @@ class GameMode(mode.Mode):
             with gl_ortho(self.window):
                 self.gui.draw()
                 self.fps_magic.draw()
+                if self.level_help:
+                    self.level_help.draw(self.window)
 
     def update_mouse(self):
         self.mouse_pos_world = self.camera.unproject(self.mouse_pos)
@@ -219,11 +229,21 @@ class GameMode(mode.Mode):
         self.mouse_pos = (x, y)
 
     def on_key_press(self, sym, mods):
+        self.hide_help()
         if sym == key.F12:
             self.skip_level = True
             return pyglet.event.EVENT_HANDLED
 
+    def hide_help(self):
+        if self.level_help:
+            self.level_help.delete()
+            self.level_help = None
+
     def on_mouse_release(self, x, y, button, modifiers):
+        if self.level_help:
+            self.hide_help()
+            return
+
         self.mouse_pos = (x, y)
         self.update_mouse()
 
@@ -301,15 +321,22 @@ class GameMode(mode.Mode):
 
     def load_grid_from_file(self, level_name):
         grid = {}
+        level_filename = self.get_level_filename(level_name)
         try:
-            level_filename = self.get_level_filename(level_name)
             with open(level_filename, 'r') as level_file:
                 grid = pickle.load(level_file)
         except IOError:
             if not self.editor_mode:
                 raise
 
-        return grid
+        level_help = None
+        try:
+            with open(level_filename + '.txt', 'r') as f:
+                level_help = '\n\n'.join(para.replace('\n', '') for para in f.read().split('\n\n'))
+        except IOError:
+            pass
+
+        return grid, level_help
 
     def init_level(self):
         self.time = 0

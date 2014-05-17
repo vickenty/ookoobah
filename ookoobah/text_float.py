@@ -1,22 +1,28 @@
 import pyglet
-from pyglet.gl import GL_QUADS
+from pyglet.gl import *
 
 class TextFloat (object):
     def __init__(self, text, x, y, width, font_name=None, font_size=None):
-        self.label = pyglet.text.Label(text, x=x, y=y, font_name=font_name, font_size=font_size, multiline=True, width=width, anchor_y = 'top')
+        self.label = pyglet.text.Label(text, x=x, y=y,
+                font_name=font_name, font_size=font_size,
+                multiline=True, width=width,
+                anchor_y = 'top')
 
         x -= 5
         y += 5
-        w = x + self.label.content_width + 10
-        h = y - self.label.content_height - 10
+        self.w = w = x + self.label.content_width + 10
+        h = y - self.label.content_height
 
         self.vlist = pyglet.graphics.vertex_list(4,
             ('v2f', (x, y, w, y, w, h, x, h)),
-            ('c4f', (.2, .2, .2, .4) * 4))
+            ('c4f', (0, 0, 0, .8) * 4))
 
-    def draw(self):
+    def draw(self, window):
+        glPushMatrix()
+        glTranslatef(window.width / 2 - self.w / 2, window.height, 0, 0)
         self.vlist.draw(GL_QUADS)
         self.label.draw()
+        glPopMatrix()
 
     def delete(self):
         self.vlist.delete()
