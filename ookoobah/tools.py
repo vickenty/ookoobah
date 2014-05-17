@@ -22,6 +22,7 @@ class DrawTool (BaseTool):
 class EraseTool (BaseTool):
     def apply(self, pos, game, editor):
         game.erase_block(pos)
+        return True
 
 class LockTool (BaseTool):
     draw_locks = True
