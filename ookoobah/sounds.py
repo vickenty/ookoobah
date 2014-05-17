@@ -11,6 +11,7 @@ all_sounds = [
     'noway.wav',
     'portal.wav',
     'start.wav',
+    'victory.wav',
     'wall.wav',
 ]
 
