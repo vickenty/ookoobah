@@ -4,7 +4,7 @@ import os
 import pyglet
 import pickle
 from pyglet.gl import *
-from pyglet.window import key
+from pyglet.window import key, mouse
 from euclid import Vector3
 import mode
 import core
@@ -30,6 +30,7 @@ class GameMode(mode.Mode):
     def connect(self, controller):
         super(GameMode, self).connect(controller)
         self.tool = TriggerTool()
+        self.alt_tool = EraseTool()
 
         self.init_opengl()
 
@@ -202,8 +203,14 @@ class GameMode(mode.Mode):
             return
 
         try:
-            if self.tool.apply(mpos, self.game_session.game, self.editor_mode):
+            if button == mouse.LEFT:
+                tool = self.tool
+            if button == mouse.RIGHT or (button == mouse.LEFT and modifiers & key.MOD_SHIFT):
+                tool = self.alt_tool
+
+            if tool.apply(mpos, self.game_session.game, self.editor_mode):
                 self.renderer.mark_dirty(mpos)
+
         except Exception as e:
             self.camera.shake(0.2)
 
