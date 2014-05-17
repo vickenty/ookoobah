@@ -45,13 +45,14 @@ class GameMode(mode.Mode):
 
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
-
         self.renderer = None
-        self.game_session = None
-        self.game_status = None
 
         if not self.level_name:
             self.level_name = self.get_default_level_name()
+
+        grid = self.load_grid_from_file(self.level_name)
+        self.game_session = session.Session(grid)
+        self.game_status = None
 
         self.init_level(self.level_name)
         self.init_renderer()
@@ -284,20 +285,18 @@ class GameMode(mode.Mode):
         self.gui.show_popup('Saved')
 
     def load_grid_from_file(self, level_name):
-        level_filename = self.get_level_filename(level_name)
-        with open(level_filename, 'r') as level_file:
-            grid = pickle.load(level_file)
-        return grid
-
-    def init_level(self, level_name):
+        grid = {}
         try:
-            grid = self.load_grid_from_file(level_name)
+            level_filename = self.get_level_filename(level_name)
+            with open(level_filename, 'r') as level_file:
+                grid = pickle.load(level_file)
         except IOError:
             if not self.editor_mode:
                 raise
-            grid = {}
 
-        self.game_session = session.Session(grid)
+        return grid
+
+    def init_level(self, level_name):
         self.time = 0
         self.next_step = self.STEP_SIZE
         self.game_session.reset()
