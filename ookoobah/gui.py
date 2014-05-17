@@ -169,7 +169,6 @@ class Manager (object):
         return pyglet.event.EVENT_HANDLED
 
     def on_key_press(self, sym, mod):
-        print sym, mod
         if key._0 <= sym <= key._9:
             ofs = sym - key._0
             ofs = (ofs - 1) % 10
