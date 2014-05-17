@@ -42,6 +42,8 @@ class GameMode(mode.Mode):
 
         self.init_opengl()
 
+        self.skip_level = False
+
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
         self.renderer = None
@@ -147,7 +149,7 @@ class GameMode(mode.Mode):
             self.camera.shake(1)
         self.game_status = new_status
 
-        if new_status == core.Game.STATUS_VICTORY:
+        if new_status == core.Game.STATUS_VICTORY or self.skip_level:
             level_name = self.get_next_level_name()
             if level_name:
                 self.control.switch_handler("game_mode", False, level_name)
@@ -212,6 +214,11 @@ class GameMode(mode.Mode):
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.mouse_pos = (x, y)
+
+    def on_key_press(self, sym, mods):
+        if sym == key.F12:
+            self.skip_level = True
+            return pyglet.event.EVENT_HANDLED
 
     def on_mouse_release(self, x, y, button, modifiers):
         self.mouse_pos = (x, y)
