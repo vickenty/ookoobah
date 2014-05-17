@@ -31,8 +31,6 @@ class GameMode(mode.Mode):
         super(GameMode, self).connect(controller)
         self.tool = TriggerTool()
 
-        self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
-        self.camera.resize(0, 0, self.window.width, self.window.height)
         self.init_opengl()
 
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
@@ -53,6 +51,22 @@ class GameMode(mode.Mode):
 
         self.reinit_level()
         self.init_gui()
+        self.init_camera()
+
+    def init_camera(self):
+        minx = miny = float("Inf")
+        maxx = maxy = float("-Inf")
+        for x, y in self.game_session.game.grid:
+            minx = min(minx, x)
+            miny = min(miny, y)
+            maxx = max(maxx, x)
+            maxy = max(maxy, y)
+
+        cx = minx + (maxx - minx) / 2
+        cy = miny + (maxy - miny) / 2
+
+        self.camera = Camera(Vector3(cx, cy, 20), Vector3(cx, cy, 0), Vector3(0, 1, 0))
+        self.camera.resize(0, 0, self.window.width, self.window.height)
 
     def disconnect(self):
         if self.renderer:
