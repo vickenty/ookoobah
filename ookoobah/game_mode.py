@@ -267,6 +267,9 @@ class GameMode(mode.Mode):
         except Exception as e:
             self.camera.shake(0.2)
 
+        self.update_inventory()
+
+    def update_inventory(self):
         if not self.editor_mode:
             for cls, count in self.game_session.game.inventory.items():
                 self.block_buttons[cls].count = count
@@ -289,7 +292,7 @@ class GameMode(mode.Mode):
 
     def on_game_reset(self, manager, args):
         self.init_level()
-        self.gui.show_popup('Reset')
+        self.update_inventory()
 
     def on_back_pressed(self, manager, args):
         # Go back to the main menu (=menu mode),
