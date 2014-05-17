@@ -14,12 +14,13 @@ class MenuMode(mode.Mode):
         super(MenuMode, self).connect(controller)
         self.init_opengl()
         self.init_menu()
+        self.toggle_full_screen(True)
 
     def disconnect(self):
         pass
 
     def init_menu(self):
-        self.b_fullscreen = gui.Button('Full screen', self.toggle_full_screen)
+        self.b_fullscreen = gui.Button('I love you!', self.on_toggle_full_screen)
         buttons = [
             gui.Button('Play', self.on_play_pressed),
             gui.Button('Edit', self.on_edit_pressed),
@@ -28,10 +29,14 @@ class MenuMode(mode.Mode):
         ]
         self.gui.replace(buttons)
 
-    def toggle_full_screen(self, manager, args):
-        fs = self.window.fullscreen
-        self.window.set_fullscreen(not fs)
-        self.b_fullscreen.label.text = 'Full screen' if fs else 'Windowed'
+    def on_toggle_full_screen(self, manager, args):
+        self.toggle_full_screen()
+
+    def toggle_full_screen(self, is_fs=None):
+        if is_fs is None:
+            is_fs = not self.window.fullscreen
+        self.window.set_fullscreen(is_fs)
+        self.b_fullscreen.label.text = 'Full screen' if not is_fs else 'Windowed'
 
     def on_play_pressed(self, manager, args):
         self.control.switch_handler("game_mode", False)
