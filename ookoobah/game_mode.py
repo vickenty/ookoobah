@@ -17,7 +17,7 @@ from camera import Camera
 
 LEVELS = (
     "intro",
-    "cloud-intro"
+    "intro"
     # TODO: these are not playable currently
     #"01-first-blood",
     #"02-looking-glass"
@@ -150,7 +150,10 @@ class GameMode(mode.Mode):
 
         if new_status == core.Game.STATUS_VICTORY:
             level_name = self.get_next_level_name()
-            self.control.switch_handler("game_mode", False, level_name)
+            if level_name:
+                self.control.switch_handler("game_mode", False, level_name)
+            else:
+                self.gui.show_popup("Congrats! You completed the game!")
             return
 
         if not self.editor_mode and self.time > self.SLOW_START and new_status == core.Game.STATUS_NEW:
@@ -268,15 +271,14 @@ class GameMode(mode.Mode):
         self.save_level(self.level_name)
 
     def get_default_level_name(self):
-        first_level = LEVELS[0]
-        if self.editor_mode:
-            return sys.argv[1] if len(sys.argv) == 2 else first_level
-        else:
-            return first_level
+        return sys.argv[1] if len(sys.argv) == 2 else LEVELS[0]
 
     def get_next_level_name(self):
         current_level_index = LEVELS.index(self.level_name)
-        return LEVELS[current_level_index+1] if current_level_index >= 0 else None
+        if current_level_index >= 0 and current_level_index < len(LEVELS):
+            return LEVELS[current_level_index+1]
+        else:
+            return None
 
     def save_level(self, level_name):
         level_filename = self.get_level_filename(level_name)
