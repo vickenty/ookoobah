@@ -55,13 +55,17 @@ class GameMode(mode.Mode):
         self.init_camera()
 
     def init_camera(self):
-        minx = miny = float("Inf")
-        maxx = maxy = float("-Inf")
-        for x, y in self.game_session.game.grid:
-            minx = min(minx, x)
-            miny = min(miny, y)
-            maxx = max(maxx, x)
-            maxy = max(maxy, y)
+        grid = self.game_session.game.grid
+        if grid:
+            minx = miny = float("Inf")
+            maxx = maxy = float("-Inf")
+            for x, y in grid:
+                minx = min(minx, x)
+                miny = min(miny, y)
+                maxx = max(maxx, x)
+                maxy = max(maxy, y)
+        else:
+            minx = miny = maxx = maxy = 0
 
         cx = minx + (maxx - minx) / 2
         cy = miny + (maxy - miny) / 2
