@@ -34,7 +34,7 @@ class MainMenuFont(Font):
 class GameMenuFont(Font):
     name = "DejaVu Sans"
     filename = 'DejaVuSans.ttf'
-    size = 12
+    size = 10
 
 class PopupFont(Font):
     name = "DejaVu Sans"
