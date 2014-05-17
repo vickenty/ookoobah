@@ -101,7 +101,7 @@ class GameMode(mode.Mode):
 
     def init_gui(self):
         font = gui.GameMenuFont()
-        build_menu = gui.Submenu([(cls.__name__, font, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
+        build_menu = gui.Submenu([(cls.human_name, font, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
         build_menu.choices.append((gui.LABEL_REMOVE, font, gui.SELECT, EraseTool()))
 
         self.b_start_stop = gui.Button(gui.LABEL_START, font, self.on_game_start_stop)
@@ -116,7 +116,7 @@ class GameMode(mode.Mode):
             ])
         else:
             self.block_buttons = {
-                block_class: gui.CountButton(block_class.__name__, font, count, gui.SELECT, DrawTool(block_class))
+                block_class: gui.CountButton(block_class.human_name, font, count, gui.SELECT, DrawTool(block_class))
                 for block_class, count in self.game_session.game.inventory.items()
             }
 

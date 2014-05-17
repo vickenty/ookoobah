@@ -41,6 +41,7 @@ class Block(object):
             setattr(self, k, v)
 
 class Launcher(Block):
+    human_name = 'Start'
     all_states = (
         (("direction", Ball.DIR_RIGHT),),
         (("direction", Ball.DIR_DOWN),),
@@ -52,6 +53,8 @@ class Launcher(Block):
         pass
 
 class Wall(Block):
+    human_name = 'Wall'
+
     def act(self, ball):
         ball.direction = (
             -ball.direction[0],
@@ -60,6 +63,7 @@ class Wall(Block):
         return True
 
 class OneWay(Block):
+    human_name = 'One way'
     all_states = (
         (("direction", Ball.DIR_RIGHT),),
         (("direction", Ball.DIR_DOWN),),
@@ -71,6 +75,8 @@ class OneWay(Block):
         ball.direction = self.direction
 
 class Mirror(Block):
+    human_name = 'Mirror'
+
     SLOPE_BACKWARD = 1
     SLOPE_FORWARD = -1
 
@@ -86,11 +92,15 @@ class Mirror(Block):
         )
 
 class FlipFlopMirror(Mirror):
+    human_name = 'Flip mirror'
+
     def act(self, ball):
         super(FlipFlopMirror, self).act(ball)
         self.cycle_states()
 
 class Exit(Block):
+    human_name = 'Finish'
+
     all_states = (
         (("is_on", False),),
     )
@@ -100,6 +110,8 @@ class Exit(Block):
             ball.status = Ball.STATUS_LEFT
 
 class FlipFlop(Block):
+    human_name = 'Bit'
+
     all_states = (
         (("is_on", False),),
         (("is_on", True),),
@@ -109,14 +121,19 @@ class FlipFlop(Block):
         self.is_on = not self.is_on
 
 class Trap(Block):
+    human_name = 'Trap'
     def act(self, ball):
         ball.status = Ball.STATUS_DEAD
 
 class Swamp(Block):
+    human_name = 'Swamp'
+
     def act(self, ball):
         pass
 
 class Portal(Block):
+    human_name = 'Portal'
+
     def act(self, ball):
         ball.pos = random.choice(self.other_portals)
 
@@ -222,14 +239,14 @@ class Game(object):
             self.exit.is_on = all(ff.is_on for ff in self.grid.values() if isinstance(ff, FlipFlop))
 
 ALL_BLOCKS = (
-    Exit,
-    FlipFlop,
-    FlipFlopMirror,
     Launcher,
+    Exit,
+    Wall,
+    FlipFlop,
     Mirror,
+    FlipFlopMirror,
     OneWay,
     Portal,
     Swamp,
     Trap,
-    Wall,
 )
