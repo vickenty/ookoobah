@@ -217,6 +217,11 @@ class Swamp (BlockRenderer):
     color = hex_color_f("34B27D20")
     shape_class = shapes.Cloud
 
+class Portal (BlockRenderer):
+    size = (.2, .2, .2)
+    color = hex_color_f("9876ab")
+    shape_class = shapes.Cross
+
 class ScalerGroup (pyglet.graphics.Group):
     def __init__(self, x, y, parent=None):
         super(ScalerGroup, self).__init__(parent)
@@ -378,6 +383,7 @@ CORE_MAPPING = {
     core.Exit: Exit,
     core.OneWay: OneWay,
     core.Swamp: Swamp,
+    core.Portal: Portal,
 }
 
 # TODO: move to a better place

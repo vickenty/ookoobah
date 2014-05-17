@@ -1,3 +1,5 @@
+import random
+
 class Ball(object):
     DIR_RIGHT = (1, 0)
     DIR_DOWN = (0, 1)
@@ -113,6 +115,10 @@ class Swamp(Block):
     def act(self, ball):
         pass
 
+class Portal(Block):
+    def act(self, ball):
+        ball.pos = random.choice(self.other_portals)
+
 class Game(object):
     STATUS_NEW = "new"
     STATUS_ON = "on"
@@ -130,6 +136,7 @@ class Game(object):
 
         ball = None
         exit = None
+        portals = set()
 
         for pos, block in self.grid.items():
             if isinstance(block, Launcher):
@@ -141,12 +148,18 @@ class Game(object):
                 if exit is not None:
                     raise Exception("must be a single exit")
                 exit = block
+            elif isinstance(block, Portal):
+                portals.add(pos)
 
         if ball is None:
             raise Exception("no launcher found")
+        if len(portals) == 1:
+            raise Exception("single portal is non-sense")
 
         self.ball = ball
         self.exit = exit
+        for pos in portals:
+            self.grid[pos].other_portals = tuple(portals - set((pos,)))
 
         self._update_exit()
 
@@ -193,6 +206,7 @@ ALL_BLOCKS = (
     Launcher,
     Mirror,
     OneWay,
+    Portal,
     Swamp,
     Trap,
     Wall,
