@@ -18,13 +18,17 @@ LABEL_REMOVE = u'\u2716 Remove'
 LABEL_START = u'\u25b6 Start'
 LABEL_STOP = u'\u25a0 Stop'
 
+LOADED_FONTS = {}
+
 class Font(object):
     name = None
     filename = None
     size = None
 
     def __init__(self):
-        pyglet.resource.add_font(self.filename)
+        if not self.name in LOADED_FONTS:
+            pyglet.resource.add_font(self.filename)
+            LOADED_FONTS[self.name] = 1
 
 class MainMenuFont(Font):
     name = "DejaVu Sans ExtraLight"
