@@ -335,7 +335,7 @@ class GameMode(mode.Mode):
         level_help = None
         try:
             with open(level_filename + '.txt', 'r') as f:
-                level_help = '\n\n'.join(para.replace('\n', '') for para in f.read().split('\n\n'))
+                level_help = '\n\n'.join(para.replace('\n', ' ') for para in f.read().split('\n\n'))
         except IOError:
             pass
 
