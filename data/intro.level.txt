@@ -1,8 +1,7 @@
 Welcome to Quantoscope X.
 
-Your task is to guide a photon to the terminal pad.
+Your task is to guide a photon to the terminal pad after activating eight
+1-bit flip-flops.
 
 Photon's direction can be changed by placing mirrors in its path. Click on the
 mirror again to rotate it.
-
-Terminal pad only activates after all of the eight 1-bit pads are lit up.
