@@ -274,7 +274,7 @@ class GameMode(mode.Mode):
 
     def get_next_level_name(self):
         current_level_index = LEVELS.index(self.level_name)
-        if current_level_index >= 0 and current_level_index < len(LEVELS):
+        if current_level_index >= 0 and current_level_index < len(LEVELS) - 1:
             return LEVELS[current_level_index+1]
         else:
             return None
