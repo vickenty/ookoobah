@@ -107,7 +107,7 @@ class Manager (object):
         if btn == mouse.LEFT:
             if y > self.active[-1].pos.y and x < self.MARGIN * len(self.stack):
                 self.pop()
-                return
+                return pyglet.event.EVENT_HANDLED
 
             for obj in self.active:
                 if obj.contains(x, y):
