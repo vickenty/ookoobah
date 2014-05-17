@@ -249,7 +249,7 @@ class GameMode(mode.Mode):
         self.renderer = render.GameRenderer(self.game_session.game)
 
     def get_level_filename(self, level_name):
-        data_dir = self.get_data_dir()
+        data_dir = os.path.join(pyglet.resource.get_script_home(), 'data')
         return os.path.join(data_dir, level_name + '.level')
 
     def get_data_dir(self):
