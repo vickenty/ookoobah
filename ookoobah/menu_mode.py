@@ -25,7 +25,6 @@ class MenuMode(mode.Mode):
         self.b_fullscreen = gui.Button(self.full_screen_label, font2, self.on_toggle_full_screen)
 
         buttons = []
-        print sys.argv
         if len(sys.argv) > 1:
             buttons.append(gui.Button('Play', font, self.on_play_pressed))
             buttons.append(gui.Button('Edit', font, self.on_edit_pressed))
