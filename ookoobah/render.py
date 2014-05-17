@@ -212,6 +212,12 @@ class Exit (BlockRenderer):
         self.shape.vlist.colors[:] = tuple(self.color_spr.value) * self.shape.vertex_count
         self.arrows.vlist.colors[3::4] = (self.alpha_arr.value,) * self.arrows.vertex_count
 
+class Swamp (BlockRenderer):
+    size = (.4, .4, .4)
+    color = (0.743, 0.29, 0.251)
+    rotate = (0, math.pi/4, 0)
+    shape_class = shapes.Disc
+
 class ScalerGroup (pyglet.graphics.Group):
     def __init__(self, x, y, parent=None):
         super(ScalerGroup, self).__init__(parent)
@@ -372,6 +378,7 @@ CORE_MAPPING = {
     core.Launcher: Launcher,
     core.Exit: Exit,
     core.OneWay: OneWay,
+    core.Swamp: Swamp,
 }
 
 # TODO: move to a better place

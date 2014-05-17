@@ -109,6 +109,10 @@ class Trap(Block):
     def act(self, ball):
         ball.status = Ball.STATUS_DEAD
 
+class Swamp(Block):
+    def act(self, ball):
+        pass
+
 class Game(object):
     STATUS_NEW = "new"
     STATUS_ON = "on"
@@ -189,6 +193,7 @@ ALL_BLOCKS = (
     Launcher,
     Mirror,
     OneWay,
+    Swamp,
     Trap,
     Wall,
 )
