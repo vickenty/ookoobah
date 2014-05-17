@@ -14,6 +14,11 @@ class MenuMode(mode.Mode):
         super(MenuMode, self).connect(controller)
         self.init_opengl()
         self.init_menu()
+        self.bg = pyglet.sprite.Sprite(pyglet.resource.image('menu-bg.png'))
+        glClearColor(20/255, 20/255, 20/255, 1)
+
+    def disconnect(self):
+        self.bg.delete()
 
     @property
     def full_screen_label(self):
@@ -54,6 +59,8 @@ class MenuMode(mode.Mode):
 
     def on_draw(self):
         self.window.clear()
+        self.bg.x = self.window.width - self.bg.width
+        self.bg.draw()
         self.gui.draw()
 
     def init_opengl(self):
