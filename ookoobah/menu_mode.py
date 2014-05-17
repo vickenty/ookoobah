@@ -20,12 +20,13 @@ class MenuMode(mode.Mode):
         pass
 
     def init_menu(self):
-        self.b_fullscreen = gui.Button('I love you!', self.on_toggle_full_screen)
+        font = gui.MainMenuFont()
+        self.b_fullscreen = gui.Button('I love you!', font, self.on_toggle_full_screen)
         buttons = [
-            gui.Button('Play', self.on_play_pressed),
-            gui.Button('Edit', self.on_edit_pressed),
+            gui.Button('Play', font, self.on_play_pressed),
+            gui.Button('Edit levels', font, self.on_edit_pressed),
             self.b_fullscreen,
-            gui.Button('Exit', self.on_exit_pressed),
+            gui.Button('Exit', font, self.on_exit_pressed),
         ]
         self.gui.replace(buttons)
 

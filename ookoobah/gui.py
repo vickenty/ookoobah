@@ -3,6 +3,7 @@ from __future__ import division
 from collections import deque
 
 import pyglet
+from pyglet import font
 from pyglet.window import mouse
 from pyglet.gl import *
 from euclid import Vector2
@@ -16,6 +17,29 @@ LABEL_BACK = u'\u276e Back'
 LABEL_REMOVE = u'\u2716 Remove'
 LABEL_START = u'\u25b6 Start'
 LABEL_STOP = u'\u25a0 Stop'
+
+class Font(object):
+    name = None
+    filename = None
+    size = None
+
+    def __init__(self):
+        pyglet.resource.add_font(self.filename)
+
+class MainMenuFont(Font):
+    name = "DejaVu Sans ExtraLight"
+    filename = 'DejaVuSans-ExtraLight.ttf'
+    size = 24
+
+class GameMenuFont(Font):
+    name = "DejaVu Sans"
+    filename = 'DejaVuSans.ttf'
+    size = 11
+
+class PopupFont(Font):
+    name = "DejaVu Sans"
+    filename = 'DejaVuSans.ttf'
+    size = 20
 
 class Manager (object):
     ANIM_STRIDE = 2
@@ -143,8 +167,13 @@ class Button (object):
     THRESHOLD = 1
     SPEED = 0.4
 
-    def __init__(self, text, callback, args=None, color=None):
-        self.label = pyglet.text.Label(text)
+    def __init__(self, text, font, callback, args=None, color=None):
+        self.label = pyglet.text.Label(
+            text,
+            font_name = font.name,
+            font_size = font.size,
+            anchor_y = 'baseline'
+        )
         self.callback = callback
         self.args = args
 
@@ -254,7 +283,14 @@ class Popup (object):
     POS_Y = 0.3
 
     def __init__(self, text, color):
-        self.label = pyglet.text.Label(text, anchor_x = 'center', font_size=32, color = color)
+        font = PopupFont()
+        self.label = pyglet.text.Label(
+            text,
+            anchor_x = 'center',
+            font_name = font.name,
+            font_size = font.size,
+            color = color
+        )
         self.offset = Spring(Vector2(1.5, self.POS_Y), self.SPEED, self.SNAP)
         self.offset.next_value = Vector2(.5, self.POS_Y)
         self.sleep = self.SLEEP

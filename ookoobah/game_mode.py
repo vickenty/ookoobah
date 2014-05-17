@@ -84,15 +84,16 @@ class GameMode(mode.Mode):
         build_menu = gui.Submenu([(cls.__name__, gui.SELECT, DrawTool(cls)) for cls in core.ALL_BLOCKS])
         build_menu.choices.append((gui.LABEL_REMOVE, gui.SELECT, EraseTool()))
 
-        self.b_start_stop = gui.Button(gui.LABEL_START, self.on_game_start_stop)
+        font = gui.GameMenuFont()
+        self.b_start_stop = gui.Button(gui.LABEL_START, font, self.on_game_start_stop)
 
         if self.editor_mode:
             self.gui.replace([
-                gui.Button(u'\u270f Build\u2026', build_menu),
-                gui.Button(u'\u2798 Save', self.on_save_pressed),
-                gui.Button(u'\u2744 Lock', gui.SELECT, LockTool()),
+                gui.Button(u'\u270f Build\u2026', font, build_menu),
+                gui.Button(u'\u2798 Save', font, self.on_save_pressed),
+                gui.Button(u'\u2744 Lock', font, gui.SELECT, LockTool()),
                 self.b_start_stop,
-                gui.Button(gui.LABEL_BACK, self.on_back_pressed),
+                gui.Button(gui.LABEL_BACK, font, self.on_back_pressed),
             ])
         else:
             self.block_buttons = {
@@ -103,9 +104,9 @@ class GameMode(mode.Mode):
             block_buttons = [self.block_buttons[cls] for cls in core.ALL_BLOCKS if cls in self.block_buttons]
 
             self.gui.replace(block_buttons + [
-                gui.Button(gui.LABEL_REMOVE, gui.SELECT, EraseTool()),
-                gui.Button(u'\u21ba Retry', self.on_game_reset),
-                gui.Button(gui.LABEL_BACK, self.on_back_pressed),
+                gui.Button(gui.LABEL_REMOVE, font, gui.SELECT, EraseTool()),
+                gui.Button(u'\u21ba Retry', font, self.on_game_reset),
+                gui.Button(gui.LABEL_BACK, font, self.on_back_pressed),
             ])
 
     def tick(self):
