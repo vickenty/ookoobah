@@ -193,8 +193,9 @@ class GameMode(mode.Mode):
         except Exception as e:
             self.gui.show_popup(str(e))
 
-        for cls, count in self.game_session.game.inventory.items():
-            self.block_buttons[cls].count = count
+        if not self.editor_mode:
+            for cls, count in self.game_session.game.inventory.items():
+                self.block_buttons[cls].count = count
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         cam_pos = self.camera.eye.next_value
