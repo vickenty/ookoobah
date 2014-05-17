@@ -14,14 +14,14 @@ class MenuMode(mode.Mode):
         super(MenuMode, self).connect(controller)
         self.init_opengl()
         self.init_menu()
-        self.toggle_full_screen(True)
 
-    def disconnect(self):
-        pass
+    @property
+    def full_screen_label(self):
+        return 'Windowed' if self.window.fullscreen else 'Fullscreen'
 
     def init_menu(self):
         font = gui.MainMenuFont()
-        self.b_fullscreen = gui.Button('I love you!', font, self.on_toggle_full_screen)
+        self.b_fullscreen = gui.Button(self.full_screen_label, font, self.on_toggle_full_screen)
         buttons = [
             gui.Button('Play', font, self.on_play_pressed),
             gui.Button('Edit levels', font, self.on_edit_pressed),
@@ -33,11 +33,10 @@ class MenuMode(mode.Mode):
     def on_toggle_full_screen(self, manager, args):
         self.toggle_full_screen()
 
-    def toggle_full_screen(self, is_fs=None):
-        if is_fs is None:
-            is_fs = not self.window.fullscreen
-        self.window.set_fullscreen(is_fs)
-        self.b_fullscreen.label.text = 'Full screen' if not is_fs else 'Windowed'
+    def toggle_full_screen(self):
+        self.window.set_fullscreen(not self.window.fullscreen)
+        self.window.set_minimum_size(800, 600)
+        self.b_fullscreen.label.text = self.full_screen_label
 
     def on_play_pressed(self, manager, args):
         self.control.switch_handler("game_mode", False)
