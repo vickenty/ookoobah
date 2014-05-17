@@ -17,7 +17,7 @@ from camera import Camera
 
 LEVELS = (
     "intro",
-    "intro"
+    "cloud-intro"
     # TODO: these are not playable currently
     #"01-first-blood",
     #"02-looking-glass"
