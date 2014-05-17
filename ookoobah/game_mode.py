@@ -32,6 +32,7 @@ LEVELS = (
     "drunk-portals",
     "wall-trick",
     "mine-field",
+    "maze",
 )
 
 class GameMode(mode.Mode):
