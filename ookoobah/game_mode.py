@@ -177,12 +177,12 @@ class GameMode(mode.Mode):
 
         if not self.editor_mode:
             if new_status == core.Game.STATUS_VICTORY or self.skip_level:
-                sounds.play('victory.wav')
                 next_level_name = self.level_name if self.editor_mode else self.get_next_level_name()
                 if next_level_name:
                     self.control.switch_handler("game_mode", False, next_level_name)
                     return
                 elif not self.game_complete:
+                    sounds.play('victory.wav')
                     self.gui.show_popup("Congrats! You completed the game!")
                     self.game_complete = True
 
