@@ -140,6 +140,9 @@ class Launcher (BlockRenderer):
 
 class OneWay (Launcher):
     color = hex_color_f("77CB4D")
+    rotate = (0, 0, 0)
+    size = (1, 1, 1)
+    shape_class = shapes.Pine
 
 class Trap (BlockRenderer):
     size = (.4, .4, .4)
@@ -220,7 +223,7 @@ class Swamp (BlockRenderer):
 class Portal (BlockRenderer):
     size = (.2, .2, .2)
     color = hex_color_f("9876ab")
-    shape_class = shapes.Cross
+    shape_class = shapes.Spiral
 
 class ScalerGroup (pyglet.graphics.Group):
     def __init__(self, x, y, parent=None):

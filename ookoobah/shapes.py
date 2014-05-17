@@ -1,11 +1,12 @@
 from __future__ import division
 import math
 from euclid import Vector3, Matrix4, Point3
-from pyglet.gl import GL_TRIANGLES, GL_POINTS
+from pyglet.gl import GL_TRIANGLES, GL_POINTS, GL_LINES
 import random
 
 class Shape (object):
     primitive = GL_TRIANGLES
+    do_normals = True
     def __init__(self, batch, group, pos, size, color, rotate=None):
         real = []
         norm = []
@@ -19,7 +20,7 @@ class Shape (object):
         self.size = size
         self.vertex_count = 0
         for face in self.shape:
-            if self.primitive != GL_POINTS:
+            if self.do_normals:
                 a = Vector3(*face[1]) - Vector3(*face[0])
                 b = Vector3(*face[2]) - Vector3(*face[0])
                 n = a.cross(b).normalize()
@@ -27,14 +28,14 @@ class Shape (object):
             for vert in face:
                 self.vertex_count += 1
                 real.extend(matrix * Point3(*vert))
-                if self.primitive != GL_POINTS:
+                if self.do_normals:
                     norm.extend(n)
 
         data = [
             ('v3f', real),
             ('c%df' % len(color), color * self.vertex_count)
         ]
-        if self.primitive != GL_POINTS:
+        if self.do_normals:
             data.append(('n3f', norm))
 
         self.vlist = batch.add(self.vertex_count, self.primitive, group, *data)
@@ -78,17 +79,21 @@ class Pyramid (Shape):
        ((-.5, .5, -.5), (-.5, -.5, -.5), (0, 0, .5)),
     ]
 
-def pairwise(seq):
+def pairwise(seq, loop=True):
     it = iter(seq)
     first = prev = next(it)
     for item in it:
         yield (prev, item)
         prev = item
-    yield (prev, first)
+    if loop:
+        yield (prev, first)
+
+def angles(count):
+    return (math.pi / 8 * i for i in range(0, count))
 
 class Disc (Shape):
     shape = [
-        ((0, 0, 0), p1, p2) for p1, p2 in pairwise((math.cos(phi), math.sin(phi), 0) for phi in (math.pi / 8 * i for i in range(0, 16)))
+        ((0, 0, 0), p1, p2) for p1, p2 in pairwise((math.cos(phi), math.sin(phi), 0) for phi in angles(16))
     ]
 
 class Cross (Shape):
@@ -151,6 +156,7 @@ class Arrows (Shape):
 
 class Cloud (Shape):
     primitive = GL_POINTS
+    do_normals = False
 
     @property
     def shape(self):
@@ -162,6 +168,18 @@ class Cloud (Shape):
             ),)
             for _ in range(1000)
         ]
+
+class Pine (Shape):
+    shape = [
+        ((-.5, .2, 0), (-.5, -.2, 0), (-.2, 0, 0)),
+        ((-.15, .2, 0), (-.15, -.2, 0), (.15, 0, 0)),
+        ((.2, .2, 0), (.2, -.2, 0), (.5, 0, 0)),
+    ]
+
+class Spiral (Shape):
+    primitive = GL_LINES
+    do_normals = False
+    shape = [ (a, b) for a, b in pairwise(((math.cos(phi) * phi / 6, math.sin(phi) * phi / 6, phi / 6) for phi in angles(32)), False) ]
 
 if __name__ == '__main__':
     import pyglet
