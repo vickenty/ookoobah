@@ -142,7 +142,7 @@ class Manager (object):
 
             for obj in self.active:
                 if obj.contains(x, y):
-                    self.handle_click(obj)
+                    return self.handle_click(obj)
 
     def handle_click(self, obj):
         old_selected = self.selected
@@ -174,7 +174,7 @@ class Manager (object):
             ofs = (ofs - 1) % 10
 
             if ofs < len(self.active):
-                self.handle_click(self.active[ofs])
+                return self.handle_click(self.active[ofs])
 
         if sym == key.ESCAPE:
             if self.stack:
