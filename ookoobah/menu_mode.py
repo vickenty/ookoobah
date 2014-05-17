@@ -19,12 +19,19 @@ class MenuMode(mode.Mode):
         pass
 
     def init_menu(self):
+        self.b_fullscreen = gui.Button('Full screen', self.toggle_full_screen)
         buttons = [
             gui.Button('Play', self.on_play_pressed),
             gui.Button('Edit', self.on_edit_pressed),
+            self.b_fullscreen,
             gui.Button('Exit', self.on_exit_pressed),
         ]
         self.gui.replace(buttons)
+
+    def toggle_full_screen(self, manager, args):
+        fs = self.window.fullscreen
+        self.window.set_fullscreen(not fs)
+        self.b_fullscreen.label.text = 'Full screen' if fs else 'Windowed'
 
     def on_play_pressed(self, manager, args):
         self.control.switch_handler("game_mode", False)
