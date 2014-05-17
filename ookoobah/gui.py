@@ -142,30 +142,41 @@ class Manager (object):
 
             for obj in self.active:
                 if obj.contains(x, y):
-                    old_selected = self.selected
-                    if self.selected:
-                        self.selected.selected(0)
-                        self.selected = None
+                    self.handle_click(obj)
 
-                    # Second click removes selection and that's it.
-                    if old_selected == obj:
-                        return pyglet.event.EVENT_HANDLED
+    def handle_click(self, obj):
+        old_selected = self.selected
+        if self.selected:
+            self.selected.selected(0)
+            self.selected = None
 
-                    if callable(obj.callback):
-                        ret = obj.callback(self, obj.args)
-                    else:
-                        ret = obj.callback
+        # Second click removes selection and that's it.
+        if old_selected == obj:
+            return pyglet.event.EVENT_HANDLED
 
-                    if ret is BACK:
-                        self.pop()
+        if callable(obj.callback):
+            ret = obj.callback(self, obj.args)
+        else:
+            ret = obj.callback
 
-                    elif ret is SELECT:
-                        obj.selected(self.MARGIN)
-                        self.selected = obj
+        if ret is BACK:
+            self.pop()
 
-                    return pyglet.event.EVENT_HANDLED
+        elif ret is SELECT:
+            obj.selected(self.MARGIN)
+            self.selected = obj
+
+        return pyglet.event.EVENT_HANDLED
 
     def on_key_press(self, sym, mod):
+        print sym, mod
+        if key._0 <= sym <= key._9:
+            ofs = sym - key._0
+            ofs = (ofs - 1) % 10
+
+            if ofs < len(self.active):
+                self.handle_click(self.active[ofs])
+
         if sym == key.ESCAPE:
             if self.stack:
                 self.pop()
