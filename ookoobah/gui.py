@@ -34,16 +34,19 @@ class MainMenuFont(Font):
     name = "DejaVu Sans Light"
     filename = 'DejaVuSans-ExtraLight.ttf'
     size = 24
+    height = 32
 
 class GameMenuFont(Font):
     name = "DejaVu Sans"
     filename = 'DejaVuSans.ttf'
     size = 10
+    height = 16
 
 class PopupFont(Font):
     name = "DejaVu Sans"
     filename = 'DejaVuSans.ttf'
     size = 20
+    height = 20
 
 class Manager (object):
     ANIM_STRIDE = 2
@@ -182,7 +185,7 @@ class Button (object):
         self.args = args
 
         w = self.label.content_width
-        h = self.label.content_height
+        h = font.height
 
         self.width = w + 10
         self.height = h + 5
