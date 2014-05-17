@@ -17,6 +17,7 @@ import gui
 import mode
 import game_mode
 import menu_mode
+import sounds
 
 class Controller(object):
     """Top level controller object.
@@ -133,6 +134,8 @@ class Controller(object):
         self.window.set_fullscreen(True)
         self.gui = gui.Manager(self.window)
         clock.schedule_interval_soft(self.tick, 1 / 60)
+
+        sounds.load()
 
     def run(self):
         """Start the game.

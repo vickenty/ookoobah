@@ -15,6 +15,7 @@ from tools import *
 from glutil import *
 from camera import Camera
 from text_float import TextFloat
+import sounds
 
 LEVELS = (
     "intro",
@@ -57,6 +58,7 @@ class GameMode(mode.Mode):
         self.game_session = session.Session(grid)
         self.game_status = None
         self.level_help = None
+        self.charge_player = None
 
         if level_help and not self.editor_mode:
             level_help += '\n\nClick to continue.\n'
@@ -90,6 +92,8 @@ class GameMode(mode.Mode):
     def disconnect(self):
         self.delete_renderer()
         self.shutdown_opengl()
+
+        self.stop_charge_player()
 
     def init_opengl(self):
         glLoadIdentity()
@@ -153,9 +157,13 @@ class GameMode(mode.Mode):
         if not self.level_help:
             self.time += 1
 
+        if self.time == 1 and not self.editor_mode:
+            self.charge_player = sounds.play('charge.wav')
+
         new_status = self.game_session.get_status()
         if self.game_status == core.Game.STATUS_ON and new_status == core.Game.STATUS_DEFEAT:
             self.camera.shake(1)
+            sounds.play('boom.wav', 0.4)
         self.game_status = new_status
 
         if not self.editor_mode:
@@ -170,6 +178,8 @@ class GameMode(mode.Mode):
 
         if not self.editor_mode and self.time > self.SLOW_START and new_status == core.Game.STATUS_NEW:
             self.game_session.start()
+            self.stop_charge_player()
+            sounds.play('start.wav')
 
         if self.time > self.next_step and new_status == core.Game.STATUS_ON:
             self.game_session.step()
@@ -192,6 +202,11 @@ class GameMode(mode.Mode):
 
         self.camera.tick()
         self.renderer.tick()
+
+    def stop_charge_player(self):
+        if self.charge_player:
+            self.charge_player.pause()
+            self.charge_player = None
 
     def on_resize(self, w, h):
         self.camera.resize(0, 0, w, h)
@@ -253,6 +268,7 @@ class GameMode(mode.Mode):
 
         if block and block.locked and not self.editor_mode:
             self.camera.shake(0.1)
+            sounds.play('noway.wav')
             return
 
         try:
@@ -266,6 +282,7 @@ class GameMode(mode.Mode):
 
         except Exception as e:
             self.camera.shake(0.2)
+            sounds.play('noway.wav')
 
         self.update_inventory()
 
@@ -293,6 +310,7 @@ class GameMode(mode.Mode):
     def on_game_reset(self, manager, args):
         self.init_level()
         self.update_inventory()
+        self.stop_charge_player()
 
     def on_back_pressed(self, manager, args):
         # Go back to the main menu (=menu mode),

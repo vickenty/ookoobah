@@ -1,5 +1,6 @@
 import random
 from inventory import Inventory
+import sounds
 
 class Ball(object):
     DIR_RIGHT = (1, 0)
@@ -60,6 +61,7 @@ class Wall(Block):
             -ball.direction[0],
             -ball.direction[1],
         )
+        sounds.play('wall.wav')
         return True
 
 class OneWay(Block):
@@ -72,6 +74,7 @@ class OneWay(Block):
     )
 
     def act(self, ball):
+        sounds.play('mirror.wav')
         ball.direction = self.direction
 
 class Mirror(Block):
@@ -90,6 +93,7 @@ class Mirror(Block):
             ball.direction[1] * self.slope,
             ball.direction[0] * self.slope,
         )
+        sounds.play('mirror.wav')
 
 class FlipFlopMirror(Mirror):
     human_name = 'Flip mirror'
@@ -97,6 +101,7 @@ class FlipFlopMirror(Mirror):
     def act(self, ball):
         super(FlipFlopMirror, self).act(ball)
         self.cycle_states()
+        sounds.play('mirror.wav')
 
 class Exit(Block):
     human_name = 'Finish'
@@ -119,6 +124,10 @@ class FlipFlop(Block):
 
     def act(self, ball):
         self.is_on = not self.is_on
+        if self.is_on:
+            sounds.play('flip-on.wav')
+        else:
+            sounds.play('flip-off.wav')
 
 class Trap(Block):
     human_name = 'Trap'
@@ -136,6 +145,7 @@ class Portal(Block):
 
     def act(self, ball):
         ball.pos = random.choice(self.other_portals)
+        sounds.play('portal.wav')
 
 class Game(object):
     STATUS_NEW = "new"
