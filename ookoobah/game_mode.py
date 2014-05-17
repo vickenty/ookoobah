@@ -275,10 +275,7 @@ class GameMode(mode.Mode):
         return os.path.join(data_dir, level_name + '.level')
 
     def get_data_dir(self):
-        # TODO: pyglet.resource.get_script_home() returns empty string
-        game_dir = sys.path[0]
-        data_dir = pyglet.resource.path[0]
-        return os.path.join(game_dir, data_dir)
+        return pyglet.resource.path[0]
 
     def _create_test_grid(self):
         grid = {}
