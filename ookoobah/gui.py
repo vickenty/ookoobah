@@ -26,9 +26,9 @@ class Font(object):
     size = None
 
     def __init__(self):
-        if not self.name in LOADED_FONTS:
+        if not self.filename in LOADED_FONTS:
             pyglet.resource.add_font(self.filename)
-            LOADED_FONTS[self.name] = 1
+            LOADED_FONTS[self.filename] = 1
 
 class MainMenuFont(Font):
     name = "DejaVu Sans ExtraLight"
