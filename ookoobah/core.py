@@ -135,7 +135,7 @@ class Trap(Block):
         ball.status = Ball.STATUS_DEAD
 
 class Swamp(Block):
-    human_name = 'Swamp'
+    human_name = 'Cloud'
 
     def act(self, ball):
         pass

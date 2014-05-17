@@ -18,11 +18,20 @@ from text_float import TextFloat
 import sounds
 
 LEVELS = (
-    "intro",
-    "cloud-intro"
-    # TODO: these are not playable currently
-    #"01-first-blood",
-    #"02-looking-glass"
+    "intro-basics",
+    "beginning",
+    "intro-trap",
+    "shroom",
+    "intro-cloud",
+    "breadboard",
+    "intro-flip-mirror",
+    "flip-danger",
+    "intro-one-way",
+    "regulator",
+    "intro-portal",
+    "drunk-portals",
+    "wall-trick",
+    "mine-field",
 )
 
 class GameMode(mode.Mode):
