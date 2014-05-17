@@ -29,12 +29,12 @@ class Font(object):
 class MainMenuFont(Font):
     name = "DejaVu Sans ExtraLight"
     filename = 'DejaVuSans-ExtraLight.ttf'
-    size = 24
+    size = 26
 
 class GameMenuFont(Font):
     name = "DejaVu Sans"
     filename = 'DejaVuSans.ttf'
-    size = 11
+    size = 12
 
 class PopupFont(Font):
     name = "DejaVu Sans"
@@ -289,6 +289,7 @@ class Popup (object):
             anchor_x = 'center',
             font_name = font.name,
             font_size = font.size,
+            anchor_y = 'baseline',
             color = color
         )
         self.offset = Spring(Vector2(1.5, self.POS_Y), self.SPEED, self.SNAP)
