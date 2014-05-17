@@ -1,1 +1,4 @@
-TBD
+Portals instantly transmit photon to another location.
+
+Due to quantum effects exit portal can not be predicted, but photon will
+maintain it's direction.
