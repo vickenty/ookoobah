@@ -80,14 +80,13 @@ class GameMode(mode.Mode):
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
 
         level_name = self.get_current_level_name()
-        if self.editor_mode:
-            try:
-                grid = self.load_grid_from_file(level_name)
-            except IOError:
-                grid = {}
-        else:
+        try:
             grid = self.load_grid_from_file(level_name)
-            self.gui.show_popup('Get ready!')
+        except IOError:
+            if not self.editor_mode:
+                raise
+            grid = {}
+
         self.game_session = session.Session(grid)
         self.reinit_level()
 
