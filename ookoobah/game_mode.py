@@ -43,6 +43,7 @@ class GameMode(mode.Mode):
         self.init_opengl()
 
         self.skip_level = False
+        self.game_complete = False
 
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
@@ -153,8 +154,9 @@ class GameMode(mode.Mode):
             next_level_name = self.level_name if self.editor_mode else self.get_next_level_name()
             if next_level_name:
                 self.control.switch_handler("game_mode", False, next_level_name)
-            else:
+            elif not self.game_complete:
                 self.gui.show_popup("Congrats! You completed the game!")
+                self.game_complete = True
             return
 
         if not self.editor_mode and self.time > self.SLOW_START and new_status == core.Game.STATUS_NEW:
