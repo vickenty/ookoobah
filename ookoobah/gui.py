@@ -4,7 +4,7 @@ from collections import deque
 
 import pyglet
 from pyglet import font
-from pyglet.window import mouse
+from pyglet.window import mouse, key
 from pyglet.gl import *
 from euclid import Vector2
 from spring import Spring
@@ -165,9 +165,13 @@ class Manager (object):
 
                     return pyglet.event.EVENT_HANDLED
 
-        elif btn == mouse.RIGHT:
+    def on_key_press(self, sym, mod):
+        if sym == key.ESCAPE:
             if self.stack:
                 self.pop()
+            if self.selected:
+                self.selected.selected(0)
+                self.selected = None
             return pyglet.event.EVENT_HANDLED
 
 class Button (object):
