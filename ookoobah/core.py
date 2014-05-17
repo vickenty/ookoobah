@@ -197,7 +197,8 @@ class Game(object):
 
     def _update_exit(self):
         # TODO Cache me, maybe
-        self.exit.is_on = all(ff.is_on for ff in self.grid.values() if isinstance(ff, FlipFlop))
+        if self.exit:
+            self.exit.is_on = all(ff.is_on for ff in self.grid.values() if isinstance(ff, FlipFlop))
 
 ALL_BLOCKS = (
     Exit,
