@@ -75,6 +75,7 @@ class Manager (object):
         self.hide(True, True)
         self.stack = []
         self.set_active(buttons)
+        self.reset_selection()
 
     def push(self, buttons, add_back=True):
         self.hide()
@@ -145,11 +146,14 @@ class Manager (object):
                 if obj.contains(x, y):
                     return self.handle_click(obj)
 
-    def handle_click(self, obj):
-        old_selected = self.selected
+    def reset_selection(self):
         if self.selected:
             self.selected.selected(0)
             self.selected = None
+
+    def handle_click(self, obj):
+        old_selected = self.selected
+        self.reset_selection()
 
         # Second click removes selection and that's it.
         if old_selected == obj:
@@ -180,9 +184,7 @@ class Manager (object):
         if sym == key.ESCAPE:
             if self.stack:
                 self.pop()
-            if self.selected:
-                self.selected.selected(0)
-                self.selected = None
+            self.reset_selection()
             return pyglet.event.EVENT_HANDLED
 
 class Button (object):
