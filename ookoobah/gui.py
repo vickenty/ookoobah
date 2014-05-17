@@ -31,9 +31,9 @@ class Font(object):
             LOADED_FONTS[self.filename] = 1
 
 class MainMenuFont(Font):
-    name = "DejaVu Sans ExtraLight"
+    name = "DejaVu Sans Light"
     filename = 'DejaVuSans-ExtraLight.ttf'
-    size = 26
+    size = 24
 
 class GameMenuFont(Font):
     name = "DejaVu Sans"
