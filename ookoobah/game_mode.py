@@ -34,7 +34,6 @@ class GameMode(mode.Mode):
         self.camera = Camera(Vector3(0, 0, 20), Vector3(0, 0, 0), Vector3(0, 1, 0))
         self.camera.resize(0, 0, self.window.width, self.window.height)
         self.init_opengl()
-        self.init_gui()
 
         self.fps_magic = pyglet.clock.ClockDisplay(font=pyglet.font.load([], self.FPS_FONT_SIZE))
         self.mouse_pos = (self.window.width / 2, self.window.height / 2)
@@ -48,7 +47,12 @@ class GameMode(mode.Mode):
             grid = {}
 
         self.game_session = session.Session(grid)
+
+        if not self.editor_mode:
+            self.game_session.game.build_inventory()
+
         self.reinit_level()
+        self.init_gui()
 
     def disconnect(self):
         if self.renderer:
@@ -176,8 +180,11 @@ class GameMode(mode.Mode):
             self.camera.shake(0.5)
             return
 
-        if self.tool.apply(mpos, self.game_session.game.grid, self.editor_mode):
-            self.renderer.mark_dirty(mpos)
+        try:
+            if self.tool.apply(mpos, self.game_session.game, self.editor_mode):
+                self.renderer.mark_dirty(mpos)
+        except Exception as e:
+            self.gui.show_popup(str(e))
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         cam_pos = self.camera.eye.next_value

@@ -1,4 +1,5 @@
 import random
+from inventory import Inventory
 
 class Ball(object):
     DIR_RIGHT = (1, 0)
@@ -128,8 +129,28 @@ class Game(object):
     def __init__(self, grid):
         self.step_n = 0
         self.grid = grid
+        self.inventory = Inventory()
         self.ball = None
         self.exit = None
+
+    def build_inventory(self):
+        for pos, block in self.grid.items():
+            if not block.locked:
+                del self.grid[pos]
+                self.inventory.add_block(block.__class__)
+
+    def erase_block(self, pos):
+        try:
+            self.inventory.add_block(self.grid[pos].__class__)
+            del self.grid[pos]
+        except KeyError:
+            pass
+
+    def place_block(self, pos, block_class, use_inventory=True):
+        self.erase_block(pos)
+        if use_inventory:
+            self.inventory.use_block(block_class)
+        self.grid[pos] = block_class()
 
     def start(self):
         assert self.get_status() == Game.STATUS_NEW, "game has been started already"
