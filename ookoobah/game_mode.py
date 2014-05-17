@@ -150,9 +150,9 @@ class GameMode(mode.Mode):
         self.game_status = new_status
 
         if new_status == core.Game.STATUS_VICTORY or self.skip_level:
-            level_name = self.get_next_level_name()
-            if level_name:
-                self.control.switch_handler("game_mode", False, level_name)
+            next_level_name = self.level_name if self.editor_mode else self.get_next_level_name()
+            if next_level_name:
+                self.control.switch_handler("game_mode", False, next_level_name)
             else:
                 self.gui.show_popup("Congrats! You completed the game!")
             return
@@ -277,9 +277,13 @@ class GameMode(mode.Mode):
         self.save_level(self.level_name)
 
     def get_default_level_name(self):
-        return sys.argv[1] if len(sys.argv) == 2 else LEVELS[0]
+        return sys.argv[1] if len(sys.argv) > 1 else LEVELS[0]
 
     def get_next_level_name(self):
+        # Always stay on the same level if the level was specified on the command line
+        if len(sys.argv) > 1:
+            return sys.argv[1]
+
         current_level_index = LEVELS.index(self.level_name)
         if current_level_index >= 0 and current_level_index < len(LEVELS) - 1:
             return LEVELS[current_level_index+1]
