@@ -184,7 +184,7 @@ class GameMode(mode.Mode):
         block = grid.get(mpos)
 
         if block and block.locked and not self.editor_mode:
-            self.camera.shake(0.5)
+            self.camera.shake(0.1)
             return
 
         try:
