@@ -153,7 +153,7 @@ class Button (object):
 
         self.width = w + 10
         self.height = h + 5
-        
+
         self.delay = 0
         self.target = Vector2(0, 0)
         self.pos = Vector2(0, 0)
@@ -183,7 +183,7 @@ class Button (object):
                 return DONE
         else:
             self.pos += delta * self.SPEED
-    
+
     def draw(self):
         glPushMatrix(GL_MODELVIEW)
         x, y = self.pos
@@ -204,6 +204,37 @@ class Button (object):
     def contains(self, x, y):
         px, py = self.pos
         return -10 <= x - px <= self.width and -10 <= y - py <= self.height
+
+class CountButton (Button):
+    THRESHOLD = 1
+    SPEED = 0.4
+
+    def __init__(self, text, count, callback, args=None, color=None):
+        self._text = text
+        self._count = count
+        super(CountButton, self).__init__(self.text_count, callback, args, color)
+
+    @property
+    def text(self):
+        return self._text
+
+    @text.setter
+    def text(self, value):
+        self._text = value
+        self.label.text = self.text_count
+
+    @property
+    def count(self):
+        return self._count
+
+    @count.setter
+    def count(self, value):
+        self._count = value
+        self.label.text = self.text_count
+
+    @property
+    def text_count(self):
+        return u'%s \u00d7 %d' % (self._text, self._count)
 
 class Submenu (object):
     def __init__(self, choices):
@@ -273,7 +304,7 @@ if __name__ == '__main__':
                 manager.push([Button(label, mk_handler(sub2)) for label, sub2 in sub])
             return handler
 
-    man.replace(Button(t, mk_handler(sub)) for t, sub in txt)
+    man.replace(CountButton(t, 15, mk_handler(sub)) for t, sub in txt)
 
     glClearColor(.3, .3, .3, 1)
 
@@ -281,11 +312,12 @@ if __name__ == '__main__':
     def on_draw():
         win.clear()
         man.draw()
-    
+
     win.push_handlers(man)
 
     def update(dt):
         man.tick()
+        man.active[0].count += 1
 
     pyglet.clock.schedule_interval_soft(update, 1/60)
 
