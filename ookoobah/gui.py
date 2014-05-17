@@ -55,6 +55,7 @@ class Manager (object):
 
     colors = {
         'okay': (0x34, 0xB2, 0x7D, 0xFF),
+        'title': (0xEE, 0xEE, 0xEE, 0xFF),
     }
 
     def __init__(self, window):

@@ -366,6 +366,9 @@ class GameMode(mode.Mode):
         except IOError:
             pass
 
+        level_title = self.level_name.replace("-", " ").title()
+        self.gui.show_popup(level_title, color="title")
+
         return grid, level_help
 
     def init_level(self):
