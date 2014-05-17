@@ -56,6 +56,17 @@ class Wall(Block):
         )
         return True
 
+class OneWay(Block):
+    all_states = (
+        (("direction", Ball.DIR_RIGHT),),
+        (("direction", Ball.DIR_DOWN),),
+        (("direction", Ball.DIR_LEFT),),
+        (("direction", Ball.DIR_UP),),
+    )
+
+    def act(self, ball):
+        ball.direction = self.direction
+
 class Mirror(Block):
     SLOPE_BACKWARD = 1
     SLOPE_FORWARD = -1
@@ -177,6 +188,7 @@ ALL_BLOCKS = (
     FlipFlopMirror,
     Launcher,
     Mirror,
+    OneWay,
     Trap,
     Wall,
 )

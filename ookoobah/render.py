@@ -138,6 +138,9 @@ class Launcher (BlockRenderer):
         self.state.tick()
         self.group.angle = 90 * self.state.value
 
+class OneWay (Launcher):
+    color = hex_color_f("77CB4D")
+
 class Trap (BlockRenderer):
     size = (.4, .4, .4)
     color = (0.743, 0.29, 0.251)
@@ -368,6 +371,7 @@ CORE_MAPPING = {
     core.Trap: Trap,
     core.Launcher: Launcher,
     core.Exit: Exit,
+    core.OneWay: OneWay,
 }
 
 # TODO: move to a better place
