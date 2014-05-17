@@ -150,14 +150,15 @@ class GameMode(mode.Mode):
             self.camera.shake(1)
         self.game_status = new_status
 
-        if new_status == core.Game.STATUS_VICTORY or self.skip_level:
-            next_level_name = self.level_name if self.editor_mode else self.get_next_level_name()
-            if next_level_name:
-                self.control.switch_handler("game_mode", False, next_level_name)
-            elif not self.game_complete:
-                self.gui.show_popup("Congrats! You completed the game!")
-                self.game_complete = True
-            return
+        if not self.editor_mode:
+            if new_status == core.Game.STATUS_VICTORY or self.skip_level:
+                next_level_name = self.level_name if self.editor_mode else self.get_next_level_name()
+                if next_level_name:
+                    self.control.switch_handler("game_mode", False, next_level_name)
+                elif not self.game_complete:
+                    self.gui.show_popup("Congrats! You completed the game!")
+                    self.game_complete = True
+                return
 
         if not self.editor_mode and self.time > self.SLOW_START and new_status == core.Game.STATUS_NEW:
             self.game_session.start()
