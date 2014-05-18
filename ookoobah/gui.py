@@ -238,7 +238,7 @@ class Button (object):
             self.pos += delta * self.SPEED
 
     def draw(self):
-        glPushMatrix(GL_MODELVIEW)
+        glPushMatrix()
         x, y = self.pos
         glTranslatef(x, y, 0)
         self.vlist.draw(GL_QUADS)

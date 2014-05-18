@@ -20,7 +20,7 @@ def gl_disable(*bits):
 
     yield
 
-    glPopAttrib(GL_ENABLE_BIT)
+    glPopAttrib()
 
 @contextmanager
 def gl_ortho(window):
@@ -28,7 +28,7 @@ def gl_ortho(window):
     glMatrixMode(GL_PROJECTION)
     glPushMatrix()
     glLoadIdentity()
-    gluOrtho2D(0, window.width, 0, window.height, -1, 1)
+    gluOrtho2D(0, window.width, 0, window.height)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 

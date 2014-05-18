@@ -66,6 +66,6 @@ class MenuMode(mode.Mode):
     def init_opengl(self):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluOrtho2D(0, self.window.width, 0, self.window.height, -1, 1)
+        gluOrtho2D(0, self.window.width, 0, self.window.height)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()

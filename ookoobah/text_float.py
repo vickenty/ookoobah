@@ -19,7 +19,7 @@ class TextFloat (object):
 
     def draw(self, window):
         glPushMatrix()
-        glTranslatef(window.width / 2 - self.w / 2, window.height, 0, 0)
+        glTranslatef(window.width / 2 - self.w / 2, window.height, 0)
         self.vlist.draw(GL_QUADS)
         self.label.draw()
         glPopMatrix()
