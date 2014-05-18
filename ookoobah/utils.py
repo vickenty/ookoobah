@@ -20,7 +20,7 @@ CHAR_TO_BLOCK = {
 BLOCK_TO_CHAR = {v: k for k, v in CHAR_TO_BLOCK.items()}
 
 def make_grid_from_string(string):
-    grid = core.Grid()
+    grid = {}
     for y, line in enumerate(string.strip().split("\n")):
         for x, char in enumerate(c for c in line if not c.isspace()):
             block, param = CHAR_TO_BLOCK[char]
@@ -57,7 +57,7 @@ def dump_game_to_string(game):
         else:
             return char
 
-    (width, height) = grid.size()
+    (width, height) = game.grid_size()
     chars = ((place_ball(ball, (x, y), block_to_char(grid.get((x, y)))) for x in range(width)) for y in range(height))
 
     return "\n".join(" ".join(row) for row in chars)

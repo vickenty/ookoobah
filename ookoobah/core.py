@@ -179,6 +179,9 @@ class Game(object):
             self.inventory.use_block(block_class)
         self.grid[pos] = block_class()
 
+    def grid_size(self):
+        return tuple(n + 1 for n in map(max, zip(*self.grid.keys())))
+
     def start(self):
         assert self.get_status() == Game.STATUS_NEW, "game has been started already"
 
