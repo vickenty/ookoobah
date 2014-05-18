@@ -183,7 +183,6 @@ class GameMode(mode.Mode):
                     self.control.switch_handler("game_mode", False, next_level_name)
                     return
                 elif not self.game_complete:
-                    sounds.play('victory.wav')
                     self.gui.show_popup("Congrats! You completed the game!")
                     self.game_complete = True
 

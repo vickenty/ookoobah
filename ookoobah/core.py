@@ -113,6 +113,7 @@ class Exit(Block):
     def act(self, ball):
         if self.is_on:
             ball.status = Ball.STATUS_LEFT
+            sounds.play('victory.wav')
 
 class FlipFlop(Block):
     human_name = 'Bit'
